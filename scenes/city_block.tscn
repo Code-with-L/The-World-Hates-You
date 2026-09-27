@@ -1,4 +1,4 @@
-[gd_scene load_steps=258 format=3]
+[gd_scene load_steps=215 format=3]
 
 [ext_resource type="Script" path="res://scripts/city_block.gd" id="1_city"]
 
@@ -36,9 +36,6 @@
 [ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Barrel_B.gltf" id="42_kk32"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Pallet_Small.gltf" id="43_kk33"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/watertower.gltf" id="44_kk34"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Box_A.gltf" id="45_kk35"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Box_B.gltf" id="46_kk36"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Box_C.gltf" id="47_kk37"]
 
 [sub_resource type="StandardMaterial3D" id="m_road"]
 albedo_color = Color(0.26, 0.26, 0.28, 1)
@@ -386,8 +383,24 @@ buffer = PackedFloat32Array(1.0, 0.0, 0.0, -3, 0.0, 1.0, 0.0, -0.3, 0.0, 0.0, 1.
 size = Vector3(0.3, 0.36, 4.4)
 
 
+[sub_resource type="MultiMesh" id="mmb_KerbStrip"]
+transform_format = 1
+instance_count = 16
+visible_instance_count = 16
+mesh = SubResource("mb0")
+buffer = PackedFloat32Array(1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -17.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -17.5, 1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -12.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -12.5, 1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -7.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -7.5, 1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -2.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, -2.5, 1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 2.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 2.5, 1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 7.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 7.5, 1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 12.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 12.5, 1.0, 0.0, 0.0, -4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 17.5, 1.0, 0.0, 0.0, 4.05, 0.0, 1.0, 0.0, 0.02, 0.0, 0.0, 1.0, 17.5)
+
+
 [sub_resource type="BoxMesh" id="mb1"]
 size = Vector3(2.9, 0.04, 0.14)
+
+
+[sub_resource type="MultiMesh" id="mmb_JointStrip"]
+transform_format = 1
+instance_count = 16
+visible_instance_count = 16
+mesh = SubResource("mb1")
+buffer = PackedFloat32Array(1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -17.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -17.5, 1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -12.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -12.5, 1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -7.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -7.5, 1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -2.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, -2.5, 1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 2.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 2.5, 1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 7.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 7.5, 1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 12.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 12.5, 1.0, 0.0, 0.0, -5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 17.5, 1.0, 0.0, 0.0, 5.5, 0.0, 1.0, 0.0, 0.15, 0.0, 0.0, 1.0, 17.5)
 
 
 [sub_resource type="CylinderMesh" id="mc2"]
@@ -455,242 +468,202 @@ size = Vector3(1.7, 2, 1.7)
 
 
 [sub_resource type="BoxMesh" id="mb17"]
-size = Vector3(1.9, 0.16, 1.9)
-
-
-[sub_resource type="BoxMesh" id="mb18"]
-size = Vector3(0.7, 1.3, 0.1)
-
-
-[sub_resource type="BoxMesh" id="mb19"]
 size = Vector3(1.15, 0.8, 1.15)
 
 
-[sub_resource type="BoxMesh" id="mb20"]
-size = Vector3(0.8, 0.07, 0.8)
-
-
-[sub_resource type="BoxMesh" id="mb21"]
-size = Vector3(1.3, 0.14, 1.3)
-
-
-[sub_resource type="BoxMesh" id="mb22"]
+[sub_resource type="BoxMesh" id="mb18"]
 size = Vector3(1.5, 0.12, 5.9)
 
 
-[sub_resource type="BoxMesh" id="mb23"]
+[sub_resource type="BoxMesh" id="mb19"]
 size = Vector3(1.52, 0.14, 0.5)
 
 
-[sub_resource type="BoxMesh" id="mb24"]
+[sub_resource type="BoxMesh" id="mb20"]
 size = Vector3(0.1, 0.34, 5.9)
 
 
-[sub_resource type="BoxMesh" id="mb25"]
-size = Vector3(0.08, 0.08, 5.9)
-
-
-[sub_resource type="BoxMesh" id="mb26"]
+[sub_resource type="BoxMesh" id="mb21"]
 size = Vector3(4.06, 3.9, 5.06)
 
 
-[sub_resource type="BoxMesh" id="mb27"]
+[sub_resource type="BoxMesh" id="mb22"]
 size = Vector3(4.24, 0.55, 5.24)
 
 
-[sub_resource type="BoxMesh" id="mb28"]
+[sub_resource type="BoxMesh" id="mb23"]
 size = Vector3(4.34, 0.34, 5.34)
 
 
-[sub_resource type="BoxMesh" id="mb29"]
+[sub_resource type="BoxMesh" id="mb24"]
 size = Vector3(4.5, 0.28, 5.5)
 
 
-[sub_resource type="BoxMesh" id="mb30"]
+[sub_resource type="BoxMesh" id="mb25"]
 size = Vector3(0.25, 0.5, 5.5)
 
 
-[sub_resource type="BoxMesh" id="mb31"]
+[sub_resource type="BoxMesh" id="mb26"]
 size = Vector3(4.06, 0.9, 7.06)
 
 
-[sub_resource type="BoxMesh" id="mb32"]
+[sub_resource type="BoxMesh" id="mb27"]
 size = Vector3(4.24, 0.55, 7.24)
 
 
-[sub_resource type="BoxMesh" id="mb33"]
+[sub_resource type="BoxMesh" id="mb28"]
 size = Vector3(4.34, 0.34, 7.34)
 
 
-[sub_resource type="BoxMesh" id="mb34"]
+[sub_resource type="BoxMesh" id="mb29"]
 size = Vector3(4.5, 0.28, 7.5)
 
 
-[sub_resource type="BoxMesh" id="mb35"]
+[sub_resource type="BoxMesh" id="mb30"]
 size = Vector3(0.25, 0.5, 7.5)
 
 
-[sub_resource type="BoxMesh" id="mb36"]
+[sub_resource type="BoxMesh" id="mb31"]
 size = Vector3(5.06, 8.9, 5.06)
 
 
-[sub_resource type="BoxMesh" id="mb37"]
+[sub_resource type="BoxMesh" id="mb32"]
 size = Vector3(5.24, 0.55, 5.24)
 
 
-[sub_resource type="BoxMesh" id="mb38"]
+[sub_resource type="BoxMesh" id="mb33"]
 size = Vector3(5.34, 0.34, 5.34)
 
 
-[sub_resource type="BoxMesh" id="mb39"]
+[sub_resource type="BoxMesh" id="mb34"]
 size = Vector3(5.5, 0.28, 5.5)
 
 
-[sub_resource type="BoxMesh" id="mb40"]
+[sub_resource type="BoxMesh" id="mb35"]
 size = Vector3(5.5, 0.5, 0.25)
 
 
-[sub_resource type="BoxMesh" id="mb41"]
+[sub_resource type="BoxMesh" id="mb36"]
 size = Vector3(5.06, 2.9, 6.06)
 
 
-[sub_resource type="BoxMesh" id="mb42"]
+[sub_resource type="BoxMesh" id="mb37"]
 size = Vector3(5.24, 0.55, 6.24)
 
 
-[sub_resource type="BoxMesh" id="mb43"]
+[sub_resource type="BoxMesh" id="mb38"]
 size = Vector3(5.34, 0.34, 6.34)
 
 
-[sub_resource type="BoxMesh" id="mb44"]
+[sub_resource type="BoxMesh" id="mb39"]
 size = Vector3(5.5, 0.28, 6.5)
 
 
-[sub_resource type="BoxMesh" id="mb45"]
+[sub_resource type="BoxMesh" id="mb40"]
 size = Vector3(5.06, 1.9, 8.06)
 
 
-[sub_resource type="BoxMesh" id="mb46"]
+[sub_resource type="BoxMesh" id="mb41"]
 size = Vector3(5.24, 0.55, 8.24)
 
 
-[sub_resource type="BoxMesh" id="mb47"]
+[sub_resource type="BoxMesh" id="mb42"]
 size = Vector3(5.34, 0.34, 8.34)
 
 
-[sub_resource type="BoxMesh" id="mb48"]
+[sub_resource type="BoxMesh" id="mb43"]
 size = Vector3(5.5, 0.28, 8.5)
 
 
-[sub_resource type="BoxMesh" id="mb49"]
+[sub_resource type="BoxMesh" id="mb44"]
 size = Vector3(0.25, 0.5, 8.5)
 
 
-[sub_resource type="BoxMesh" id="mb50"]
+[sub_resource type="BoxMesh" id="mb45"]
 size = Vector3(6.24, 0.5, 4.24)
 
 
-[sub_resource type="BoxMesh" id="mb51"]
+[sub_resource type="BoxMesh" id="mb46"]
 size = Vector3(6.3, 0.3, 4.3)
 
 
-[sub_resource type="BoxMesh" id="mb52"]
+[sub_resource type="BoxMesh" id="mb47"]
 size = Vector3(6.5, 0.26, 4.5)
 
 
-[sub_resource type="BoxMesh" id="mb53"]
+[sub_resource type="BoxMesh" id="mb48"]
 size = Vector3(6.5, 0.45, 0.24)
 
 
-[sub_resource type="BoxMesh" id="mb54"]
+[sub_resource type="BoxMesh" id="mb49"]
 size = Vector3(0.24, 0.45, 4.5)
 
 
-[sub_resource type="BoxMesh" id="mb55"]
-size = Vector3(5, 0.5, 0.22)
-
-
-[sub_resource type="BoxMesh" id="mb56"]
+[sub_resource type="BoxMesh" id="mb50"]
 size = Vector3(4.7, 2.2, 0.18)
 
 
-[sub_resource type="BoxMesh" id="mb57"]
+[sub_resource type="BoxMesh" id="mb51"]
 size = Vector3(0.12, 2.2, 0.2)
 
 
-[sub_resource type="BoxMesh" id="mb58"]
+[sub_resource type="BoxMesh" id="mb52"]
 size = Vector3(1.26, 2.5, 0.2)
 
 
-[sub_resource type="BoxMesh" id="mb59"]
+[sub_resource type="BoxMesh" id="mb53"]
 size = Vector3(1.02, 2.25, 0.24)
 
 
-[sub_resource type="BoxMesh" id="mb60"]
+[sub_resource type="BoxMesh" id="mb54"]
 size = Vector3(5.5, 0.72, 0.28)
 
 
-[sub_resource type="BoxMesh" id="mb61"]
-size = Vector3(0.22, 0.5, 3.2)
-
-
-[sub_resource type="BoxMesh" id="mb62"]
+[sub_resource type="BoxMesh" id="mb55"]
 size = Vector3(0.18, 2.2, 2.9)
 
 
-[sub_resource type="BoxMesh" id="mb63"]
+[sub_resource type="BoxMesh" id="mb56"]
 size = Vector3(0.2, 2.2, 0.12)
 
 
-[sub_resource type="BoxMesh" id="mb64"]
+[sub_resource type="BoxMesh" id="mb57"]
 size = Vector3(0.28, 0.72, 3.5)
 
 
-[sub_resource type="BoxMesh" id="mb65"]
+[sub_resource type="BoxMesh" id="mb58"]
 size = Vector3(0.1, 0.36, 0.7)
 
 
-[sub_resource type="BoxMesh" id="mb66"]
+[sub_resource type="BoxMesh" id="mb59"]
 size = Vector3(5.6, 0.12, 1.5)
 
 
-[sub_resource type="BoxMesh" id="mb67"]
+[sub_resource type="BoxMesh" id="mb60"]
 size = Vector3(0.5, 0.14, 1.52)
 
 
-[sub_resource type="BoxMesh" id="mb68"]
+[sub_resource type="BoxMesh" id="mb61"]
 size = Vector3(5.6, 0.4, 0.1)
 
 
-[sub_resource type="BoxMesh" id="mb69"]
-size = Vector3(5.6, 0.08, 0.08)
-
-
-[sub_resource type="BoxMesh" id="mb70"]
+[sub_resource type="BoxMesh" id="mb62"]
 size = Vector3(1.5, 0.12, 3.6)
 
 
-[sub_resource type="BoxMesh" id="mb71"]
+[sub_resource type="BoxMesh" id="mb63"]
 size = Vector3(0.1, 0.4, 3.6)
 
 
-[sub_resource type="BoxMesh" id="mb72"]
-size = Vector3(0.08, 0.08, 3.6)
-
-
-[sub_resource type="BoxMesh" id="mb73"]
+[sub_resource type="BoxMesh" id="mb64"]
 size = Vector3(1.2, 1.36, 0.12)
 
 
-[sub_resource type="BoxMesh" id="mb74"]
+[sub_resource type="BoxMesh" id="mb65"]
 size = Vector3(0.96, 1.12, 0.18)
 
 
-[sub_resource type="BoxMesh" id="mb75"]
-size = Vector3(1.36, 0.11, 0.28)
-
-
-[sub_resource type="CylinderMesh" id="mc76"]
+[sub_resource type="CylinderMesh" id="mc66"]
 top_radius = 0.28
 bottom_radius = 0.28
 height = 0.9
@@ -698,128 +671,86 @@ radial_segments = 8
 rings = 1
 
 
-[sub_resource type="BoxMesh" id="mb77"]
+[sub_resource type="BoxMesh" id="mb67"]
 size = Vector3(1.6, 1.8, 1.6)
 
 
-[sub_resource type="BoxMesh" id="mb78"]
-size = Vector3(1.8, 0.14, 1.8)
-
-
-[sub_resource type="BoxMesh" id="mb79"]
-size = Vector3(1.1, 0.7, 1.1)
-
-
-[sub_resource type="BoxMesh" id="mb80"]
+[sub_resource type="BoxMesh" id="mb68"]
 size = Vector3(0.09, 0.09, 0.9)
 
 
-[sub_resource type="BoxMesh" id="mb81"]
-size = Vector3(0.05, 0.55, 0.05)
-
-
-[sub_resource type="BoxMesh" id="mb82"]
+[sub_resource type="BoxMesh" id="mb69"]
 size = Vector3(0.12, 0.7, 1)
 
 
-[sub_resource type="BoxMesh" id="mb83"]
+[sub_resource type="BoxMesh" id="mb70"]
 size = Vector3(0.16, 0.46, 0.6)
 
 
-[sub_resource type="BoxMesh" id="mb84"]
+[sub_resource type="BoxMesh" id="mb71"]
 size = Vector3(0.8, 0.4, 0.36)
 
 
-[sub_resource type="BoxMesh" id="mb85"]
-size = Vector3(0.7, 0.06, 0.28)
-
-
-[sub_resource type="SphereMesh" id="ms86"]
+[sub_resource type="SphereMesh" id="ms72"]
 radius = 0.22
 height = 0.44
 radial_segments = 8
 rings = 4
 
 
-[sub_resource type="BoxMesh" id="mb87"]
+[sub_resource type="BoxMesh" id="mb73"]
 size = Vector3(0.85, 0.55, 3.5)
 
 
-[sub_resource type="BoxMesh" id="mb88"]
+[sub_resource type="BoxMesh" id="mb74"]
 size = Vector3(0.7, 0.5, 0.7)
 
 
-[sub_resource type="BoxMesh" id="mb89"]
+[sub_resource type="BoxMesh" id="mb75"]
 size = Vector3(0.6, 0.2, 0.6)
 
 
-[sub_resource type="BoxMesh" id="mb90"]
+[sub_resource type="BoxMesh" id="mb76"]
 size = Vector3(0.55, 0.2, 0.55)
 
 
-[sub_resource type="BoxMesh" id="mb91"]
+[sub_resource type="BoxMesh" id="mb77"]
 size = Vector3(0.8, 0.16, 0.5)
 
 
-[sub_resource type="BoxMesh" id="mb92"]
+[sub_resource type="BoxMesh" id="mb78"]
 size = Vector3(1.4, 0.18, 0.4)
 
 
-[sub_resource type="BoxMesh" id="mb93"]
+[sub_resource type="BoxMesh" id="mb79"]
 size = Vector3(0.16, 1.9, 0.16)
 
 
-[sub_resource type="BoxMesh" id="mb94"]
+[sub_resource type="BoxMesh" id="mb80"]
 size = Vector3(0.14, 0.14, 1.1)
 
 
-[sub_resource type="BoxMesh" id="mb95"]
+[sub_resource type="BoxMesh" id="mb81"]
 size = Vector3(1.5, 0.12, 1.5)
 
 
-[sub_resource type="BoxMesh" id="mb96"]
+[sub_resource type="BoxMesh" id="mb82"]
 size = Vector3(1.16, 0.1, 1.16)
 
 
-[sub_resource type="BoxMesh" id="mb97"]
-size = Vector3(0.26, 0.08, 0.26)
-
-
-[sub_resource type="BoxMesh" id="mb98"]
-size = Vector3(0.24, 0.08, 0.24)
-
-
-[sub_resource type="BoxMesh" id="mb99"]
+[sub_resource type="BoxMesh" id="mb83"]
 size = Vector3(1.35, 0.09, 0.09)
 
 
-[sub_resource type="BoxMesh" id="mb100"]
-size = Vector3(0.55, 0.07, 0.07)
-
-
-[sub_resource type="BoxMesh" id="mb101"]
+[sub_resource type="BoxMesh" id="mb84"]
 size = Vector3(0.7, 0.16, 0.34)
 
 
-[sub_resource type="BoxMesh" id="mb102"]
+[sub_resource type="BoxMesh" id="mb85"]
 size = Vector3(0.56, 0.06, 0.26)
 
 
-[sub_resource type="SphereMesh" id="ms103"]
-radius = 0.62
-height = 1.24
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="SphereMesh" id="ms104"]
-radius = 0.55
-height = 1.1
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="CylinderMesh" id="mc105"]
+[sub_resource type="CylinderMesh" id="mc86"]
 top_radius = 0.55
 bottom_radius = 0.55
 height = 0.06
@@ -827,173 +758,59 @@ radial_segments = 8
 rings = 1
 
 
-[sub_resource type="CylinderMesh" id="mc106"]
-top_radius = 0.45
-bottom_radius = 0.45
-height = 0.05
-radial_segments = 8
-rings = 1
-
-
-[sub_resource type="SphereMesh" id="ms107"]
-radius = 0.558
-height = 1.116
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="SphereMesh" id="ms108"]
-radius = 0.495
-height = 0.99
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="SphereMesh" id="ms109"]
-radius = 0.527
-height = 1.054
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="SphereMesh" id="ms110"]
-radius = 0.4675
-height = 0.935
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="SphereMesh" id="ms111"]
-radius = 0.496
-height = 0.992
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="SphereMesh" id="ms112"]
-radius = 0.44
-height = 0.88
-radial_segments = 8
-rings = 4
-
-
-[sub_resource type="BoxMesh" id="mb113"]
+[sub_resource type="BoxMesh" id="mb87"]
 size = Vector3(0.86, 0.14, 0.86)
 
 
-[sub_resource type="CylinderMesh" id="mc114"]
-top_radius = 0.32
-bottom_radius = 0.32
-height = 0.24
-radial_segments = 10
-rings = 1
-
-
-[sub_resource type="BoxMesh" id="mb115"]
-size = Vector3(0.14, 0.3, 0.14)
-
-
-[sub_resource type="BoxMesh" id="mb116"]
+[sub_resource type="BoxMesh" id="mb88"]
 size = Vector3(0.42, 0.46, 0.52)
 
 
-[sub_resource type="BoxMesh" id="mb117"]
+[sub_resource type="BoxMesh" id="mb89"]
 size = Vector3(0.44, 0.14, 0.54)
 
 
-[sub_resource type="BoxMesh" id="mb118"]
-size = Vector3(0.26, 0.08, 0.06)
-
-
-[sub_resource type="BoxMesh" id="mb119"]
-size = Vector3(0.06, 0.22, 0.06)
-
-
-[sub_resource type="CylinderMesh" id="mc120"]
-top_radius = 0.16
-bottom_radius = 0.16
-height = 0.1
-radial_segments = 8
-rings = 1
-
-
-[sub_resource type="BoxMesh" id="mb121"]
+[sub_resource type="BoxMesh" id="mb90"]
 size = Vector3(0.04, 0.74, 0.74)
 
 
-[sub_resource type="BoxMesh" id="mb122"]
+[sub_resource type="BoxMesh" id="mb91"]
 size = Vector3(0.06, 0.3, 0.5)
 
 
-[sub_resource type="BoxMesh" id="mb123"]
+[sub_resource type="BoxMesh" id="mb92"]
 size = Vector3(0.3, 0.34, 1.2)
 
 
-[sub_resource type="BoxMesh" id="mb124"]
-size = Vector3(0.5, 0.16, 0.2)
-
-
-[sub_resource type="BoxMesh" id="mb125"]
+[sub_resource type="BoxMesh" id="mb93"]
 size = Vector3(0.7, 1, 0.5)
 
 
-[sub_resource type="BoxMesh" id="mb126"]
+[sub_resource type="BoxMesh" id="mb94"]
 size = Vector3(0.49, 0.6, 0.06)
 
 
-[sub_resource type="BoxMesh" id="mb127"]
-size = Vector3(0.28, 0.06, 0.2)
-
-
-[sub_resource type="BoxMesh" id="mb128"]
-size = Vector3(0.82, 0.12, 0.62)
-
-
-[sub_resource type="BoxMesh" id="mb129"]
+[sub_resource type="BoxMesh" id="mb95"]
 size = Vector3(0.6, 0.9, 0.45)
 
 
-[sub_resource type="BoxMesh" id="mb130"]
+[sub_resource type="BoxMesh" id="mb96"]
 size = Vector3(0.42, 0.54, 0.06)
 
 
-[sub_resource type="BoxMesh" id="mb131"]
-size = Vector3(0.24, 0.06, 0.18)
-
-
-[sub_resource type="BoxMesh" id="mb132"]
-size = Vector3(0.72, 0.12, 0.57)
-
-
-[sub_resource type="BoxMesh" id="mb133"]
+[sub_resource type="BoxMesh" id="mb97"]
 size = Vector3(0.55, 0.85, 0.4)
 
 
-[sub_resource type="BoxMesh" id="mb134"]
+[sub_resource type="BoxMesh" id="mb98"]
 size = Vector3(0.385, 0.51, 0.06)
 
 
-[sub_resource type="BoxMesh" id="mb135"]
-size = Vector3(0.22, 0.06, 0.16)
-
-
-[sub_resource type="BoxMesh" id="mb136"]
-size = Vector3(0.67, 0.12, 0.52)
-
-
-[sub_resource type="BoxMesh" id="mb137"]
+[sub_resource type="BoxMesh" id="mb99"]
 size = Vector3(0.44, 0.62, 0.72)
 
 
-[sub_resource type="BoxMesh" id="mb138"]
-size = Vector3(0.1, 0.44, 0.52)
-
-
-[sub_resource type="BoxMesh" id="mb139"]
-size = Vector3(0.12, 1.1, 0.12)
-
-
-[sub_resource type="CylinderMesh" id="mc140"]
+[sub_resource type="CylinderMesh" id="mc100"]
 top_radius = 0.1
 bottom_radius = 0.1
 height = 5
@@ -1001,31 +818,15 @@ radial_segments = 8
 rings = 1
 
 
-[sub_resource type="CylinderMesh" id="mc141"]
-top_radius = 0.14
-bottom_radius = 0.14
-height = 0.12
-radial_segments = 8
-rings = 1
-
-
-[sub_resource type="CylinderMesh" id="mc142"]
-top_radius = 0.13
-bottom_radius = 0.13
-height = 0.3
-radial_segments = 8
-rings = 1
-
-
-[sub_resource type="BoxMesh" id="mb143"]
+[sub_resource type="BoxMesh" id="mb101"]
 size = Vector3(0.5, 0.04, 0.9)
 
 
-[sub_resource type="BoxMesh" id="mb144"]
+[sub_resource type="BoxMesh" id="mb102"]
 size = Vector3(1, 0.04, 0.4)
 
 
-[sub_resource type="CylinderMesh" id="mc145"]
+[sub_resource type="CylinderMesh" id="mc103"]
 top_radius = 1.75
 bottom_radius = 1.75
 height = 0.03
@@ -1033,55 +834,55 @@ radial_segments = 16
 rings = 1
 
 
-[sub_resource type="BoxMesh" id="mb146"]
+[sub_resource type="BoxMesh" id="mb104"]
 size = Vector3(0.5, 0.04, 1.4)
 
 
-[sub_resource type="BoxMesh" id="mb147"]
+[sub_resource type="BoxMesh" id="mb105"]
 size = Vector3(1.2, 0.04, 0.8)
 
 
-[sub_resource type="BoxMesh" id="mb148"]
+[sub_resource type="BoxMesh" id="mb106"]
 size = Vector3(0.1, 1.4, 0.1)
 
 
-[sub_resource type="BoxMesh" id="mb149"]
+[sub_resource type="BoxMesh" id="mb107"]
 size = Vector3(0.06, 0.4, 0.6)
 
 
-[sub_resource type="BoxMesh" id="mb150"]
+[sub_resource type="BoxMesh" id="mb108"]
 size = Vector3(0.4, 0.04, 1.2)
 
 
-[sub_resource type="BoxMesh" id="mb151"]
+[sub_resource type="BoxMesh" id="mb109"]
 size = Vector3(1.1, 0.03, 0.2)
 
 
-[sub_resource type="BoxMesh" id="mb152"]
+[sub_resource type="BoxMesh" id="mb110"]
 size = Vector3(3, 2.6, 0.1)
 
 
-[sub_resource type="BoxMesh" id="mb153"]
+[sub_resource type="BoxMesh" id="mb111"]
 size = Vector3(1, 0.9, 0.06)
 
 
-[sub_resource type="BoxMesh" id="mb154"]
+[sub_resource type="BoxMesh" id="mb112"]
 size = Vector3(3.2, 0.18, 0.7)
 
 
-[sub_resource type="BoxMesh" id="mb155"]
+[sub_resource type="BoxMesh" id="mb113"]
 size = Vector3(0.36, 0.42, 0.05)
 
 
-[sub_resource type="BoxMesh" id="mb156"]
+[sub_resource type="BoxMesh" id="mb114"]
 size = Vector3(0.18, 0.24, 0.07)
 
 
-[sub_resource type="BoxMesh" id="mb157"]
+[sub_resource type="BoxMesh" id="mb115"]
 size = Vector3(1.2, 0.05, 0.6)
 
 
-[sub_resource type="BoxMesh" id="mb158"]
+[sub_resource type="BoxMesh" id="mb116"]
 size = Vector3(3.4, 0.12, 0.8)
 
 
@@ -1164,227 +965,15 @@ cast_shadow = 0
 [node name="Curbs" type="Node3D" parent="."]
 
 
-[node name="CurbL0" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, -17.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
+[node name="KerbStrip" type="MultiMeshInstance3D" parent="Curbs"]
+multimesh = SubResource("mmb_KerbStrip")
+material_override = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
-[node name="CurbR0" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, -17.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL0" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, -17.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR0" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, -17.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="CurbL1" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, -12.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="CurbR1" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, -12.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL1" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, -12.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR1" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, -12.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="CurbL2" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, -7.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="CurbR2" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, -7.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL2" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, -7.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR2" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, -7.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="CurbL3" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, -2.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="CurbR3" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, -2.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL3" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, -2.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR3" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, -2.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="CurbL4" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, 2.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="CurbR4" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, 2.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL4" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, 2.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR4" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, 2.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="CurbL5" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, 7.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="CurbR5" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, 7.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL5" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, 7.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR5" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, 7.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="CurbL6" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, 12.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="CurbR6" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, 12.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL6" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, 12.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR6" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, 12.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="CurbL7" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 0.02, 17.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="CurbR7" type="MeshInstance3D" parent="Curbs"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.02, 17.5)
-mesh = SubResource("mb0")
-surface_material_override/0 = SubResource("m_kk_trim")
-cast_shadow = 0
-
-
-[node name="JointL7" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.15, 17.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
-cast_shadow = 0
-
-
-[node name="JointR7" type="MeshInstance3D" parent="Paving"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.15, 17.5)
-mesh = SubResource("mb1")
-surface_material_override/0 = SubResource("m_walk_tile")
+[node name="JointStrip" type="MultiMeshInstance3D" parent="Paving"]
+multimesh = SubResource("mmb_JointStrip")
+material_override = SubResource("m_walk_tile")
 cast_shadow = 0
 
 
@@ -1686,41 +1275,13 @@ surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
-[node name="Cap" type="MeshInstance3D" parent="Building1/RoofTop/Hut"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.08, 0)
-mesh = SubResource("mb17")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Door" type="MeshInstance3D" parent="Building1/RoofTop/Hut"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0.88)
-mesh = SubResource("mb18")
-surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
 [node name="AC0" type="Node3D" parent="Building1/RoofTop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 10.9, -1.68)
 
 
 [node name="Body" type="MeshInstance3D" parent="Building1/RoofTop/AC0"]
-mesh = SubResource("mb19")
+mesh = SubResource("mb17")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Grill" type="MeshInstance3D" parent="Building1/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
-mesh = SubResource("mb20")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Foot" type="MeshInstance3D" parent="Building1/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-mesh = SubResource("mb21")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -1729,22 +1290,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 10.9, -0.68)
 
 
 [node name="Body" type="MeshInstance3D" parent="Building1/RoofTop/AC1"]
-mesh = SubResource("mb19")
+mesh = SubResource("mb17")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Grill" type="MeshInstance3D" parent="Building1/RoofTop/AC1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
-mesh = SubResource("mb20")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Foot" type="MeshInstance3D" parent="Building1/RoofTop/AC1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-mesh = SubResource("mb21")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -1796,50 +1343,43 @@ transform = Transform3D(0.9397, 0.342, 0, -0.342, 0.9397, 0, 0, 0, 1, 2.62, 3.35
 
 
 [node name="Slab" type="MeshInstance3D" parent="Building1/Shop/Awning"]
-mesh = SubResource("mb22")
+mesh = SubResource("mb18")
 surface_material_override/0 = SubResource("m_awning_red")
 cast_shadow = 0
 
 
 [node name="Stripe0" type="MeshInstance3D" parent="Building1/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.2125)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Stripe1" type="MeshInstance3D" parent="Building1/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7375)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Stripe2" type="MeshInstance3D" parent="Building1/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.7375)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Stripe3" type="MeshInstance3D" parent="Building1/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.2125)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Valance" type="MeshInstance3D" parent="Building1/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72, -0.2, 0)
-mesh = SubResource("mb24")
+mesh = SubResource("mb20")
 surface_material_override/0 = SubResource("m_awning_red")
-cast_shadow = 0
-
-
-[node name="Rod" type="MeshInstance3D" parent="Building1/Shop/Awning"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, -0.02, 0)
-mesh = SubResource("mb25")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -1863,21 +1403,21 @@ use_collision = true
 
 [node name="Cladding" type="MeshInstance3D" parent="Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.8, 0)
-mesh = SubResource("mb26")
+mesh = SubResource("mb21")
 surface_material_override/0 = SubResource("m_wall_blue2")
 cast_shadow = 0
 
 
 [node name="Base" type="MeshInstance3D" parent="Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0)
-mesh = SubResource("mb27")
+mesh = SubResource("mb22")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Cornice" type="MeshInstance3D" parent="Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.85, 0)
-mesh = SubResource("mb28")
+mesh = SubResource("mb23")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -1891,7 +1431,7 @@ use_collision = true
 
 [node name="RoofLip" type="MeshInstance3D" parent="Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.48, 0)
-mesh = SubResource("mb29")
+mesh = SubResource("mb24")
 surface_material_override/0 = SubResource("m_kk_roof")
 cast_shadow = 0
 
@@ -1912,14 +1452,14 @@ cast_shadow = 0
 
 [node name="ParapetE" type="MeshInstance3D" parent="Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 7.75, 0)
-mesh = SubResource("mb30")
+mesh = SubResource("mb25")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetW" type="MeshInstance3D" parent="Building2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 7.75, 0)
-mesh = SubResource("mb30")
+mesh = SubResource("mb25")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -1935,22 +1475,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 7.9, -1.4)
 
 
 [node name="Body" type="MeshInstance3D" parent="Building2/RoofTop/AC0"]
-mesh = SubResource("mb19")
+mesh = SubResource("mb17")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Grill" type="MeshInstance3D" parent="Building2/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
-mesh = SubResource("mb20")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Foot" type="MeshInstance3D" parent="Building2/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-mesh = SubResource("mb21")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2000,21 +1526,21 @@ use_collision = true
 
 [node name="Cladding" type="MeshInstance3D" parent="Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3, 0)
-mesh = SubResource("mb31")
+mesh = SubResource("mb26")
 surface_material_override/0 = SubResource("m_wall_tan2")
 cast_shadow = 0
 
 
 [node name="Base" type="MeshInstance3D" parent="Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0)
-mesh = SubResource("mb32")
+mesh = SubResource("mb27")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Cornice" type="MeshInstance3D" parent="Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.85, 0)
-mesh = SubResource("mb33")
+mesh = SubResource("mb28")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2028,7 +1554,7 @@ use_collision = true
 
 [node name="RoofLip" type="MeshInstance3D" parent="Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.48, 0)
-mesh = SubResource("mb34")
+mesh = SubResource("mb29")
 surface_material_override/0 = SubResource("m_kk_roof")
 cast_shadow = 0
 
@@ -2049,14 +1575,14 @@ cast_shadow = 0
 
 [node name="ParapetE" type="MeshInstance3D" parent="Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 4.75, 0)
-mesh = SubResource("mb35")
+mesh = SubResource("mb30")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetW" type="MeshInstance3D" parent="Building3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 4.75, 0)
-mesh = SubResource("mb35")
+mesh = SubResource("mb30")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2099,21 +1625,21 @@ use_collision = true
 
 [node name="Cladding" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.3, 0)
-mesh = SubResource("mb36")
+mesh = SubResource("mb31")
 surface_material_override/0 = SubResource("m_wall_blue2")
 cast_shadow = 0
 
 
 [node name="Base" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0)
-mesh = SubResource("mb37")
+mesh = SubResource("mb32")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Cornice" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.85, 0)
-mesh = SubResource("mb38")
+mesh = SubResource("mb33")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2127,35 +1653,35 @@ use_collision = true
 
 [node name="RoofLip" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.48, 0)
-mesh = SubResource("mb39")
+mesh = SubResource("mb34")
 surface_material_override/0 = SubResource("m_kk_roof")
 cast_shadow = 0
 
 
 [node name="ParapetN" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.75, 2.7)
-mesh = SubResource("mb40")
+mesh = SubResource("mb35")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetS" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.75, -2.7)
-mesh = SubResource("mb40")
+mesh = SubResource("mb35")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetE" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 12.75, 0)
-mesh = SubResource("mb30")
+mesh = SubResource("mb25")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetW" type="MeshInstance3D" parent="Building4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 12.75, 0)
-mesh = SubResource("mb30")
+mesh = SubResource("mb25")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2176,41 +1702,13 @@ surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
-[node name="Cap" type="MeshInstance3D" parent="Building4/RoofTop/Hut"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.08, 0)
-mesh = SubResource("mb17")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Door" type="MeshInstance3D" parent="Building4/RoofTop/Hut"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0.88)
-mesh = SubResource("mb18")
-surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
 [node name="AC0" type="Node3D" parent="Building4/RoofTop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 12.9, -1.4)
 
 
 [node name="Body" type="MeshInstance3D" parent="Building4/RoofTop/AC0"]
-mesh = SubResource("mb19")
+mesh = SubResource("mb17")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Grill" type="MeshInstance3D" parent="Building4/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
-mesh = SubResource("mb20")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Foot" type="MeshInstance3D" parent="Building4/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-mesh = SubResource("mb21")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2219,22 +1717,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12.9, -0.4)
 
 
 [node name="Body" type="MeshInstance3D" parent="Building4/RoofTop/AC1"]
-mesh = SubResource("mb19")
+mesh = SubResource("mb17")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Grill" type="MeshInstance3D" parent="Building4/RoofTop/AC1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
-mesh = SubResource("mb20")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Foot" type="MeshInstance3D" parent="Building4/RoofTop/AC1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-mesh = SubResource("mb21")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2294,21 +1778,21 @@ use_collision = true
 
 [node name="Cladding" type="MeshInstance3D" parent="Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3, 0)
-mesh = SubResource("mb41")
+mesh = SubResource("mb36")
 surface_material_override/0 = SubResource("m_wall_tan2")
 cast_shadow = 0
 
 
 [node name="Base" type="MeshInstance3D" parent="Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0)
-mesh = SubResource("mb42")
+mesh = SubResource("mb37")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Cornice" type="MeshInstance3D" parent="Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.85, 0)
-mesh = SubResource("mb43")
+mesh = SubResource("mb38")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2322,21 +1806,21 @@ use_collision = true
 
 [node name="RoofLip" type="MeshInstance3D" parent="Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.48, 0)
-mesh = SubResource("mb44")
+mesh = SubResource("mb39")
 surface_material_override/0 = SubResource("m_kk_roof")
 cast_shadow = 0
 
 
 [node name="ParapetN" type="MeshInstance3D" parent="Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.75, 3.2)
-mesh = SubResource("mb40")
+mesh = SubResource("mb35")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetS" type="MeshInstance3D" parent="Building5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.75, -3.2)
-mesh = SubResource("mb40")
+mesh = SubResource("mb35")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2366,22 +1850,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 6.9, -1.68)
 
 
 [node name="Body" type="MeshInstance3D" parent="Building5/RoofTop/AC0"]
-mesh = SubResource("mb19")
+mesh = SubResource("mb17")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Grill" type="MeshInstance3D" parent="Building5/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
-mesh = SubResource("mb20")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Foot" type="MeshInstance3D" parent="Building5/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-mesh = SubResource("mb21")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2423,50 +1893,43 @@ transform = Transform3D(0.9397, -0.342, 0, 0.342, 0.9397, 0, 0, 0, 1, -3.12, 3.3
 
 
 [node name="Slab" type="MeshInstance3D" parent="Building5/Shop/Awning"]
-mesh = SubResource("mb22")
+mesh = SubResource("mb18")
 surface_material_override/0 = SubResource("m_awning_red")
 cast_shadow = 0
 
 
 [node name="Stripe0" type="MeshInstance3D" parent="Building5/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.2125)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Stripe1" type="MeshInstance3D" parent="Building5/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7375)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Stripe2" type="MeshInstance3D" parent="Building5/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.7375)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Stripe3" type="MeshInstance3D" parent="Building5/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.2125)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_awning_cream")
 cast_shadow = 0
 
 
 [node name="Valance" type="MeshInstance3D" parent="Building5/Shop/Awning"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.72, -0.2, 0)
-mesh = SubResource("mb24")
+mesh = SubResource("mb20")
 surface_material_override/0 = SubResource("m_awning_red")
-cast_shadow = 0
-
-
-[node name="Rod" type="MeshInstance3D" parent="Building5/Shop/Awning"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, -0.02, 0)
-mesh = SubResource("mb25")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2490,21 +1953,21 @@ use_collision = true
 
 [node name="Cladding" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
-mesh = SubResource("mb45")
+mesh = SubResource("mb40")
 surface_material_override/0 = SubResource("m_wall_blue2")
 cast_shadow = 0
 
 
 [node name="Base" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, 0)
-mesh = SubResource("mb46")
+mesh = SubResource("mb41")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Cornice" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.85, 0)
-mesh = SubResource("mb47")
+mesh = SubResource("mb42")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2518,35 +1981,35 @@ use_collision = true
 
 [node name="RoofLip" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.48, 0)
-mesh = SubResource("mb48")
+mesh = SubResource("mb43")
 surface_material_override/0 = SubResource("m_kk_roof")
 cast_shadow = 0
 
 
 [node name="ParapetN" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.75, 4.2)
-mesh = SubResource("mb40")
+mesh = SubResource("mb35")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetS" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.75, -4.2)
-mesh = SubResource("mb40")
+mesh = SubResource("mb35")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetE" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 5.75, 0)
-mesh = SubResource("mb49")
+mesh = SubResource("mb44")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="ParapetW" type="MeshInstance3D" parent="Building6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 5.75, 0)
-mesh = SubResource("mb49")
+mesh = SubResource("mb44")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
@@ -2562,22 +2025,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 5.9, -2.24)
 
 
 [node name="Body" type="MeshInstance3D" parent="Building6/RoofTop/AC0"]
-mesh = SubResource("mb19")
+mesh = SubResource("mb17")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Grill" type="MeshInstance3D" parent="Building6/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43, 0)
-mesh = SubResource("mb20")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Foot" type="MeshInstance3D" parent="Building6/RoofTop/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46, 0)
-mesh = SubResource("mb21")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2673,14 +2122,14 @@ use_collision = true
 
 [node name="Base" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
-mesh = SubResource("mb50")
+mesh = SubResource("mb45")
 surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
 [node name="Cornice" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.85, 0)
-mesh = SubResource("mb51")
+mesh = SubResource("mb46")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
@@ -2694,28 +2143,28 @@ use_collision = true
 
 [node name="RoofLip" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.45, 0)
-mesh = SubResource("mb52")
+mesh = SubResource("mb47")
 surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
 [node name="ParapetS" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.75, -2.2)
-mesh = SubResource("mb53")
+mesh = SubResource("mb48")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="ParapetN" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.75, 2.2)
-mesh = SubResource("mb53")
+mesh = SubResource("mb48")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="ParapetW" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1, 6.75, 0)
-mesh = SubResource("mb54")
+mesh = SubResource("mb49")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
@@ -2726,79 +2175,65 @@ cast_shadow = 0
 [node name="Front" type="Node3D" parent="PizzaShop/Shop"]
 
 
-[node name="KickS" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -2.03)
-mesh = SubResource("mb55")
-surface_material_override/0 = SubResource("m_trim_dark")
-cast_shadow = 0
-
-
 [node name="GlassS" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -2.05)
-mesh = SubResource("mb56")
+mesh = SubResource("mb50")
 surface_material_override/0 = SubResource("m_glass_lit")
 cast_shadow = 0
 
 
 [node name="BarS" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -2.07)
-mesh = SubResource("mb57")
+mesh = SubResource("mb51")
 surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
 [node name="DoorFrameS" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 1.3, -2.07)
-mesh = SubResource("mb58")
+mesh = SubResource("mb52")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="DoorS" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 1.25, -2.09)
-mesh = SubResource("mb59")
+mesh = SubResource("mb53")
 surface_material_override/0 = SubResource("m_door")
 cast_shadow = 0
 
 
 [node name="BandS" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.12, -2.08)
-mesh = SubResource("mb60")
+mesh = SubResource("mb54")
 surface_material_override/0 = SubResource("m_pizza_red")
-cast_shadow = 0
-
-
-[node name="KickW" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.03, 0.35, 0)
-mesh = SubResource("mb61")
-surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
 [node name="GlassW" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.05, 1.6, 0)
-mesh = SubResource("mb62")
+mesh = SubResource("mb55")
 surface_material_override/0 = SubResource("m_glass_lit")
 cast_shadow = 0
 
 
 [node name="BarW" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.07, 1.6, 0)
-mesh = SubResource("mb63")
+mesh = SubResource("mb56")
 surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
 [node name="BandW" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.09, 3.12, 0)
-mesh = SubResource("mb64")
+mesh = SubResource("mb57")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="Open" type="MeshInstance3D" parent="PizzaShop/Shop/Front"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.12, 2.35, 0.9)
-mesh = SubResource("mb65")
+mesh = SubResource("mb58")
 surface_material_override/0 = SubResource("m_neon")
 cast_shadow = 0
 
@@ -2832,56 +2267,49 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.52, -2.58)
 
 
 [node name="Slab" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
-mesh = SubResource("mb66")
+mesh = SubResource("mb59")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="Stripe0" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, 0)
-mesh = SubResource("mb67")
+mesh = SubResource("mb60")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Stripe1" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 0, 0)
-mesh = SubResource("mb67")
+mesh = SubResource("mb60")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Stripe2" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
-mesh = SubResource("mb67")
+mesh = SubResource("mb60")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Stripe3" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 0, 0)
-mesh = SubResource("mb67")
+mesh = SubResource("mb60")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Stripe4" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 0)
-mesh = SubResource("mb67")
+mesh = SubResource("mb60")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Valance" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0.72)
-mesh = SubResource("mb68")
+mesh = SubResource("mb61")
 surface_material_override/0 = SubResource("m_pizza_cream")
-cast_shadow = 0
-
-
-[node name="Rod" type="MeshInstance3D" parent="PizzaShop/Shop/AwningS"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, -0.72)
-mesh = SubResource("mb69")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2890,42 +2318,35 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.58, 3.52, 0)
 
 
 [node name="Slab" type="MeshInstance3D" parent="PizzaShop/Shop/AwningW"]
-mesh = SubResource("mb70")
+mesh = SubResource("mb62")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="Stripe0" type="MeshInstance3D" parent="PizzaShop/Shop/AwningW"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.2)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Stripe1" type="MeshInstance3D" parent="PizzaShop/Shop/AwningW"]
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Stripe2" type="MeshInstance3D" parent="PizzaShop/Shop/AwningW"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.2)
-mesh = SubResource("mb23")
+mesh = SubResource("mb19")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Valance" type="MeshInstance3D" parent="PizzaShop/Shop/AwningW"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.72, -0.2, 0)
-mesh = SubResource("mb71")
+mesh = SubResource("mb63")
 surface_material_override/0 = SubResource("m_pizza_cream")
-cast_shadow = 0
-
-
-[node name="Rod" type="MeshInstance3D" parent="PizzaShop/Shop/AwningW"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.72, -0.02, 0)
-mesh = SubResource("mb72")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -2937,21 +2358,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 4.75, -2.03)
 
 
 [node name="Frame" type="MeshInstance3D" parent="PizzaShop/Windows/U0"]
-mesh = SubResource("mb73")
+mesh = SubResource("mb64")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Pane" type="MeshInstance3D" parent="PizzaShop/Windows/U0"]
-mesh = SubResource("mb74")
+mesh = SubResource("mb65")
 surface_material_override/0 = SubResource("m_glass")
-cast_shadow = 0
-
-
-[node name="Sill" type="MeshInstance3D" parent="PizzaShop/Windows/U0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.76, -0.06)
-mesh = SubResource("mb75")
-surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
@@ -2960,21 +2374,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, -2.03)
 
 
 [node name="Frame" type="MeshInstance3D" parent="PizzaShop/Windows/U1"]
-mesh = SubResource("mb73")
+mesh = SubResource("mb64")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Pane" type="MeshInstance3D" parent="PizzaShop/Windows/U1"]
-mesh = SubResource("mb74")
+mesh = SubResource("mb65")
 surface_material_override/0 = SubResource("m_glass_lit")
-cast_shadow = 0
-
-
-[node name="Sill" type="MeshInstance3D" parent="PizzaShop/Windows/U1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.76, -0.06)
-mesh = SubResource("mb75")
-surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
@@ -2983,21 +2390,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 4.75, -2.03)
 
 
 [node name="Frame" type="MeshInstance3D" parent="PizzaShop/Windows/U2"]
-mesh = SubResource("mb73")
+mesh = SubResource("mb64")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Pane" type="MeshInstance3D" parent="PizzaShop/Windows/U2"]
-mesh = SubResource("mb74")
+mesh = SubResource("mb65")
 surface_material_override/0 = SubResource("m_glass")
-cast_shadow = 0
-
-
-[node name="Sill" type="MeshInstance3D" parent="PizzaShop/Windows/U2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.76, -0.06)
-mesh = SubResource("mb75")
-surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
@@ -3006,29 +2406,15 @@ cast_shadow = 0
 
 [node name="Vent" type="MeshInstance3D" parent="PizzaShop/RoofTop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 6.85, 1)
-mesh = SubResource("mc76")
+mesh = SubResource("mc66")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Hut" type="MeshInstance3D" parent="PizzaShop/RoofTop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 7.3, 0.9)
-mesh = SubResource("mb77")
+mesh = SubResource("mb67")
 surface_material_override/0 = SubResource("m_trim_dark")
-cast_shadow = 0
-
-
-[node name="HutCap" type="MeshInstance3D" parent="PizzaShop/RoofTop"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 8.26, 0.9)
-mesh = SubResource("mb78")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="AC" type="MeshInstance3D" parent="PizzaShop/RoofTop"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 6.75, 1.1)
-mesh = SubResource("mb79")
-surface_material_override/0 = SubResource("m_metal_light")
 cast_shadow = 0
 
 
@@ -3037,35 +2423,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 3.05, -2.5)
 
 
 [node name="Arm" type="MeshInstance3D" parent="PizzaShop/Hanging"]
-mesh = SubResource("mb80")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Rod1" type="MeshInstance3D" parent="PizzaShop/Hanging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, -0.36)
-mesh = SubResource("mb81")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Rod2" type="MeshInstance3D" parent="PizzaShop/Hanging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0.36)
-mesh = SubResource("mb81")
+mesh = SubResource("mb68")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Board" type="MeshInstance3D" parent="PizzaShop/Hanging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.85, 0)
-mesh = SubResource("mb82")
+mesh = SubResource("mb69")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="Slice" type="MeshInstance3D" parent="PizzaShop/Hanging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.85, 0)
-mesh = SubResource("mb83")
+mesh = SubResource("mb70")
 surface_material_override/0 = SubResource("m_pizza_cheese")
 cast_shadow = 0
 
@@ -3084,21 +2456,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0.15, -2.45)
 
 [node name="Box" type="MeshInstance3D" parent="PizzaShop/WindowBox0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
-mesh = SubResource("mb84")
+mesh = SubResource("mb71")
 surface_material_override/0 = SubResource("m_wood")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="PizzaShop/WindowBox0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
-mesh = SubResource("mb85")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
 [node name="Bush" type="MeshInstance3D" parent="PizzaShop/WindowBox0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-mesh = SubResource("ms86")
+mesh = SubResource("ms72")
 surface_material_override/0 = SubResource("m_leaf")
 cast_shadow = 0
 
@@ -3109,21 +2474,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -2.45)
 
 [node name="Box" type="MeshInstance3D" parent="PizzaShop/WindowBox1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
-mesh = SubResource("mb84")
+mesh = SubResource("mb71")
 surface_material_override/0 = SubResource("m_wood")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="PizzaShop/WindowBox1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
-mesh = SubResource("mb85")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
 [node name="Bush" type="MeshInstance3D" parent="PizzaShop/WindowBox1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-mesh = SubResource("ms86")
+mesh = SubResource("ms72")
 surface_material_override/0 = SubResource("m_leaf")
 cast_shadow = 0
 
@@ -3134,21 +2492,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0.15, -2.45)
 
 [node name="Box" type="MeshInstance3D" parent="PizzaShop/WindowBox2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
-mesh = SubResource("mb84")
+mesh = SubResource("mb71")
 surface_material_override/0 = SubResource("m_wood")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="PizzaShop/WindowBox2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
-mesh = SubResource("mb85")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
 [node name="Bush" type="MeshInstance3D" parent="PizzaShop/WindowBox2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-mesh = SubResource("ms86")
+mesh = SubResource("ms72")
 surface_material_override/0 = SubResource("m_leaf")
 cast_shadow = 0
 
@@ -3166,85 +2517,71 @@ use_collision = false
 
 [node name="Crust" type="MeshInstance3D" parent="PizzaShop/PizzaIcon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0, 1.6)
-mesh = SubResource("mb87")
+mesh = SubResource("mb73")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="CrustTip" type="MeshInstance3D" parent="PizzaShop/PizzaIcon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0, 0.55)
-mesh = SubResource("mb88")
+mesh = SubResource("mb74")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="PepA" type="MeshInstance3D" parent="PizzaShop/PizzaIcon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.3, 1.5)
-mesh = SubResource("mb89")
+mesh = SubResource("mb75")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="PepB" type="MeshInstance3D" parent="PizzaShop/PizzaIcon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.3, 0.9)
-mesh = SubResource("mb90")
+mesh = SubResource("mb76")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="Leaf" type="MeshInstance3D" parent="PizzaShop/PizzaIcon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0.3, 0.6)
-mesh = SubResource("mb91")
+mesh = SubResource("mb77")
 surface_material_override/0 = SubResource("m_leaf")
 cast_shadow = 0
 
 
 [node name="Cheese" type="MeshInstance3D" parent="PizzaShop/PizzaIcon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0.3, 2)
-mesh = SubResource("mb92")
+mesh = SubResource("mb78")
 surface_material_override/0 = SubResource("m_yellow")
 cast_shadow = 0
 
 
 [node name="SignMast" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 5.3, -2.2)
-mesh = SubResource("mb93")
+mesh = SubResource("mb79")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="SignArm" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 6.4, -1.8)
-mesh = SubResource("mb94")
+mesh = SubResource("mb80")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="SignDisc" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 3.16, -2.34)
-mesh = SubResource("mb95")
+mesh = SubResource("mb81")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="SignDiscIn" type="MeshInstance3D" parent="PizzaShop"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 3.2, -2.34)
-mesh = SubResource("mb96")
+mesh = SubResource("mb82")
 surface_material_override/0 = SubResource("m_pizza_red")
-cast_shadow = 0
-
-
-[node name="SignDiscPep" type="MeshInstance3D" parent="PizzaShop"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 3.24, -2.5)
-mesh = SubResource("mb97")
-surface_material_override/0 = SubResource("m_yellow")
-cast_shadow = 0
-
-
-[node name="SignDiscPep2" type="MeshInstance3D" parent="PizzaShop"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3.24, -2.15)
-mesh = SubResource("mb98")
-surface_material_override/0 = SubResource("m_yellow")
 cast_shadow = 0
 
 
@@ -3275,28 +2612,21 @@ use_collision = true
 
 [node name="Arm" type="MeshInstance3D" parent="StreetProps/Lamp1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 4.9, 0)
-mesh = SubResource("mb99")
-surface_material_override/0 = SubResource("m_pole")
-cast_shadow = 0
-
-
-[node name="Brace" type="MeshInstance3D" parent="StreetProps/Lamp1"]
-transform = Transform3D(0.8192, -0.5736, 0, 0.5736, 0.8192, 0, 0, 0, 1, 0.3, 4.7, 0)
-mesh = SubResource("mb100")
+mesh = SubResource("mb83")
 surface_material_override/0 = SubResource("m_pole")
 cast_shadow = 0
 
 
 [node name="Head" type="MeshInstance3D" parent="StreetProps/Lamp1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 4.8, 0)
-mesh = SubResource("mb101")
+mesh = SubResource("mb84")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Lens" type="MeshInstance3D" parent="StreetProps/Lamp1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 4.69, 0)
-mesh = SubResource("mb102")
+mesh = SubResource("mb85")
 surface_material_override/0 = SubResource("m_lamp_glow")
 cast_shadow = 0
 
@@ -3333,28 +2663,21 @@ use_collision = true
 
 [node name="Arm" type="MeshInstance3D" parent="StreetProps/Lamp2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 4.9, 0)
-mesh = SubResource("mb99")
-surface_material_override/0 = SubResource("m_pole")
-cast_shadow = 0
-
-
-[node name="Brace" type="MeshInstance3D" parent="StreetProps/Lamp2"]
-transform = Transform3D(0.8192, -0.5736, 0, 0.5736, 0.8192, 0, 0, 0, 1, 0.3, 4.7, 0)
-mesh = SubResource("mb100")
+mesh = SubResource("mb83")
 surface_material_override/0 = SubResource("m_pole")
 cast_shadow = 0
 
 
 [node name="Head" type="MeshInstance3D" parent="StreetProps/Lamp2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 4.8, 0)
-mesh = SubResource("mb101")
+mesh = SubResource("mb84")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Lens" type="MeshInstance3D" parent="StreetProps/Lamp2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 4.69, 0)
-mesh = SubResource("mb102")
+mesh = SubResource("mb85")
 surface_material_override/0 = SubResource("m_lamp_glow")
 cast_shadow = 0
 
@@ -3391,28 +2714,21 @@ use_collision = true
 
 [node name="Arm" type="MeshInstance3D" parent="StreetProps/Lamp3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 4.9, 0)
-mesh = SubResource("mb99")
-surface_material_override/0 = SubResource("m_pole")
-cast_shadow = 0
-
-
-[node name="Brace" type="MeshInstance3D" parent="StreetProps/Lamp3"]
-transform = Transform3D(0.8192, -0.5736, 0, 0.5736, 0.8192, 0, 0, 0, 1, 0.3, 4.7, 0)
-mesh = SubResource("mb100")
+mesh = SubResource("mb83")
 surface_material_override/0 = SubResource("m_pole")
 cast_shadow = 0
 
 
 [node name="Head" type="MeshInstance3D" parent="StreetProps/Lamp3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 4.8, 0)
-mesh = SubResource("mb101")
+mesh = SubResource("mb84")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Lens" type="MeshInstance3D" parent="StreetProps/Lamp3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 4.69, 0)
-mesh = SubResource("mb102")
+mesh = SubResource("mb85")
 surface_material_override/0 = SubResource("m_lamp_glow")
 cast_shadow = 0
 
@@ -3449,28 +2765,21 @@ use_collision = true
 
 [node name="Arm" type="MeshInstance3D" parent="StreetProps/Lamp4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 4.9, 0)
-mesh = SubResource("mb99")
-surface_material_override/0 = SubResource("m_pole")
-cast_shadow = 0
-
-
-[node name="Brace" type="MeshInstance3D" parent="StreetProps/Lamp4"]
-transform = Transform3D(0.8192, 0.5736, 0, -0.5736, 0.8192, 0, 0, 0, 1, -0.3, 4.7, 0)
-mesh = SubResource("mb100")
+mesh = SubResource("mb83")
 surface_material_override/0 = SubResource("m_pole")
 cast_shadow = 0
 
 
 [node name="Head" type="MeshInstance3D" parent="StreetProps/Lamp4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 4.8, 0)
-mesh = SubResource("mb101")
+mesh = SubResource("mb84")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Lens" type="MeshInstance3D" parent="StreetProps/Lamp4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 4.69, 0)
-mesh = SubResource("mb102")
+mesh = SubResource("mb85")
 surface_material_override/0 = SubResource("m_lamp_glow")
 cast_shadow = 0
 
@@ -3507,28 +2816,21 @@ use_collision = true
 
 [node name="Arm" type="MeshInstance3D" parent="StreetProps/Lamp5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 4.9, 0)
-mesh = SubResource("mb99")
-surface_material_override/0 = SubResource("m_pole")
-cast_shadow = 0
-
-
-[node name="Brace" type="MeshInstance3D" parent="StreetProps/Lamp5"]
-transform = Transform3D(0.8192, 0.5736, 0, -0.5736, 0.8192, 0, 0, 0, 1, -0.3, 4.7, 0)
-mesh = SubResource("mb100")
+mesh = SubResource("mb83")
 surface_material_override/0 = SubResource("m_pole")
 cast_shadow = 0
 
 
 [node name="Head" type="MeshInstance3D" parent="StreetProps/Lamp5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 4.8, 0)
-mesh = SubResource("mb101")
+mesh = SubResource("mb84")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Lens" type="MeshInstance3D" parent="StreetProps/Lamp5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25, 4.69, 0)
-mesh = SubResource("mb102")
+mesh = SubResource("mb85")
 surface_material_override/0 = SubResource("m_lamp_glow")
 cast_shadow = 0
 
@@ -3687,31 +2989,10 @@ rings = 4
 use_collision = true
 
 
-[node name="CanopyB" type="MeshInstance3D" parent="StreetProps/Tree1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 1.85, 0.3)
-mesh = SubResource("ms103")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
-[node name="CanopyC" type="MeshInstance3D" parent="StreetProps/Tree1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 3.1, -0.2)
-mesh = SubResource("ms104")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
 [node name="Grate" type="MeshInstance3D" parent="StreetProps/Tree1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
-mesh = SubResource("mc105")
+mesh = SubResource("mc86")
 surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="StreetProps/Tree1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
-mesh = SubResource("mc106")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
@@ -3742,31 +3023,10 @@ rings = 4
 use_collision = true
 
 
-[node name="CanopyB" type="MeshInstance3D" parent="StreetProps/Tree2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.405, 1.665, 0.27)
-mesh = SubResource("ms107")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
-[node name="CanopyC" type="MeshInstance3D" parent="StreetProps/Tree2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36, 2.79, -0.18)
-mesh = SubResource("ms108")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
 [node name="Grate" type="MeshInstance3D" parent="StreetProps/Tree2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
-mesh = SubResource("mc105")
+mesh = SubResource("mc86")
 surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="StreetProps/Tree2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
-mesh = SubResource("mc106")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
@@ -3797,31 +3057,10 @@ rings = 4
 use_collision = true
 
 
-[node name="CanopyB" type="MeshInstance3D" parent="StreetProps/Tree3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 1.85, 0.3)
-mesh = SubResource("ms103")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
-[node name="CanopyC" type="MeshInstance3D" parent="StreetProps/Tree3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 3.1, -0.2)
-mesh = SubResource("ms104")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
 [node name="Grate" type="MeshInstance3D" parent="StreetProps/Tree3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
-mesh = SubResource("mc105")
+mesh = SubResource("mc86")
 surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="StreetProps/Tree3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
-mesh = SubResource("mc106")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
@@ -3852,31 +3091,10 @@ rings = 4
 use_collision = true
 
 
-[node name="CanopyB" type="MeshInstance3D" parent="StreetProps/Tree4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3825, 1.5725, 0.255)
-mesh = SubResource("ms109")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
-[node name="CanopyC" type="MeshInstance3D" parent="StreetProps/Tree4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34, 2.635, -0.17)
-mesh = SubResource("ms110")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
 [node name="Grate" type="MeshInstance3D" parent="StreetProps/Tree4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
-mesh = SubResource("mc105")
+mesh = SubResource("mc86")
 surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="StreetProps/Tree4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
-mesh = SubResource("mc106")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
@@ -3907,31 +3125,10 @@ rings = 4
 use_collision = true
 
 
-[node name="CanopyB" type="MeshInstance3D" parent="StreetProps/Tree5"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36, 1.48, 0.24)
-mesh = SubResource("ms111")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
-[node name="CanopyC" type="MeshInstance3D" parent="StreetProps/Tree5"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32, 2.48, -0.16)
-mesh = SubResource("ms112")
-surface_material_override/0 = SubResource("m_leaf2")
-cast_shadow = 0
-
-
 [node name="Grate" type="MeshInstance3D" parent="StreetProps/Tree5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
-mesh = SubResource("mc105")
+mesh = SubResource("mc86")
 surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Soil" type="MeshInstance3D" parent="StreetProps/Tree5"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
-mesh = SubResource("mc106")
-surface_material_override/0 = SubResource("m_soil")
 cast_shadow = 0
 
 
@@ -3953,18 +3150,13 @@ visible = false
 
 [node name="Rim" type="MeshInstance3D" parent="StreetProps/Planter1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
-mesh = SubResource("mb113")
+mesh = SubResource("mb87")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Shrub" parent="StreetProps/Planter1" instance=ExtResource("35_kk25")]
 transform = Transform3D(3.4, 0, 0, 0, 3.4, 0, 0, 0, 3.4, 0, 0.36, 0)
-cast_shadow = 0
-
-
-[node name="ShrubB" parent="StreetProps/Planter1" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.4, 0, 0, 0, 2.4, 0, 0, 0, 2.4, 0.3, 0.3, -0.22)
 cast_shadow = 0
 
 
@@ -3981,18 +3173,13 @@ visible = false
 
 [node name="Rim" type="MeshInstance3D" parent="StreetProps/Planter2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
-mesh = SubResource("mb113")
+mesh = SubResource("mb87")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Shrub" parent="StreetProps/Planter2" instance=ExtResource("35_kk25")]
 transform = Transform3D(3.4, 0, 0, 0, 3.4, 0, 0, 0, 3.4, 0, 0.36, 0)
-cast_shadow = 0
-
-
-[node name="ShrubB" parent="StreetProps/Planter2" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.4, 0, 0, 0, 2.4, 0, 0, 0, 2.4, 0.3, 0.3, -0.22)
 cast_shadow = 0
 
 
@@ -4009,18 +3196,13 @@ visible = false
 
 [node name="Rim" type="MeshInstance3D" parent="StreetProps/Planter3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
-mesh = SubResource("mb113")
+mesh = SubResource("mb87")
 surface_material_override/0 = SubResource("m_kk_trim")
 cast_shadow = 0
 
 
 [node name="Shrub" parent="StreetProps/Planter3" instance=ExtResource("35_kk25")]
 transform = Transform3D(3.4, 0, 0, 0, 3.4, 0, 0, 0, 3.4, 0, 0.36, 0)
-cast_shadow = 0
-
-
-[node name="ShrubB" parent="StreetProps/Planter3" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.4, 0, 0, 0, 2.4, 0, 0, 0, 2.4, 0.3, 0.3, -0.22)
 cast_shadow = 0
 
 
@@ -4034,34 +3216,6 @@ size = Vector3(1.85, 0.6, 3.6)
 material = SubResource("m_car_a")
 use_collision = true
 visible = false
-
-
-[node name="Wheel0" type="MeshInstance3D" parent="StreetProps/ParkedCar1"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.88, -0.26, 1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
-
-
-[node name="Wheel1" type="MeshInstance3D" parent="StreetProps/ParkedCar1"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.88, -0.26, 1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
-
-
-[node name="Wheel2" type="MeshInstance3D" parent="StreetProps/ParkedCar1"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.88, -0.26, -1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
-
-
-[node name="Wheel3" type="MeshInstance3D" parent="StreetProps/ParkedCar1"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.88, -0.26, -1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
 
 
 [node name="Shell" parent="StreetProps/ParkedCar1" instance=ExtResource("36_kk26")]
@@ -4079,34 +3233,6 @@ size = Vector3(1.85, 0.6, 3.6)
 material = SubResource("m_car_b")
 use_collision = true
 visible = false
-
-
-[node name="Wheel0" type="MeshInstance3D" parent="StreetProps/ParkedCar2"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.88, -0.26, 1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
-
-
-[node name="Wheel1" type="MeshInstance3D" parent="StreetProps/ParkedCar2"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.88, -0.26, 1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
-
-
-[node name="Wheel2" type="MeshInstance3D" parent="StreetProps/ParkedCar2"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.88, -0.26, -1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
-
-
-[node name="Wheel3" type="MeshInstance3D" parent="StreetProps/ParkedCar2"]
-transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.88, -0.26, -1.15)
-mesh = SubResource("mc114")
-surface_material_override/0 = SubResource("m_tire")
-cast_shadow = 0
 
 
 [node name="Shell" parent="StreetProps/ParkedCar2" instance=ExtResource("37_kk27")]
@@ -4145,38 +3271,17 @@ radial_segments = 8
 use_collision = true
 
 
-[node name="Leg" type="MeshInstance3D" parent="StreetProps/Mailbox"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.95, 0)
-mesh = SubResource("mb115")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
 [node name="Box" type="MeshInstance3D" parent="StreetProps/Mailbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
-mesh = SubResource("mb116")
+mesh = SubResource("mb88")
 surface_material_override/0 = SubResource("m_car_b")
 cast_shadow = 0
 
 
 [node name="Cap" type="MeshInstance3D" parent="StreetProps/Mailbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
-mesh = SubResource("mb117")
+mesh = SubResource("mb89")
 surface_material_override/0 = SubResource("m_car_b")
-cast_shadow = 0
-
-
-[node name="Slot" type="MeshInstance3D" parent="StreetProps/Mailbox"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0.27)
-mesh = SubResource("mb118")
-surface_material_override/0 = SubResource("m_shop_dark")
-cast_shadow = 0
-
-
-[node name="Flag" type="MeshInstance3D" parent="StreetProps/Mailbox"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 0.5, 0)
-mesh = SubResource("mb119")
-surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
@@ -4193,13 +3298,6 @@ radial_segments = 8
 use_collision = true
 
 
-[node name="Foot" type="MeshInstance3D" parent="StreetProps/StopSign"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.45, 0)
-mesh = SubResource("mc120")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
 [node name="Plate" type="Node3D" parent="StreetProps/StopSign"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
@@ -4213,14 +3311,14 @@ use_collision = true
 
 [node name="Rim" type="MeshInstance3D" parent="StreetProps/StopSign/Plate"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 0, 0)
-mesh = SubResource("mb121")
+mesh = SubResource("mb90")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
 
 [node name="Bar" type="MeshInstance3D" parent="StreetProps/StopSign/Plate"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, 0, 0)
-mesh = SubResource("mb122")
+mesh = SubResource("mb91")
 surface_material_override/0 = SubResource("m_pizza_cream")
 cast_shadow = 0
 
@@ -4237,29 +3335,15 @@ use_collision = true
 
 [node name="Stripe1" type="MeshInstance3D" parent="StreetProps/Barrier1"]
 transform = Transform3D(1, 0, 0, 0, 0.848, -0.5299, 0, 0.5299, 0.848, 0, 0, -0.55)
-mesh = SubResource("mb123")
+mesh = SubResource("mb92")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="Stripe2" type="MeshInstance3D" parent="StreetProps/Barrier1"]
 transform = Transform3D(1, 0, 0, 0, 0.848, 0.5299, 0, -0.5299, 0.848, 0, 0, 0.55)
-mesh = SubResource("mb123")
+mesh = SubResource("mb92")
 surface_material_override/0 = SubResource("m_pizza_red")
-cast_shadow = 0
-
-
-[node name="Foot1" type="MeshInstance3D" parent="StreetProps/Barrier1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, -0.8)
-mesh = SubResource("mb124")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Foot2" type="MeshInstance3D" parent="StreetProps/Barrier1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0.8)
-mesh = SubResource("mb124")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4275,29 +3359,15 @@ use_collision = true
 
 [node name="Stripe1" type="MeshInstance3D" parent="StreetProps/Barrier2"]
 transform = Transform3D(1, 0, 0, 0, 0.848, 0.5299, 0, -0.5299, 0.848, 0, 0, -0.55)
-mesh = SubResource("mb123")
+mesh = SubResource("mb92")
 surface_material_override/0 = SubResource("m_pizza_red")
 cast_shadow = 0
 
 
 [node name="Stripe2" type="MeshInstance3D" parent="StreetProps/Barrier2"]
 transform = Transform3D(1, 0, 0, 0, 0.848, -0.5299, 0, 0.5299, 0.848, 0, 0, 0.55)
-mesh = SubResource("mb123")
+mesh = SubResource("mb92")
 surface_material_override/0 = SubResource("m_pizza_red")
-cast_shadow = 0
-
-
-[node name="Foot1" type="MeshInstance3D" parent="StreetProps/Barrier2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, -0.8)
-mesh = SubResource("mb124")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Foot2" type="MeshInstance3D" parent="StreetProps/Barrier2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0.8)
-mesh = SubResource("mb124")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4307,29 +3377,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.15, -2.2)
 
 [node name="Body" type="MeshInstance3D" parent="StreetProps/Utility1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-mesh = SubResource("mb125")
+mesh = SubResource("mb93")
 surface_material_override/0 = SubResource("m_metal_light")
 cast_shadow = 0
 
 
 [node name="Door" type="MeshInstance3D" parent="StreetProps/Utility1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.27)
-mesh = SubResource("mb126")
+mesh = SubResource("mb94")
 surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Vent" type="MeshInstance3D" parent="StreetProps/Utility1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02, 0)
-mesh = SubResource("mb127")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Base" type="MeshInstance3D" parent="StreetProps/Utility1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
-mesh = SubResource("mb128")
-surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
@@ -4339,29 +3395,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4, 0.15, 8)
 
 [node name="Body" type="MeshInstance3D" parent="StreetProps/Utility2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
-mesh = SubResource("mb129")
+mesh = SubResource("mb95")
 surface_material_override/0 = SubResource("m_metal_light")
 cast_shadow = 0
 
 
 [node name="Door" type="MeshInstance3D" parent="StreetProps/Utility2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0.245)
-mesh = SubResource("mb130")
+mesh = SubResource("mb96")
 surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Vent" type="MeshInstance3D" parent="StreetProps/Utility2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.92, 0)
-mesh = SubResource("mb131")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Base" type="MeshInstance3D" parent="StreetProps/Utility2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
-mesh = SubResource("mb132")
-surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
@@ -4371,29 +3413,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.15, 12.5)
 
 [node name="Body" type="MeshInstance3D" parent="StreetProps/Utility3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
-mesh = SubResource("mb133")
+mesh = SubResource("mb97")
 surface_material_override/0 = SubResource("m_metal_light")
 cast_shadow = 0
 
 
 [node name="Door" type="MeshInstance3D" parent="StreetProps/Utility3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0.22)
-mesh = SubResource("mb134")
+mesh = SubResource("mb98")
 surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Vent" type="MeshInstance3D" parent="StreetProps/Utility3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.87, 0)
-mesh = SubResource("mb135")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Base" type="MeshInstance3D" parent="StreetProps/Utility3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
-mesh = SubResource("mb136")
-surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
@@ -4455,21 +3483,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.6, 6.7, 18)
 cast_shadow = 0
 
 
-[node name="Crate0" parent="KayKitProps" instance=ExtResource("45_kk35")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 0.15, 12.4)
-cast_shadow = 0
-
-
-[node name="Crate1" parent="KayKitProps" instance=ExtResource("46_kk36")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6, 0.15, 11.9)
-cast_shadow = 0
-
-
-[node name="Crate2" parent="KayKitProps" instance=ExtResource("47_kk37")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, 0.15, 11.4)
-cast_shadow = 0
-
-
 [node name="FacadeBits" type="Node3D" parent="."]
 
 
@@ -4479,22 +3492,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.96, 0, 7.6)
 
 [node name="Unit" type="MeshInstance3D" parent="FacadeBits/AC0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
-mesh = SubResource("mb137")
+mesh = SubResource("mb99")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Fan" type="MeshInstance3D" parent="FacadeBits/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 3.5, 0)
-mesh = SubResource("mb138")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Pipe" type="MeshInstance3D" parent="FacadeBits/AC0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, 0.4)
-mesh = SubResource("mb139")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4504,22 +3503,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.96, 0, -1.6)
 
 [node name="Unit" type="MeshInstance3D" parent="FacadeBits/AC1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
-mesh = SubResource("mb137")
+mesh = SubResource("mb99")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Fan" type="MeshInstance3D" parent="FacadeBits/AC1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 2.2, 0)
-mesh = SubResource("mb138")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Pipe" type="MeshInstance3D" parent="FacadeBits/AC1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0.4)
-mesh = SubResource("mb139")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4529,22 +3514,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.96, 0, -12)
 
 [node name="Unit" type="MeshInstance3D" parent="FacadeBits/AC2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
-mesh = SubResource("mb137")
+mesh = SubResource("mb99")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Fan" type="MeshInstance3D" parent="FacadeBits/AC2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 1.7, 0)
-mesh = SubResource("mb138")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Pipe" type="MeshInstance3D" parent="FacadeBits/AC2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0.4)
-mesh = SubResource("mb139")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4554,22 +3525,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.46, 0, 11)
 
 [node name="Unit" type="MeshInstance3D" parent="FacadeBits/AC3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
-mesh = SubResource("mb137")
+mesh = SubResource("mb99")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Fan" type="MeshInstance3D" parent="FacadeBits/AC3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, 3.2, 0)
-mesh = SubResource("mb138")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Pipe" type="MeshInstance3D" parent="FacadeBits/AC3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0.4)
-mesh = SubResource("mb139")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4579,22 +3536,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.46, 0, 6.4)
 
 [node name="Unit" type="MeshInstance3D" parent="FacadeBits/AC4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
-mesh = SubResource("mb137")
+mesh = SubResource("mb99")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Fan" type="MeshInstance3D" parent="FacadeBits/AC4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, 2.1, 0)
-mesh = SubResource("mb138")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Pipe" type="MeshInstance3D" parent="FacadeBits/AC4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0.4)
-mesh = SubResource("mb139")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4604,22 +3547,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.46, 0, -9)
 
 [node name="Unit" type="MeshInstance3D" parent="FacadeBits/AC5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
-mesh = SubResource("mb137")
+mesh = SubResource("mb99")
 surface_material_override/0 = SubResource("m_metal_light")
-cast_shadow = 0
-
-
-[node name="Fan" type="MeshInstance3D" parent="FacadeBits/AC5"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, 2.1, 0)
-mesh = SubResource("mb138")
-surface_material_override/0 = SubResource("m_grate")
-cast_shadow = 0
-
-
-[node name="Pipe" type="MeshInstance3D" parent="FacadeBits/AC5"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0.4)
-mesh = SubResource("mb139")
-surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
@@ -4629,21 +3558,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.94, 0, 8.6)
 
 [node name="Pipe" type="MeshInstance3D" parent="FacadeBits/Downpipe0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-mesh = SubResource("mc140")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Collar" type="MeshInstance3D" parent="FacadeBits/Downpipe0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-mesh = SubResource("mc141")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Shoe" type="MeshInstance3D" parent="FacadeBits/Downpipe0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.08)
-mesh = SubResource("mc142")
+mesh = SubResource("mc100")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
@@ -4654,21 +3569,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.44, 0, -2.2)
 
 [node name="Pipe" type="MeshInstance3D" parent="FacadeBits/Downpipe1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-mesh = SubResource("mc140")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Collar" type="MeshInstance3D" parent="FacadeBits/Downpipe1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-mesh = SubResource("mc141")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Shoe" type="MeshInstance3D" parent="FacadeBits/Downpipe1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.08)
-mesh = SubResource("mc142")
+mesh = SubResource("mc100")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
@@ -4679,21 +3580,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.94, 0, 14.6)
 
 [node name="Pipe" type="MeshInstance3D" parent="FacadeBits/Downpipe2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-mesh = SubResource("mc140")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Collar" type="MeshInstance3D" parent="FacadeBits/Downpipe2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-mesh = SubResource("mc141")
-surface_material_override/0 = SubResource("m_metal")
-cast_shadow = 0
-
-
-[node name="Shoe" type="MeshInstance3D" parent="FacadeBits/Downpipe2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.08)
-mesh = SubResource("mc142")
+mesh = SubResource("mc100")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
@@ -4717,14 +3604,14 @@ use_collision = false
 
 [node name="Arrow" type="MeshInstance3D" parent="PlayerSpawn/Ring"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.17, 0.55)
-mesh = SubResource("mb143")
+mesh = SubResource("mb101")
 surface_material_override/0 = SubResource("m_marker_spawn")
 cast_shadow = 0
 
 
 [node name="Arrow2" type="MeshInstance3D" parent="PlayerSpawn/Ring"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.17, 1)
-mesh = SubResource("mb144")
+mesh = SubResource("mb102")
 surface_material_override/0 = SubResource("m_marker_spawn")
 cast_shadow = 0
 
@@ -4738,7 +3625,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 1, 15.4)
 
 [node name="Disc" type="MeshInstance3D" parent="PizzaShopGoal/Pad"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -0.83, 0)
-mesh = SubResource("mc145")
+mesh = SubResource("mc103")
 surface_material_override/0 = SubResource("m_marker_goal")
 cast_shadow = 0
 
@@ -4755,14 +3642,14 @@ use_collision = false
 
 [node name="Arrow" type="MeshInstance3D" parent="PizzaShopGoal/Pad"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -0.78, 0.3)
-mesh = SubResource("mb146")
+mesh = SubResource("mb104")
 surface_material_override/0 = SubResource("m_marker_goal")
 cast_shadow = 0
 
 
 [node name="Head" type="MeshInstance3D" parent="PizzaShopGoal/Pad"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -0.78, 1.3)
-mesh = SubResource("mb147")
+mesh = SubResource("mb105")
 surface_material_override/0 = SubResource("m_marker_goal")
 cast_shadow = 0
 
@@ -4772,21 +3659,21 @@ cast_shadow = 0
 
 [node name="Post" type="MeshInstance3D" parent="PizzaShopGoal/Beam"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.9, -1.6)
-mesh = SubResource("mb148")
+mesh = SubResource("mb106")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 
 
 [node name="Flag" type="MeshInstance3D" parent="PizzaShopGoal/Beam"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.5, -1.6)
-mesh = SubResource("mb149")
+mesh = SubResource("mb107")
 surface_material_override/0 = SubResource("m_marker_goal")
 cast_shadow = 0
 
 
 [node name="Arrow3" type="MeshInstance3D" parent="PizzaShopGoal/Beam"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.2, -0.9)
-mesh = SubResource("mb150")
+mesh = SubResource("mb108")
 surface_material_override/0 = SubResource("m_marker_goal")
 cast_shadow = 0
 
@@ -4813,28 +3700,28 @@ use_collision = true
 
 [node name="Hatch0" type="MeshInstance3D" parent="DisasterZones/CarAttackZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, -0.3, 2.05)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch1" type="MeshInstance3D" parent="DisasterZones/CarAttackZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, -0.3, 2.05)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch2" type="MeshInstance3D" parent="DisasterZones/CarAttackZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, -0.3, -2.05)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch3" type="MeshInstance3D" parent="DisasterZones/CarAttackZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, -0.3, -2.05)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
@@ -4858,28 +3745,28 @@ use_collision = true
 
 [node name="Hatch0" type="MeshInstance3D" parent="DisasterZones/FallingObjectZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, -0.3, 0.8)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch1" type="MeshInstance3D" parent="DisasterZones/FallingObjectZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, -0.3, 0.8)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch2" type="MeshInstance3D" parent="DisasterZones/FallingObjectZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, -0.3, -0.8)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch3" type="MeshInstance3D" parent="DisasterZones/FallingObjectZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, -0.3, -0.8)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
@@ -4903,28 +3790,28 @@ use_collision = true
 
 [node name="Hatch0" type="MeshInstance3D" parent="DisasterZones/DogChaseZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, -0.3, 3.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch1" type="MeshInstance3D" parent="DisasterZones/DogChaseZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, -0.3, 3.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch2" type="MeshInstance3D" parent="DisasterZones/DogChaseZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, -0.3, -3.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch3" type="MeshInstance3D" parent="DisasterZones/DogChaseZone"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, -0.3, -3.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
@@ -4948,28 +3835,28 @@ use_collision = true
 
 [node name="Hatch0" type="MeshInstance3D" parent="DisasterZones/ObstacleZone1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.3, 0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch1" type="MeshInstance3D" parent="DisasterZones/ObstacleZone1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.3, 0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch2" type="MeshInstance3D" parent="DisasterZones/ObstacleZone1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.3, -0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch3" type="MeshInstance3D" parent="DisasterZones/ObstacleZone1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.3, -0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
@@ -4993,28 +3880,28 @@ use_collision = true
 
 [node name="Hatch0" type="MeshInstance3D" parent="DisasterZones/ObstacleZone2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.3, 0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch1" type="MeshInstance3D" parent="DisasterZones/ObstacleZone2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.3, 0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch2" type="MeshInstance3D" parent="DisasterZones/ObstacleZone2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.3, -0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch3" type="MeshInstance3D" parent="DisasterZones/ObstacleZone2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.3, -0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
@@ -5038,28 +3925,28 @@ use_collision = true
 
 [node name="Hatch0" type="MeshInstance3D" parent="DisasterZones/ObstacleZone3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.3, 0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch1" type="MeshInstance3D" parent="DisasterZones/ObstacleZone3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.3, 0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch2" type="MeshInstance3D" parent="DisasterZones/ObstacleZone3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.3, -0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
 
 [node name="Hatch3" type="MeshInstance3D" parent="DisasterZones/ObstacleZone3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, -0.3, -0.85)
-mesh = SubResource("mb151")
+mesh = SubResource("mb109")
 surface_material_override/0 = SubResource("m_hatch")
 cast_shadow = 0
 
@@ -5083,56 +3970,56 @@ use_collision = true
 
 [node name="Frame" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.16)
-mesh = SubResource("mb152")
+mesh = SubResource("mb110")
 surface_material_override/0 = SubResource("m_trim")
 cast_shadow = 0
 
 
 [node name="Panel" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0.4, -0.2)
-mesh = SubResource("mb153")
+mesh = SubResource("mb111")
 surface_material_override/0 = SubResource("m_door")
 cast_shadow = 0
 
 
 [node name="PanelB" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.4, -0.2)
-mesh = SubResource("mb153")
+mesh = SubResource("mb111")
 surface_material_override/0 = SubResource("m_door")
 cast_shadow = 0
 
 
 [node name="Step" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3, -0.32)
-mesh = SubResource("mb154")
+mesh = SubResource("mb112")
 surface_material_override/0 = SubResource("m_curb")
 cast_shadow = 0
 
 
 [node name="LockPlate" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0, -0.2)
-mesh = SubResource("mb155")
+mesh = SubResource("mb113")
 surface_material_override/0 = SubResource("m_trim_dark")
 cast_shadow = 0
 
 
 [node name="Lock" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0, -0.24)
-mesh = SubResource("mb156")
+mesh = SubResource("mb114")
 surface_material_override/0 = SubResource("m_yellow")
 cast_shadow = 0
 
 
 [node name="Doormat" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.2, -0.5)
-mesh = SubResource("mb157")
+mesh = SubResource("mb115")
 surface_material_override/0 = SubResource("m_grate")
 cast_shadow = 0
 
 
 [node name="Canopy" type="MeshInstance3D" parent="DisasterZones/LockedDoorArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -0.5)
-mesh = SubResource("mb158")
+mesh = SubResource("mb116")
 surface_material_override/0 = SubResource("m_metal")
 cast_shadow = 0
 

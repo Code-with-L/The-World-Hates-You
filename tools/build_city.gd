@@ -397,8 +397,6 @@ func building(tag: String, cx: float, cz: float, dx: float, dz: float, h: float,
 		if roof_kit > 1:
 			grp(rp, "Hut", T(dx * 0.2, h + 1.45, dz * 0.18))
 			mi(rp + "/Hut", "Body", Vector3(1.7, 2.0, 1.7), "trim_dark", T(0, 0, 0))
-			mi(rp + "/Hut", "Cap", Vector3(1.9, 0.16, 1.9), "metal", T(0, 1.08, 0))
-			mi(rp + "/Hut", "Door", Vector3(0.7, 1.3, 0.1), "metal_light", T(0, -0.3, 0.88))
 		if roof_kit > 2:
 			grp(rp, "Tank", T(-dx * 0.22, h + 1.75, -dz * 0.2))
 			scyl(rp + "/Tank", "Drum", 0.85, 1.5, "metal_light", T(0, 0, 0), 10, false)
@@ -406,12 +404,12 @@ func building(tag: String, cx: float, cz: float, dx: float, dz: float, h: float,
 			for lx in [-0.6, 0.6]:
 				for lz in [-0.6, 0.6]:
 					mi(rp + "/Tank", "Leg%d_%d" % [int(lx * 10.0), int(lz * 10.0)], Vector3(0.12, 0.95, 0.12), "metal", T(lx, -1.2, lz))
+		# One box per unit: the grill and foot plates were 0.07 and 0.14 thick, so
+		# they never read at street distance and cost a node each.
 		for a in roof_kit:
 			var an := "AC%d" % a
 			grp(rp, an, T(-dx * 0.3 + float(a) * 1.5, h + 0.9, -dz * 0.28 + float(a % 2) * 1.0))
 			mi(rp + "/" + an, "Body", Vector3(1.15, 0.8, 1.15), "metal_light", T(0, 0, 0))
-			mi(rp + "/" + an, "Grill", Vector3(0.8, 0.07, 0.8), "grate", T(0, 0.43, 0))
-			mi(rp + "/" + an, "Foot", Vector3(1.3, 0.14, 1.3), "metal", T(0, -0.46, 0))
 	# ground floor frontage: the KayKit doorway/order window panels take over the
 	# shopfront glazing, so only the sign and the awning are kept.
 	grp(p, "Shop")
@@ -428,7 +426,6 @@ func building(tag: String, cx: float, cz: float, dx: float, dz: float, h: float,
 		for st in 4:
 			mi(ap, "Stripe%d" % st, fs(face, 0.5, 0.14, 1.52), "awning_cream", fo(face, (float(st) - 1.5) * (span + 0.9) / 4.0, 0, 0))
 		mi(ap, "Valance", fs(face, span + 0.9, 0.34, 0.1), "awning_red", fo(face, 0, -0.2, 0.72))
-		mi(ap, "Rod", fs(face, span + 0.9, 0.08, 0.08), "metal", fo(face, 0, -0.02, -0.7))
 
 # --------------------------------------------------------------- props
 func streetlight(x: float, z: float, dir: float, id: int) -> void:
@@ -438,7 +435,6 @@ func streetlight(x: float, z: float, dir: float, id: int) -> void:
 	scyl(p, "Base", 0.17, 0.34, "metal", T(0, 0.17, 0), 8, true)
 	scyl(p, "Pole", 0.075, 4.7, "pole", T(0, 2.6, 0), 8, true)
 	mi(p, "Arm", Vector3(1.35, 0.09, 0.09), "pole", T(dir * 0.65, 4.9, 0))
-	mi(p, "Brace", Vector3(0.55, 0.07, 0.07), "pole", RZ(dir * 0.3, 4.7, 0, dir * 35.0))
 	mi(p, "Head", Vector3(0.7, 0.16, 0.34), "metal", T(dir * 1.25, 4.8, 0))
 	mi(p, "Lens", Vector3(0.56, 0.06, 0.26), "lamp_glow", T(dir * 1.25, 4.69, 0))
 	light(p, "Glow", Vector3(dir * 1.25, 4.55, 0), Color(1, 0.93, 0.78), 1.15, 7.0)
@@ -463,11 +459,10 @@ func tree(x: float, z: float, s: float, id: int) -> void:
 	grp("StreetProps", n, T(x, 0.15, z))
 	var p := "StreetProps/" + n
 	scyl(p, "Trunk", 0.17 * s, 1.9 * s, "trunk", T(0, 0.95 * s, 0), 8, true)
+	# One canopy sphere is enough: the two extra blobs were hidden inside it and
+	# the tree grate already hides the soil disc underneath.
 	ssph(p, "Canopy", 0.95 * s, "leaf", T(0, 2.5 * s, 0), true)
-	ssph(p, "CanopyB", 0.62 * s, "leaf2", T(0.45 * s, 1.85 * s, 0.3 * s), false)
-	ssph(p, "CanopyC", 0.55 * s, "leaf2", T(-0.4 * s, 3.1 * s, -0.2 * s), false)
 	scyl(p, "Grate", 0.55, 0.06, "grate", T(0, 0.03, 0), 8, false)
-	scyl(p, "Soil", 0.45, 0.05, "soil", T(0, 0.05, 0), 8, false)
 	# KayKit shrubs fill the bare trunk base
 	inst(p, "Bush", KK_CITY + "bush.gltf", TS(
 		cos(float(id) * 1.7) * 0.4, -0.15, sin(float(id) * 1.7) * 0.4, 2.6), 27)
@@ -491,9 +486,6 @@ func kk_clutter() -> void:
 	inst("KayKitProps", "Pallet", KK_PROTO + "Pallet_Small.gltf", TS(-7.0, 0.15, -15.0, 1.0), 88)
 	# rooftop water tower and a few crates on the back lots
 	inst("KayKitProps", "Tower", KK_CITY + "watertower.gltf", TS(6.6, 6.7, 18.0, 1.0), 77)
-	for i in 3:
-		inst("KayKitProps", "Crate%d" % i, KK_PROTO + ["Box_A", "Box_B", "Box_C"][i] + ".gltf",
-			TS(6.9 + float(i) * 0.7, 0.15, 12.4 - float(i) * 0.5, 1.0), 50)
 
 func planter(x: float, z: float, name: String) -> void:
 	grp("StreetProps", name, T(x, 0.45, z))
@@ -501,18 +493,15 @@ func planter(x: float, z: float, name: String) -> void:
 	sb(p, "Box", Vector3(0.72, 0.72, 0.72), "trim", T(0, 0, 0), true, true)
 	mi(p, "Rim", Vector3(0.86, 0.14, 0.86), "kk_trim", T(0, 0.3, 0))
 	inst(p, "Shrub", KK_CITY + "bush.gltf", TS(0.0, 0.36, 0.0, 3.4), 27)
-	inst(p, "ShrubB", KK_CITY + "bush.gltf", TS(0.3, 0.3, -0.22, 2.4), 27)
 
 func parked_car(x: float, z: float, rot: float, body: String, name: String) -> void:
 	grp("StreetProps", name, RY(x, 0.55, z, rot))
 	var p := "StreetProps/" + name
-	# the box and wheels stay as the collision body, the KayKit shell is the
-	# visible car. Scale 3.8 lines the 0.94 long shell up with the 3.6 box.
+	# The box and wheels stay as the collision body, the KayKit shell is the
+	# visible car. Scale 3.8 lines the 0.94 long shell up with the 3.6 box. The
+	# shell carries its own wheels, so separate wheel cylinders only sat inside
+	# it and cost sixteen nodes across the four parked cars.
 	sb(p, "Body", Vector3(1.85, 0.6, 3.6), body, T(0, -0.06, 0), true, true)
-	for i in 4:
-		var wx := 0.88 if i % 2 == 0 else -0.88
-		var wz := 1.15 if i < 2 else -1.15
-		scyl(p, "Wheel%d" % i, 0.32, 0.24, "tire", Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(wx, -0.26, wz)), 10, false)
 	var kind := "car_sedan"
 	if name == "ParkedCar1":
 		kind = "car_taxi"
@@ -529,17 +518,13 @@ func mailbox() -> void:
 	grp("StreetProps", "Mailbox", T(5.5, 0.75, 1))
 	var p := "StreetProps/Mailbox"
 	scyl(p, "Post", 0.08, 1.2, "pole", T(0, -0.35, 0), 8, true)
-	mi(p, "Leg", Vector3(0.14, 0.3, 0.14), "metal", T(0, -0.95, 0))
 	mi(p, "Box", Vector3(0.42, 0.46, 0.52), "car_b", T(0, 0.3, 0))
 	mi(p, "Cap", Vector3(0.44, 0.14, 0.54), "car_b", T(0, 0.55, 0))
-	mi(p, "Slot", Vector3(0.26, 0.08, 0.06), "shop_dark", T(0, 0.42, 0.27))
-	mi(p, "Flag", Vector3(0.06, 0.22, 0.06), "pizza_red", T(0.22, 0.5, 0))
 
 func stop_sign() -> void:
 	grp("StreetProps", "StopSign", T(-6.5, 1.5, 8))
 	var p := "StreetProps/StopSign"
 	scyl(p, "Pole", 0.055, 2.0, "metal_light", T(0, -0.5, 0), 8, true)
-	scyl(p, "Foot", 0.16, 0.1, "metal", T(0, -1.45, 0), 8, false)
 	grp(p, "Plate", RY(0, 0, 0, 90))
 	var pp := p + "/Plate"
 	node("CSGPolygon3D", "Octagon", pp, Transform3D.IDENTITY, [
@@ -559,16 +544,12 @@ func barrier(x: float, z: float, flip: float, name: String) -> void:
 	sb(p, "Body", Vector3(0.24, 0.85, 2.1), "awning_cream", T(0, 0, 0), true)
 	mi(p, "Stripe1", Vector3(0.3, 0.34, 1.2), "pizza_red", RX(0, 0, -0.55, 32.0 * flip))
 	mi(p, "Stripe2", Vector3(0.3, 0.34, 1.2), "pizza_red", RX(0, 0, 0.55, -32.0 * flip))
-	mi(p, "Foot1", Vector3(0.5, 0.16, 0.2), "metal", T(0, -0.36, -0.8))
-	mi(p, "Foot2", Vector3(0.5, 0.16, 0.2), "metal", T(0, -0.36, 0.8))
 
 func utility(x: float, z: float, name: String, w: float, h: float, d: float) -> void:
 	grp("StreetProps", name, T(x, 0.15, z))
 	var p := "StreetProps/" + name
 	mi(p, "Body", Vector3(w, h, d), "metal_light", T(0, h * 0.5, 0))
 	mi(p, "Door", Vector3(w * 0.7, h * 0.6, 0.06), "metal", T(0, h * 0.5, d * 0.5 + 0.02))
-	mi(p, "Vent", Vector3(w * 0.4, 0.06, d * 0.4), "grate", T(0, h + 0.02, 0))
-	mi(p, "Base", Vector3(w + 0.12, 0.12, d + 0.12), "trim_dark", T(0, 0.06, 0))
 
 func manhole(x: float, z: float, id: int) -> void:
 	var n := "Manhole%d" % id
@@ -635,6 +616,43 @@ func _mm_tiles(name: String, path: String, xs: Array, zs: Array, y: float) -> vo
 		"cast_shadow = 0"])
 	n_inst += 1
 	n_tri += xs.size() * 34
+
+# Same idea for boxes, but only for dressing that is on screen no matter where
+# the camera looks: the kerb strips and paving joints run the length of the
+# block in two unbroken lines. A MultiMesh is one cullable AABB, so scattering
+# one across a wide area throws away the per-object culling that made the first
+# batching attempt slower. Placements are translation only, which keeps the
+# transform buffer a plain basis-plus-origin list.
+func mm_boxes(parent: String, name: String, size: Vector3, mat: String, pts: Array) -> void:
+	if pts.is_empty():
+		return
+	var key := "b|" + str(size)
+	if not _mesh.has(key):
+		var id := "mb%d" % _mesh.size()
+		_mesh[key] = id
+		sub_res("BoxMesh", id, ["size = " + v3(size)])
+		n_tri += 12
+	var sub := "mmb_" + name
+	var buf := ""
+	for i in pts.size():
+		if i > 0:
+			buf += ", "
+		var p: Vector3 = pts[i]
+		buf += "1.0, 0.0, 0.0, " + f(p.x)
+		buf += ", 0.0, 1.0, 0.0, " + f(p.y)
+		buf += ", 0.0, 0.0, 1.0, " + f(p.z)
+	sub_res("MultiMesh", sub, [
+		"transform_format = 1",
+		"instance_count = " + str(pts.size()),
+		"visible_instance_count = " + str(pts.size()),
+		"mesh = SubResource(\"%s\")" % _mesh[key],
+		"buffer = PackedFloat32Array(" + buf + ")"])
+	node("MultiMeshInstance3D", name, parent, Transform3D.IDENTITY, [
+		"multimesh = SubResource(\"%s\")" % sub,
+		"material_override = SubResource(\"%s\")" % _mid[mat],
+		"cast_shadow = 0"])
+	n_inst += 1
+	n_tri += pts.size() * 12
 
 func kk_roads() -> void:
 	grp(".", "Roads")
@@ -806,12 +824,18 @@ func _build() -> void:
 	grp(".", "RoadDetails")
 	grp(".", "Paving")
 	grp(".", "Curbs")
+	# The kerbs and paving joints are unbroken lines down both sides of the
+	# block, so each run is one MultiMesh instead of sixteen little boxes.
+	var kerbs: Array = []
+	var joints: Array = []
 	for i in 8:
 		var cz := -17.5 + float(i) * 5.0
-		sb("Curbs", "CurbL%d" % i, Vector3(0.3, 0.36, 4.4), "kk_trim", T(-4.05, 0.02, cz), false)
-		sb("Curbs", "CurbR%d" % i, Vector3(0.3, 0.36, 4.4), "kk_trim", T(4.05, 0.02, cz), false)
-		mi("Paving", "JointL%d" % i, Vector3(2.9, 0.04, 0.14), "walk_tile", T(-5.5, 0.15, cz))
-		mi("Paving", "JointR%d" % i, Vector3(2.9, 0.04, 0.14), "walk_tile", T(5.5, 0.15, cz))
+		kerbs.append(Vector3(-4.05, 0.02, cz))
+		kerbs.append(Vector3(4.05, 0.02, cz))
+		joints.append(Vector3(-5.5, 0.15, cz))
+		joints.append(Vector3(5.5, 0.15, cz))
+	mm_boxes("Curbs", "KerbStrip", Vector3(0.3, 0.36, 4.4), "kk_trim", kerbs)
+	mm_boxes("Paving", "JointStrip", Vector3(2.9, 0.04, 0.14), "walk_tile", joints)
 	# Lane markings now come from the road tile texture, so the old painted
 	# dashes/crosswalk boxes are gone; the manholes stay as extra detail.
 	manhole(-2.0, -6.0, 1)
@@ -869,13 +893,11 @@ func _build() -> void:
 	grp("PizzaShop", "Shop")
 	grp("PizzaShop/Shop", "Front")
 	var fpz := "PizzaShop/Shop/Front"
-	mi(fpz, "KickS", Vector3(5.0, 0.5, 0.22), "trim_dark", T(0, 0.35, -2.03))
 	mi(fpz, "GlassS", Vector3(4.7, 2.2, 0.18), "glass_lit", T(0, 1.6, -2.05))
 	mi(fpz, "BarS", Vector3(0.12, 2.2, 0.2), "trim_dark", T(0, 1.6, -2.07))
 	mi(fpz, "DoorFrameS", Vector3(1.26, 2.5, 0.2), "pizza_cream", T(-1.9, 1.3, -2.07))
 	mi(fpz, "DoorS", Vector3(1.02, 2.25, 0.24), "door", T(-1.9, 1.25, -2.09))
 	mi(fpz, "BandS", Vector3(5.5, 0.72, 0.28), "pizza_red", T(0, 3.12, -2.08))
-	mi(fpz, "KickW", Vector3(0.22, 0.5, 3.2), "trim_dark", T(-3.03, 0.35, 0))
 	mi(fpz, "GlassW", Vector3(0.18, 2.2, 2.9), "glass_lit", T(-3.05, 1.6, 0))
 	mi(fpz, "BarW", Vector3(0.2, 2.2, 0.12), "trim_dark", T(-3.07, 1.6, 0))
 	mi(fpz, "BandW", Vector3(0.28, 0.72, 3.5), "pizza_red", T(-3.09, 3.12, 0))
@@ -887,28 +909,21 @@ func _build() -> void:
 	for s in 5:
 		mi("PizzaShop/Shop/AwningS", "Stripe%d" % s, Vector3(0.5, 0.14, 1.52), "pizza_cream", T(-2.2 + float(s) * 1.1, 0, 0))
 	mi("PizzaShop/Shop/AwningS", "Valance", Vector3(5.6, 0.4, 0.1), "pizza_cream", T(0, -0.2, 0.72))
-	mi("PizzaShop/Shop/AwningS", "Rod", Vector3(5.6, 0.08, 0.08), "metal", T(0, -0.02, -0.72))
 	grp("PizzaShop/Shop", "AwningW", T(-3.58, 3.52, 0))
 	mi("PizzaShop/Shop/AwningW", "Slab", Vector3(1.5, 0.12, 3.6), "pizza_red", T(0, 0, 0))
 	for s in 3:
 		mi("PizzaShop/Shop/AwningW", "Stripe%d" % s, Vector3(1.52, 0.14, 0.5), "pizza_cream", T(0, 0, -1.2 + float(s) * 1.2))
 	mi("PizzaShop/Shop/AwningW", "Valance", Vector3(0.1, 0.4, 3.6), "pizza_cream", T(-0.72, -0.2, 0))
-	mi("PizzaShop/Shop/AwningW", "Rod", Vector3(0.08, 0.08, 3.6), "metal", T(-0.72, -0.02, 0))
 	grp("PizzaShop", "Windows")
 	for i in 3:
 		grp("PizzaShop/Windows", "U%d" % i, T(-1.7 + float(i) * 1.7, 4.75, -2.03))
 		mi("PizzaShop/Windows/U%d" % i, "Frame", Vector3(1.2, 1.36, 0.12), "pizza_cream", T(0, 0, 0))
 		mi("PizzaShop/Windows/U%d" % i, "Pane", Vector3(0.96, 1.12, 0.18), "glass_lit" if i == 1 else "glass", T(0, 0, 0))
-		mi("PizzaShop/Windows/U%d" % i, "Sill", Vector3(1.36, 0.11, 0.28), "pizza_cream", T(0, -0.76, -0.06))
 	grp("PizzaShop", "RoofTop")
 	scyl("PizzaShop/RoofTop", "Vent", 0.28, 0.9, "metal", T(-1.6, 6.85, 1.0), 8, false)
 	mi("PizzaShop/RoofTop", "Hut", Vector3(1.6, 1.8, 1.6), "trim_dark", T(1.4, 7.3, 0.9))
-	mi("PizzaShop/RoofTop", "HutCap", Vector3(1.8, 0.14, 1.8), "metal", T(1.4, 8.26, 0.9))
-	mi("PizzaShop/RoofTop", "AC", Vector3(1.1, 0.7, 1.1), "metal_light", T(-0.4, 6.75, 1.1))
 	grp("PizzaShop", "Hanging", T(1.7, 3.05, -2.5))
 	mi("PizzaShop/Hanging", "Arm", Vector3(0.09, 0.09, 0.9), "metal", T(0, 0, 0))
-	mi("PizzaShop/Hanging", "Rod1", Vector3(0.05, 0.55, 0.05), "metal", T(0, -0.28, -0.36))
-	mi("PizzaShop/Hanging", "Rod2", Vector3(0.05, 0.55, 0.05), "metal", T(0, -0.28, 0.36))
 	mi("PizzaShop/Hanging", "Board", Vector3(0.12, 0.7, 1.0), "pizza_red", T(0, -0.85, 0))
 	mi("PizzaShop/Hanging", "Slice", Vector3(0.16, 0.46, 0.6), "pizza_cheese", T(0, -0.85, 0))
 	light("PizzaShop", "Warm", Vector3(0, 2.7, -2.7), Color(1, 0.8, 0.55), 0.9, 5.0)
@@ -916,7 +931,6 @@ func _build() -> void:
 		var pn := "WindowBox%d" % i
 		grp("PizzaShop", pn, T(-2.2 + float(i) * 2.2, 0.15, -2.45))
 		mi("PizzaShop/" + pn, "Box", Vector3(0.8, 0.4, 0.36), "wood", T(0, 0.2, 0))
-		mi("PizzaShop/" + pn, "Soil", Vector3(0.7, 0.06, 0.28), "soil", T(0, 0.4, 0))
 		ssph("PizzaShop/" + pn, "Bush", 0.22, "leaf", T(0, 0.5, 0), false)
 	# scripts/city_block.gd drives this node: it overwrites scale with
 	# 0.1 * (1 + sin) and spins it. The original was a CSGCylinder3D of radius 3
@@ -942,8 +956,6 @@ func _build() -> void:
 	# static decoration on the front sign band (not driven by any script)
 	mi("PizzaShop", "SignDisc", Vector3(1.5, 0.12, 1.5), "pizza_cream", T(1.7, 3.16, -2.34))
 	mi("PizzaShop", "SignDiscIn", Vector3(1.16, 0.1, 1.16), "pizza_red", T(1.7, 3.2, -2.34))
-	mi("PizzaShop", "SignDiscPep", Vector3(0.26, 0.08, 0.26), "yellow", T(1.4, 3.24, -2.5))
-	mi("PizzaShop", "SignDiscPep2", Vector3(0.24, 0.08, 0.24), "yellow", T(2.0, 3.24, -2.15))
 
 	# --- street props ------------------------------------------------------
 	grp(".", "StreetProps")
@@ -985,15 +997,13 @@ func _build() -> void:
 	for i in units.size():
 		var un := "AC%d" % i
 		grp("FacadeBits", un, T(units[i][1], 0, units[i][2]))
+		# The unit box carries the read; the fan slat and the drain pipe behind
+		# it were sub-decimetre details that cost a node apiece.
 		mi("FacadeBits/" + un, "Unit", Vector3(0.44, 0.62, 0.72), "metal_light", T(0, units[i][3], 0))
-		mi("FacadeBits/" + un, "Fan", Vector3(0.1, 0.44, 0.52), "grate", T(-0.24 if units[i][1] < 0.0 else 0.24, units[i][3], 0))
-		mi("FacadeBits/" + un, "Pipe", Vector3(0.12, 1.1, 0.12), "metal", T(0, units[i][3] - 0.8, 0.4))
 	for i2 in 3:
 		var pn2 := "Downpipe%d" % i2
 		grp("FacadeBits", pn2, T(-5.94 if i2 % 2 == 0 else 6.44, 0, [8.6, -2.2, 14.6][i2]))
 		scyl("FacadeBits/" + pn2, "Pipe", 0.1, 5.0, "metal", T(0, 2.5, 0), 8, false)
-		scyl("FacadeBits/" + pn2, "Collar", 0.14, 0.12, "metal", T(0, 1.1, 0), 8, false)
-		scyl("FacadeBits/" + pn2, "Shoe", 0.13, 0.3, "metal", T(0, 0.2, 0.08), 8, false)
 
 	# --- markers -----------------------------------------------------------
 	# The goal centre sits inside the Building4 footprint, so its ground decal is
