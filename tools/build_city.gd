@@ -58,6 +58,7 @@ var MATS := [
 	["pizza_red", {"c": Color(0.76, 0.11, 0.09), "r": 0.5}],
 	["pizza_cream", {"c": Color(0.93, 0.86, 0.68), "r": 0.7}],
 	["pizza_cheese", {"c": Color(0.95, 0.78, 0.2), "r": 0.6}],
+	["pizza_glow", {"c": Color(0.86, 0.14, 0.1), "r": 0.5, "e": Color(0.98, 0.26, 0.15), "ei": 0.7}],
 	["yellow", {"c": Color(0.94, 0.76, 0.14), "r": 0.5, "e": Color(1, 0.8, 0.2), "ei": 0.35}],
 	["leaf", {"c": Color(0.24, 0.48, 0.24), "r": 0.95}],
 	["leaf2", {"c": Color(0.31, 0.55, 0.27), "r": 0.95}],
@@ -790,6 +791,101 @@ func clad_building(p: String, dx: float, dz: float, h: float, face: int, shop: b
 			inst(fp, "F%d" % c, KK_REST + "wall.gltf",
 				_panel_xf(lx, bottom + float(rows) * 4.0, out, rot, rem / 4.0), 50)
 
+# --- pizza shop polish ----------------------------------------------------
+# The shop is the mission destination but it is the shortest building on the
+# block (6.5m) and Building4 rises 12m directly in front of it, so from the road
+# only its west corner reads and the objective is easy to walk past. This pass
+# fixes that without moving the building, the goal or any collision:
+#   * a grounded apron and forecourt that close the sidewalk/bare-ground seam
+#   * a tall roof blade sign on the north-west corner, which clears Building4
+#     and is the only thing visible from the far end of the street
+#   * a lit entrance, menu board and pavement seating that make the doorway
+#     read as "the place" from the goal pad
+# All of it is decoration: no new collision, no anchor moves, no new lights
+# beyond two shadowless omnis.
+func pizza_polish() -> void:
+	# The 6x4 footprint straddles the x=7 sidewalk edge. The base sat in mid-air
+	# over the bare -0.2 ground and the two window boxes over x=7 floated above
+	# it. One apron slab, top at 0.14, puts every ground-floor prop back on a
+	# surface without touching GroundFloor's transform or its collision.
+	mi("PizzaShop", "Apron", Vector3(6.5, 0.42, 4.5), "curb", T(0, -0.06, 0))
+
+	# Forecourt in the only gap between Building4 and the apron edge. Building4's
+	# base trim reaches z=15.62, so the slab starts at 15.675; it stops at x=7.0
+	# to stay clear of the goal pad disc, whose 1.75 radius at (5.2, 15.4)
+	# reaches x=6.95.
+	mi("PizzaShop", "Forecourt", Vector3(3.6, 0.36, 1.15), "sidewalk", T(1.1, -0.04, -2.775))
+	# Set 3 sits in the strip between Building4's base (z<=15.62) and the shop's
+	# glazing plane (z>=16.86), which leaves 1.24m. The 0.62-scaled table is
+	# 0.93 deep, so it is centred at 16.35 and the stools tuck either side of it.
+	inst("PizzaShop", "CafeTable", KK_REST + "table_round_A_small_decorated.gltf",
+		TS(1.15, 0.14, -2.65, 0.62), 275)
+	for i in 2:
+		inst("PizzaShop", "CafeStool%d" % i, KK_REST + "chair_stool.gltf",
+			TS(1.15, 0.14, -3.05 + float(i) * 0.6, 0.68), 87)
+	# top of the 0.62-scaled table sits at 0.14 + 1.116
+	inst("PizzaShop", "CafeKetchup", KK_REST + "ketchup.gltf", TS(0.97, 1.26, -2.48, 0.26), 56)
+	inst("PizzaShop", "CafeMustard", KK_REST + "mustard.gltf", TS(1.31, 1.26, -2.62, 0.26), 56)
+	inst("PizzaShop", "CafeBowl", KK_REST + "bowl.gltf", TS(1.14, 1.26, -2.3, 0.3), 70)
+
+	# Menu board at the east end of the seating area. The door frame fills
+	# x 4.97..6.23 and Building4's west cladding stands proud to x=6.25, so
+	# there is no room for it beside the door; out here it still faces the road.
+	inst("PizzaShop", "MenuBoard", KK_REST + "menu.gltf", TS(2.2, 0.14, -2.95, 1.0), 50)
+
+	# Entrance lamps on the door bay (frame spans x 4.97..6.23), lifted to
+	# y=2.55 so they clear the door leaf's 2.375 top. Building4's west cladding
+	# overshoots its own mass and stands proud at x 6.25..6.75 from z 13 to 17,
+	# so the lamps stay inside the bay rather than flanking it further out, and
+	# sit 6cm proud of the glazing. Emissive geometry only; the actual falloff
+	# is DoorGlow below.
+	for i in 2:
+		var lx := -2.42 + float(i) * 1.04
+		mi("PizzaShop/Shop/Front", "EntryLamp%d" % i, Vector3(0.16, 0.3, 0.16), "lamp_glow", T(lx, 2.55, -2.28))
+		mi("PizzaShop/Shop/Front", "EntryArm%d" % i, Vector3(0.08, 0.08, 0.26), "metal", T(lx, 2.55, -2.07))
+	# Warm bar under the awning, over the door bay only. It hangs in front of the
+	# sign band (z 16.67 vs the band's 16.78) and stops short of x=6.2, because
+	# Building4's cladding fills everything east of that up to roof height.
+	mi("PizzaShop/Shop/AwningS", "Strip", Vector3(1.2, 0.07, 0.07), "lamp_glow", T(-1.9, -0.12, 0.28))
+	light("PizzaShop", "DoorGlow", Vector3(-1.9, 2.2, -2.7), Color(1, 0.84, 0.6), 0.8, 3.6)
+
+	# No counter dressing behind the west glazing: GroundFloor and Walls are
+	# solid CSG boxes, so anything placed inside them would be invisible. The
+	# emissive glass_lit pane is what sells the window.
+
+	# --- roof blade sign ---------------------------------------------------
+	# Sits on the north-west roof corner at world (4.9, 0, 17.5). The panel plus
+	# its rims reach 2.52m either side of the mast, which puts the east edge at
+	# x=6.16 -- short of Building4's proud west cladding at 6.25 -- while the
+	# 11.6m panel top stays under that building's 13m parapet. Because the whole
+	# sign is west of Building4, the sight line from the road passes beside the
+	# block rather than having to clear it.
+	grp("PizzaShop", "Blade", T(-2.6, 0, -1.5))
+	var bp := "PizzaShop/Blade"
+	mi(bp, "Mast", Vector3(0.24, 6.0, 0.24), "pole", T(0, 9.4, 0))
+	mi(bp, "Collar", Vector3(0.46, 0.24, 0.46), "metal", T(0, 6.62, 0))
+	# cross of two panels, north and west, so it reads from the road and the
+	# pavement. Back-to-back at +-0.06 they share the mast.
+	mi(bp, "PanelN", Vector3(2.2, 4.3, 0.2), "pizza_glow", T(0, 9.3, -0.06))
+	mi(bp, "PanelW", Vector3(0.2, 4.3, 2.2), "pizza_glow", T(-0.06, 9.3, 0))
+	mi(bp, "RimTop", Vector3(2.36, 0.16, 0.3), "pizza_cream", T(0, 11.53, -0.02))
+	mi(bp, "RimBot", Vector3(2.36, 0.16, 0.3), "pizza_cream", T(0, 7.07, -0.02))
+	mi(bp, "RimW", Vector3(0.16, 4.62, 0.3), "pizza_cream", T(-1.18, 9.3, -0.02))
+	mi(bp, "RimE", Vector3(0.16, 4.62, 0.3), "pizza_cream", T(1.18, 9.3, -0.02))
+	# chunky stylised pie on the north face; boxes read as a pizza at distance
+	# in a way a 0.1-scaled icon never can
+	mi(bp, "PieCrust", Vector3(1.3, 1.3, 0.12), "pizza_cream", T(0, 10.55, -0.19))
+	mi(bp, "PieSauce", Vector3(0.98, 0.98, 0.14), "pizza_red", T(0, 10.55, -0.22))
+	mi(bp, "PieCheeseA", Vector3(0.24, 0.24, 0.16), "pizza_cheese", T(-0.24, 10.67, -0.25))
+	mi(bp, "PieCheeseB", Vector3(0.24, 0.24, 0.16), "pizza_cheese", T(0.26, 10.45, -0.25))
+	mi(bp, "PiePepA", Vector3(0.2, 0.2, 0.17), "pizza_red", T(0.18, 10.71, -0.26))
+	mi(bp, "PiePepB", Vector3(0.2, 0.2, 0.17), "pizza_red", T(-0.2, 10.41, -0.26))
+	label3d(bp, "TextN", "PIZZA", Vector3(0, 8.8, -0.24), 180.0, 0.016,
+		Color(1, 0.96, 0.88), Color(0.42, 0.06, 0.04))
+	label3d(bp, "TextW", "PIZZA", Vector3(-0.24, 8.8, 0), 270.0, 0.016,
+		Color(1, 0.96, 0.88), Color(0.42, 0.06, 0.04))
+	light(bp, "BladeGlow", Vector3(0, 9.3, -0.9), Color(1, 0.72, 0.48), 0.7, 5.5)
+
 # --------------------------------------------------------------- main
 func _initialize() -> void:
 	_build()
@@ -961,7 +1057,10 @@ func _build() -> void:
 	mi(fpz, "BandW", Vector3(0.28, 0.72, 3.5), "pizza_red", T(-3.09, 3.12, 0))
 	mi(fpz, "Open", Vector3(0.1, 0.36, 0.7), "neon", T(-3.12, 2.35, 0.9))
 	label3d(fpz, "Sign", "PIZZA", Vector3(-0.9, 3.14, -2.26), 180.0, 0.014, Color(1, 0.95, 0.85), Color(0.35, 0.05, 0.04))
-	label3d(fpz, "SignW", "HOT SLICE", Vector3(-3.26, 3.14, 0), 90.0, 0.009, Color(1, 0.95, 0.85), Color(0.35, 0.05, 0.04))
+	# a Label3D draws on its local XY plane facing +z, so RY(180) looks north
+	# down the road and RY(90) would look east, straight into the shopfront.
+	# 270 turns this one out to the street on the west elevation.
+	label3d(fpz, "SignW", "HOT SLICE", Vector3(-3.26, 3.14, 0), 270.0, 0.009, Color(1, 0.95, 0.85), Color(0.35, 0.05, 0.04))
 	grp("PizzaShop/Shop", "AwningS", T(0, 3.52, -2.58))
 	mi("PizzaShop/Shop/AwningS", "Slab", Vector3(5.6, 0.12, 1.5), "pizza_red", T(0, 0, 0))
 	for s in 5:
@@ -1014,6 +1113,7 @@ func _build() -> void:
 	# static decoration on the front sign band (not driven by any script)
 	mi("PizzaShop", "SignDisc", Vector3(1.5, 0.12, 1.5), "pizza_cream", T(1.7, 3.16, -2.34))
 	mi("PizzaShop", "SignDiscIn", Vector3(1.16, 0.1, 1.16), "pizza_red", T(1.7, 3.2, -2.34))
+	pizza_polish()
 
 	# --- street props ------------------------------------------------------
 	grp(".", "StreetProps")
