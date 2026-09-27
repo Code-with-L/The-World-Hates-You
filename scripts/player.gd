@@ -17,6 +17,21 @@ const JUMP_BUFFER := 0.14
 const HIT_IFRAMES := 1.25
 const TURN_SPEED := 12.0
 
+# Rig animation names available on the KayKit character.
+const ANIM_IDLE := "Idle"
+const ANIM_WALK := "Walking_A"
+const ANIM_RUN := "Running_A"
+const ANIM_AIR := "Jump_Idle"
+const ANIM_LAND := "Jump_Land"
+const ANIM_CHEER := "Cheer"
+const ANIM_DEATH := "Death_A"
+const ANIM_LAND_LEN := 0.25
+# Weapon meshes parented to the hand bone slots; the courier delivers, it does not fight.
+const RIG_WEAPONS := ["1H_Crossbow", "2H_Crossbow", "Knife", "Knife_Offhand", "Throwable"]
+# Locomotion clips ship with loop disabled, so they are switched on at load.
+const ANIM_LOOPS := [ANIM_IDLE, ANIM_WALK, "Walking_B", "Walking_C", ANIM_RUN, "Running_B",
+	"Jump_Idle", ANIM_AIR]
+
 var camera_rig: Node3D = null
 var alive := true
 var hp := MAX_HP
@@ -31,18 +46,28 @@ var _control_lock := 0.0
 var _facing := 0.0
 var _blink := 0.0
 var _was_on_floor := true
-var _limb_phase := 0.0
-var _limb_amp := 0.0
+var _anim_name := ""
+var _land_t := 0.0
+var _one_shot := ""
 
 @onready var model: Node3D = $Model
 @onready var shadow: MeshInstance3D = $Shadow
-@onready var _arm_l: Node3D = $Model/ArmL
-@onready var _arm_r: Node3D = $Model/ArmR
-@onready var _leg_l: Node3D = $Model/LegL
-@onready var _leg_r: Node3D = $Model/LegR
+@onready var _anim: AnimationPlayer = _find_anim()
+@onready var _death_mat: StandardMaterial3D = _make_death_mat()
 
 var _shadow_mat: StandardMaterial3D = null
-var _body_mat: StandardMaterial3D = null
+
+
+func _find_anim() -> AnimationPlayer:
+	for c in model.find_children("*", "AnimationPlayer", true, false):
+		return c as AnimationPlayer
+	return null
+
+
+func _make_death_mat() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(1.0, 0.35, 0.32)
+	return m
 
 
 func _ready() -> void:
@@ -56,10 +81,32 @@ func _ready() -> void:
 	_shadow_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_shadow_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	shadow.material_override = _shadow_mat
-	var body := $Model/Body as MeshInstance3D
-	if body != null and body.mesh != null:
-		_body_mat = body.mesh.surface_get_material(0) as StandardMaterial3D
+	for n in model.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi != null and RIG_WEAPONS.has(String(mi.name)):
+			mi.visible = false
+	for n in ANIM_LOOPS:
+		var a: Animation = _anim.get_animation(n) if _anim != null else null
+		if a != null:
+			a.loop_mode = Animation.LOOP_LINEAR
+	_play(ANIM_IDLE)
 	health_changed.emit(hp, MAX_HP)
+
+
+func _play(name: String) -> void:
+	if _anim == null or name == _anim_name:
+		return
+	if not _anim.has_animation(name):
+		return
+	_anim_name = name
+	_anim.play(name)
+	_anim.advance(0.0)
+
+
+func _play_once(name: String) -> void:
+	_play(name)
+	_one_shot = name
+
 
 
 func _physics_process(delta: float) -> void:
@@ -106,6 +153,7 @@ func _physics_process(delta: float) -> void:
 
 	if is_on_floor() and not _was_on_floor:
 		_squash(Vector2(1.3, 0.72), 0.16)
+		_land_t = ANIM_LAND_LEN
 	_was_on_floor = is_on_floor()
 
 	if global_position.y < -12.0:
@@ -113,7 +161,7 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector3.ZERO
 
 	_update_blink(delta)
-	_update_limbs(delta)
+	_update_anim(delta)
 
 
 func _process(_delta: float) -> void:
@@ -192,6 +240,7 @@ func force_death(reason: String) -> void:
 func celebrate() -> void:
 	input_enabled = false
 	velocity = Vector3.ZERO
+	_play_once(ANIM_CHEER)
 	var t := create_tween().set_parallel(true)
 	t.tween_property(model, "position:y", 0.35, 0.18).set_trans(Tween.TRANS_BACK)
 	t.chain().tween_property(model, "position:y", 0.0, 0.22)
@@ -203,11 +252,20 @@ func _die(reason: String) -> void:
 	alive = false
 	input_enabled = false
 	velocity = Vector3.ZERO
+	_play(ANIM_DEATH)
+	_set_death_flash(true)
 	var t := create_tween()
 	t.tween_property(self, "rotation:z", PI * 0.5, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	if _body_mat != null:
-		t.parallel().tween_property(_body_mat, "albedo_color", Color(1.0, 0.4, 0.4), 0.3)
 	died.emit(reason)
+
+
+func _set_death_flash(on: bool) -> void:
+	if _death_mat == null:
+		return
+	for n in model.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi != null and mi.skin != null:
+			mi.material_overlay = _death_mat if on else null
 
 
 func _squash(to: Vector2, time: float) -> void:
@@ -229,21 +287,32 @@ func _update_blink(delta: float) -> void:
 		model.visible = true
 
 
-func _update_limbs(delta: float) -> void:
-	if _arm_l == null or _arm_r == null or _leg_l == null or _leg_r == null:
+func _update_anim(delta: float) -> void:
+	if _anim == null or not alive:
 		return
+	if _land_t > 0.0:
+		_land_t = maxf(0.0, _land_t - delta)
 	var planar := Vector2(velocity.x, velocity.z).length()
-	if alive and is_on_floor():
-		var want := clampf(planar / SPRINT_SPEED, 0.0, 1.0)
-		_limb_amp = lerpf(_limb_amp, want, clampf(delta * 12.0, 0.0, 1.0))
-		_limb_phase += delta * lerpf(7.0, 15.0, _limb_amp)
-	else:
-		_limb_amp = lerpf(_limb_amp, 0.0, clampf(delta * 9.0, 0.0, 1.0))
-		_limb_phase += delta * 2.0
-	var swing := sin(_limb_phase) * _limb_amp
-	var air := 0.0 if is_on_floor() else 0.35
-	_arm_l.rotation.x = lerpf(_arm_l.rotation.x, swing * 0.95 - air, clampf(delta * 18.0, 0.0, 1.0))
-	_arm_r.rotation.x = lerpf(_arm_r.rotation.x, -swing * 0.95 - air, clampf(delta * 18.0, 0.0, 1.0))
-	_leg_l.rotation.x = lerpf(_leg_l.rotation.x, -swing * 0.85, clampf(delta * 18.0, 0.0, 1.0))
-	_leg_r.rotation.x = lerpf(_leg_r.rotation.x, swing * 0.85, clampf(delta * 18.0, 0.0, 1.0))
-	model.rotation.z = swing * 0.05
+	if _one_shot != "":
+		if _anim.current_animation != _one_shot or not _anim.is_playing():
+			_one_shot = ""
+		else:
+			return
+	var want := ANIM_IDLE
+	if not is_on_floor():
+		want = ANIM_AIR
+	elif _land_t > 0.0:
+		want = ANIM_LAND
+	elif planar > WALK_SPEED * 1.05:
+		want = ANIM_RUN
+	elif planar > 0.35:
+		want = ANIM_WALK
+	if not input_enabled:
+		want = ANIM_IDLE
+	_play(want)
+	if _anim_name == ANIM_WALK or _anim_name == ANIM_RUN:
+		var base := WALK_SPEED if _anim_name == ANIM_WALK else SPRINT_SPEED
+		_anim.speed_scale = clampf(planar / base, 0.65, 1.7)
+	elif _anim_name == ANIM_IDLE or _anim_name == ANIM_AIR:
+		_anim.speed_scale = 1.0
+

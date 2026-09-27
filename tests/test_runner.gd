@@ -65,6 +65,69 @@ func _player() -> Node3D:
 	return game.get_node("Player")
 
 
+func _weapons_hidden(model: Node) -> bool:
+	var names := ["1H_Crossbow", "2H_Crossbow", "Knife", "Knife_Offhand", "Throwable"]
+	var found := 0
+	for nc in model.find_children("*", "MeshInstance3D", true, false):
+		if nc != null and names.has(String(nc.name)):
+			found += 1
+			if nc.visible:
+				return false
+	return found == names.size()
+
+
+func _flash_on(model: Node) -> bool:
+	for nc in model.find_children("*", "MeshInstance3D", true, false):
+		if nc != null and nc.skin != null and nc.material_overlay != null:
+			return true
+	return false
+
+
+func _rig_height(rig: Node) -> float:
+	# World-space height of the skinned body meshes only, ignoring the hand weapons.
+	var lo := INF
+	var hi := -INF
+	for nc in rig.find_children("*", "MeshInstance3D", true, false):
+		if nc == null or nc.skin == null or nc.mesh == null:
+			continue
+		for s in nc.mesh.get_surface_count():
+			for v in nc.mesh.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]:
+				var y: float = (nc.global_transform * v).y
+				lo = minf(lo, y)
+				hi = maxf(hi, y)
+	return 0.0 if lo == INF else hi - lo
+
+
+func _rig_height_ok(rig: Node) -> bool:
+	if rig == null:
+		return false
+	return absf(_rig_height(rig) - 1.7) < 0.35
+
+
+func _find_skel(root: Node) -> Skeleton3D:
+	for c in root.find_children("*", "Skeleton3D", true, false):
+		return c as Skeleton3D
+	return null
+
+
+func _facing_ok(p: Node3D) -> bool:
+	# The rig's toes must point the way the player is travelling, or it moonwalks.
+	var skel := _find_skel(p.get_node("Model"))
+	if skel == null:
+		return false
+	var fi := skel.find_bone("foot.l")
+	var ti := skel.find_bone("toes.l")
+	if fi < 0 or ti < 0:
+		return false
+	var foot: Vector3 = (skel.global_transform * skel.get_bone_global_pose(fi)).origin
+	var toe: Vector3 = (skel.global_transform * skel.get_bone_global_pose(ti)).origin
+	var d := toe - foot
+	d.y = 0.0
+	if d.length() < 0.001:
+		return false
+	return d.normalized().dot(-p.global_transform.basis.z) > 0.7
+
+
 func _cam() -> Node3D:
 	return game.get_node("CameraRig")
 
@@ -86,12 +149,31 @@ func _run() -> void:
 
 	# --- player visual structure ---
 	_ok("model exists", model != null)
-	_ok("body mesh kept for death flash", model.get_node_or_null("Body") != null and model.get_node("Body").mesh != null)
-	_ok("head exists", model.get_node_or_null("Head") != null)
-	_ok("cap exists", model.get_node_or_null("Head/Cap") != null)
-	_ok("delivery bag exists", model.get_node_or_null("Bag") != null)
-	_ok("arm pivots exist", model.get_node_or_null("ArmL") != null and model.get_node_or_null("ArmR") != null)
-	_ok("leg pivots exist", model.get_node_or_null("LegL") != null and model.get_node_or_null("LegR") != null)
+	var rig: Node = model.get_node_or_null("Rig")
+	_ok("kaykit rig instanced", rig != null)
+	var skel: Skeleton3D = null
+	var anim: AnimationPlayer = null
+	var body_mesh: MeshInstance3D = null
+	if rig != null:
+		for nc in rig.find_children("*", "Skeleton3D", true, false):
+			skel = nc as Skeleton3D
+		for nc in rig.find_children("*", "AnimationPlayer", true, false):
+			anim = nc as AnimationPlayer
+		for nc in rig.find_children("*", "MeshInstance3D", true, false):
+			if nc != null and nc.skin != null and body_mesh == null:
+				body_mesh = nc
+	_ok("rig has skeleton", skel != null and skel.get_bone_count() >= 20,
+		"bones=%d" % (skel.get_bone_count() if skel != null else 0))
+	_ok("rig has animation player with locomotion set", anim != null
+		and anim.has_animation("Idle") and anim.has_animation("Walking_A")
+		and anim.has_animation("Running_A"),
+		"anims=%d" % (anim.get_animation_list().size() if anim != null else 0))
+	_ok("body mesh kept for death flash", body_mesh != null and body_mesh.mesh != null)
+	_ok("locomotion clips loop", anim != null
+		and anim.get_animation("Idle").loop_mode != Animation.LOOP_NONE)
+	_ok("weapons hidden on courier", _weapons_hidden(model))
+	_ok("rig scaled to capsule height", _rig_height_ok(rig),
+		"h=%.2f" % _rig_height(rig))
 	var cs: Variant = p.get_node("CollisionShape3D").shape
 	_ok("collision shape unchanged", is_equal_approx(cs.radius, 0.4) and is_equal_approx(cs.height, 1.7), "r=%.2f h=%.2f" % [cs.radius, cs.height])
 	_ok("player layers unchanged", p.collision_layer == 2 and p.collision_mask == 1)
@@ -106,9 +188,12 @@ func _run() -> void:
 	_ok("walk moves player", walked > 1.0, "d=%.2f" % walked)
 	var walk_v: float = Vector2(p.velocity.x, p.velocity.z).length()
 	_ok("walk speed ~5.4", walk_v > 4.0 and walk_v <= 5.45, "v=%.2f" % walk_v)
-	_ok("limbs animate while walking", absf(model.get_node("LegL").rotation.x) > 0.01,
-		"legL=%.3f armL=%.3f" % [model.get_node("LegL").rotation.x, model.get_node("ArmL").rotation.x])
+	_ok("limbs animate while walking", anim != null and anim.is_playing()
+		and anim.current_animation in ["Walking_A", "Walking_B", "Walking_C", "Running_A", "Running_B"],
+		"anim=%s pos=%.2f" % [anim.current_animation if anim != null else "none",
+			anim.current_animation_position if anim != null else 0.0])
 	_ok("still on ground while walking", p.is_on_floor(), "y=%.2f" % p.global_position.y)
+	_ok("rig faces travel direction", _facing_ok(p))
 
 	# --- sprint ---
 	p.set_touch_input(Vector2(0, -1), true)
@@ -127,8 +212,11 @@ func _run() -> void:
 	_ok("jump leaves ground", p.global_position.y > y0 + 0.3, "dy=%.2f" % (p.global_position.y - y0))
 	await _steps(45)
 	_ok("jump lands", p.is_on_floor(), "y=%.2f" % p.global_position.y)
+	# The rig plays a short land clip after touchdown, so let the sequence settle first.
+	await _steps(20)
 	_ok("model scale settles", model.scale.distance_to(Vector3.ONE) < 0.15, "sx=%.3f" % model.scale.x)
-	_ok("limbs return to rest", absf(model.get_node("LegL").rotation.x) < 0.2, "legL=%.3f" % model.get_node("LegL").rotation.x)
+	_ok("limbs return to rest", anim != null and anim.current_animation == "Idle",
+		"anim=%s" % (anim.current_animation if anim != null else "none"))
 
 	# --- camera look / pitch limits ---
 	var yaw0: float = c.yaw
@@ -276,8 +364,14 @@ func _run() -> void:
 	_ok("restart resets position", p2.global_position.distance_to(Vector3(0, 0.1, -17)) < 2.5, "pos=%s" % str(p2.global_position.snapped(Vector3(0.01, 0.01, 0.01))))
 	_ok("restart resets state", game.state == 0, "state=%d" % game.state)
 	_ok("restart resets camera distance", c2.follow_distance > 3.0, "d=%.2f" % c2.follow_distance)
-	_ok("limbs rest pose after restart", absf(p2.get_node("Model/LegL").rotation.x) < 0.35, "legL=%.3f" % p2.get_node("Model/LegL").rotation.x)
-	_ok("new character mesh intact", p2.get_node("Model/Head/Cap") != null and p2.get_node("Model/Body").mesh != null)
+	var anim2: AnimationPlayer = null
+	for nc in p2.get_node("Model").find_children("*", "AnimationPlayer", true, false):
+		anim2 = nc as AnimationPlayer
+	_ok("limbs rest pose after restart", anim2 != null and anim2.current_animation == "Idle",
+		"anim=%s" % (anim2.current_animation if anim2 != null else "none"))
+	_ok("new character mesh intact", p2.get_node_or_null("Model/Rig") != null
+		and _rig_height_ok(p2.get_node("Model/Rig")))
+	_ok("death flash cleared on restart", not _flash_on(p2.get_node("Model")))
 
 	# --- victory ---
 	await get_tree().create_timer(1.8).timeout
