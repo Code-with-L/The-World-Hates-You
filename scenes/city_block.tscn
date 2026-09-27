@@ -1,4 +1,4 @@
-[gd_scene load_steps=215 format=3]
+[gd_scene load_steps=222 format=3]
 
 [ext_resource type="Script" path="res://scripts/city_block.gd" id="1_city"]
 
@@ -6,10 +6,10 @@
 [ext_resource type="Mesh" path="res://scenes/generated/road_straight_crossing.res" id="12_kk2"]
 [ext_resource type="Mesh" path="res://scenes/generated/base.res" id="13_kk3"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/restaurant/Assets/gltf/wall.gltf" id="14_kk4"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/building_G.gltf" id="15_kk5"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/building_H.gltf" id="15_kk5"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/building_A.gltf" id="16_kk6"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/building_C.gltf" id="17_kk7"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/building_B.gltf" id="18_kk8"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/building_F.gltf" id="18_kk8"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/restaurant/Assets/gltf/wall_orderwindow.gltf" id="19_kk9"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/restaurant/Assets/gltf/wall_window_closed.gltf" id="20_kk10"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/restaurant/Assets/gltf/wall_doorway.gltf" id="21_kk11"]
@@ -29,13 +29,20 @@
 [ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/bush.gltf" id="35_kk25"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/car_taxi.gltf" id="36_kk26"]
 [ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/car_sedan.gltf" id="37_kk27"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/firehydrant.gltf" id="38_kk28"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/trafficlight_B.gltf" id="39_kk29"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/dumpster.gltf" id="40_kk30"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Barrel_C.gltf" id="41_kk31"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Barrel_B.gltf" id="42_kk32"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Pallet_Small.gltf" id="43_kk33"]
-[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/watertower.gltf" id="44_kk34"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/car_police.gltf" id="38_kk28"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/car_hatchback.gltf" id="39_kk29"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/firehydrant.gltf" id="40_kk30"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/trafficlight_A.gltf" id="41_kk31"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/trafficlight_C.gltf" id="42_kk32"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/dumpster.gltf" id="43_kk33"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Barrel_C.gltf" id="44_kk34"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Barrel_B.gltf" id="45_kk35"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Pallet_Small.gltf" id="46_kk36"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/city/Assets/gltf/watertower.gltf" id="47_kk37"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Pallet_Large.gltf" id="48_kk38"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Box_A.gltf" id="49_kk39"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Box_B.gltf" id="50_kk40"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/prototype/Assets/gltf/Box_C.gltf" id="51_kk41"]
 
 [sub_resource type="StandardMaterial3D" id="m_road"]
 albedo_color = Color(0.26, 0.26, 0.28, 1)
@@ -3240,6 +3247,40 @@ transform = Transform3D(3.8, 0, 0, 0, 3.8, 0, 0, 0, 3.8, 0, -0.32, 0)
 cast_shadow = 0
 
 
+[node name="ParkedCar3" type="Node3D" parent="StreetProps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 0.55, 12)
+
+
+[node name="Body" type="CSGBox3D" parent="StreetProps/ParkedCar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0)
+size = Vector3(1.85, 0.6, 3.6)
+material = SubResource("m_car_a")
+use_collision = true
+visible = false
+
+
+[node name="Shell" parent="StreetProps/ParkedCar3" instance=ExtResource("38_kk28")]
+transform = Transform3D(3.8, 0, 0, 0, 3.8, 0, 0, 0, 3.8, 0, -0.32, 0)
+cast_shadow = 0
+
+
+[node name="ParkedCar4" type="Node3D" parent="StreetProps"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.7, 0.55, -14)
+
+
+[node name="Body" type="CSGBox3D" parent="StreetProps/ParkedCar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, 0)
+size = Vector3(1.85, 0.6, 3.4)
+material = SubResource("m_car_b")
+use_collision = true
+visible = false
+
+
+[node name="Shell" parent="StreetProps/ParkedCar4" instance=ExtResource("39_kk29")]
+transform = Transform3D(4.4, 0, 0, 0, 4.4, 0, 0, 0, 4.4, 0, -0.28, 0)
+cast_shadow = 0
+
+
 [node name="FireHydrant" type="Node3D" parent="StreetProps"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.55, 10)
 
@@ -3253,7 +3294,7 @@ use_collision = true
 visible = false
 
 
-[node name="Mesh" parent="StreetProps/FireHydrant" instance=ExtResource("38_kk28")]
+[node name="Mesh" parent="StreetProps/FireHydrant" instance=ExtResource("40_kk30")]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, -0.4, 0)
 cast_shadow = 0
 
@@ -3428,27 +3469,27 @@ cast_shadow = 0
 [node name="KayKitProps" type="Node3D" parent="."]
 
 
-[node name="Signal0" parent="KayKitProps" instance=ExtResource("39_kk29")]
-transform = Transform3D(3.6, 0, 0, 0, 3.6, 0, 0, 0, 3.6, -4.6, 0.15, 5.6)
+[node name="Signal0" parent="KayKitProps" instance=ExtResource("41_kk31")]
+transform = Transform3D(4.4, 0, 0, 0, 4.4, 0, 0, 0, 4.4, -4.6, 0.15, 5.6)
 cast_shadow = 0
 
 
-[node name="Signal1" parent="KayKitProps" instance=ExtResource("39_kk29")]
-transform = Transform3D(3.6, 0, 0, 0, 3.6, 0, 0, 0, 3.6, 4.6, 0.15, 10.4)
+[node name="Signal1" parent="KayKitProps" instance=ExtResource("42_kk32")]
+transform = Transform3D(3.3, 0, 0, 0, 3.3, 0, 0, 0, 3.3, 4.6, 0.15, 10.4)
 cast_shadow = 0
 
 
-[node name="Skip0" parent="KayKitProps" instance=ExtResource("40_kk30")]
+[node name="Skip0" parent="KayKitProps" instance=ExtResource("43_kk33")]
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -7.4, -0.2, 14)
 cast_shadow = 0
 
 
-[node name="Skip1" parent="KayKitProps" instance=ExtResource("40_kk30")]
+[node name="Skip1" parent="KayKitProps" instance=ExtResource("43_kk33")]
 transform = Transform3D(0, 0, 2.2, 0, 2.2, 0, -2.2, 0, 0, 7.4, -0.2, -10.5)
 cast_shadow = 0
 
 
-[node name="Skip2" parent="KayKitProps" instance=ExtResource("40_kk30")]
+[node name="Skip2" parent="KayKitProps" instance=ExtResource("43_kk33")]
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -7.4, -0.2, -17.5)
 cast_shadow = 0
 
@@ -3458,12 +3499,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0.3, -16)
 cast_shadow = 0
 
 
-[node name="Barrel1" parent="KayKitProps" instance=ExtResource("41_kk31")]
+[node name="Barrel1" parent="KayKitProps" instance=ExtResource("44_kk34")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.15, 0.65, -16)
 cast_shadow = 0
 
 
-[node name="Barrel2" parent="KayKitProps" instance=ExtResource("42_kk32")]
+[node name="Barrel2" parent="KayKitProps" instance=ExtResource("45_kk35")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0.3, -15.05)
 cast_shadow = 0
 
@@ -3473,13 +3514,78 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.15, 0.65, -15.05)
 cast_shadow = 0
 
 
-[node name="Pallet" parent="KayKitProps" instance=ExtResource("43_kk33")]
+[node name="Pallet" parent="KayKitProps" instance=ExtResource("46_kk36")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.15, -15)
 cast_shadow = 0
 
 
-[node name="Tower" parent="KayKitProps" instance=ExtResource("44_kk34")]
+[node name="Tower" parent="KayKitProps" instance=ExtResource("47_kk37")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.6, 6.7, 18)
+cast_shadow = 0
+
+
+[node name="PalletLarge" parent="KayKitProps" instance=ExtResource("48_kk38")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.2, -0.2, -19)
+cast_shadow = 0
+
+
+[node name="YardCrate0" parent="KayKitProps" instance=ExtResource("49_kk39")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6, -0.2, -16.2)
+cast_shadow = 0
+
+
+[node name="YardCrate1" parent="KayKitProps" instance=ExtResource("50_kk40")]
+transform = Transform3D(0.9781, 0, 0.2079, 0, 1, 0, -0.2079, 0, 0.9781, 8.45, -0.2, -16.2)
+cast_shadow = 0
+
+
+[node name="YardCrate2" parent="KayKitProps" instance=ExtResource("51_kk41")]
+transform = Transform3D(0.9135, 0, 0.4067, 0, 1, 0, -0.4067, 0, 0.9135, 9.3, -0.2, -16.2)
+cast_shadow = 0
+
+
+[node name="Shrub0_0" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 8.75, -0.2, 8.8)
+cast_shadow = 0
+
+
+[node name="Shrub0_1" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(2.4, 0, 0, 0, 2.4, 0, 0, 0, 2.4, 7.7944, -0.2, 9.1715)
+cast_shadow = 0
+
+
+[node name="Shrub0_2" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 8.2481, -0.2, 8.2521)
+cast_shadow = 0
+
+
+[node name="Shrub1_0" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, -8.45, -0.2, 4.8)
+cast_shadow = 0
+
+
+[node name="Shrub1_1" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(2.4, 0, 0, 0, 2.4, 0, 0, 0, 2.4, -9.4056, -0.2, 5.1715)
+cast_shadow = 0
+
+
+[node name="Shrub1_2" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, -8.9519, -0.2, 4.2521)
+cast_shadow = 0
+
+
+[node name="Shrub2_0" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 9.15, -0.2, 0)
+cast_shadow = 0
+
+
+[node name="Shrub2_1" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(2.4, 0, 0, 0, 2.4, 0, 0, 0, 2.4, 8.1944, -0.2, 0.3715)
+cast_shadow = 0
+
+
+[node name="Shrub2_2" parent="KayKitProps" instance=ExtResource("35_kk25")]
+transform = Transform3D(1.9, 0, 0, 0, 1.9, 0, 0, 0, 1.9, 8.6481, -0.2, -0.5479)
 cast_shadow = 0
 
 

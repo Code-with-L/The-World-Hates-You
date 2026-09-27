@@ -473,10 +473,16 @@ func tree(x: float, z: float, s: float, id: int) -> void:
 # had. All of it is decoration only, so the walkable lanes are untouched.
 func kk_clutter() -> void:
 	grp(".", "KayKitProps")
-	# traffic lights on two crossing corners
+	# Traffic lights on two crossing corners. trafficlight_A is a slim 0.73 pole
+	# and _C a boxy 0.97 head, so each gets its own scale to land at the same
+	# ~3.2m reading height instead of one scale stretching both into the wrong
+	# proportions. _B stays the fallback so a new corner still has a kit.
 	for i in 2:
 		var tx := -4.6 if i % 2 == 0 else 4.6
-		inst("KayKitProps", "Signal%d" % i, KK_CITY + "trafficlight_B.gltf", TS(tx, 0.15, 5.6 if i < 1 else 10.4, 3.6), 331)
+		var pole := 4.4 if i % 2 == 0 else 3.3
+		var kit := "trafficlight_A" if i % 2 == 0 else "trafficlight_C"
+		inst("KayKitProps", "Signal%d" % i, KK_CITY + kit + ".gltf", TS(tx, 0.15, 5.6 if i < 1 else 10.4, pole),
+			287 if i % 2 == 0 else 223)
 	# skips and pallet stacks in the back yards. Ground/Body is a 2m box whose
 	# top is y=-0.2, so anything off the road/sidewalk slabs has to stand on
 	# -0.2 rather than on the 0.15 pavement height it was previously using.
@@ -492,6 +498,30 @@ func kk_clutter() -> void:
 	inst("KayKitProps", "Pallet", KK_PROTO + "Pallet_Small.gltf", TS(-7.0, 0.15, -15.0, 1.0), 88)
 	# rooftop water tower and a few crates on the back lots
 	inst("KayKitProps", "Tower", KK_CITY + "watertower.gltf", TS(6.6, 6.7, 18.0, 1.0), 77)
+	# South-east back lot, in the gap south of the Plot155 annex. The big pallet
+	# gives that corner some mass it never had, and the three crate sizes in
+	# front of it break up the silhouette. All of it sits off the slabs, so it
+	# stands on the -0.2 ground rather than the 0.15 pavement height. The pallet
+	# is pushed to x=9.2 so its 4m width clears Barrier2's 6.92 edge, and the
+	# crates sit at z=-16.2 to clear that same barrier by more than a hair.
+	inst("KayKitProps", "PalletLarge", KK_PROTO + "Pallet_Large.gltf", TS(9.2, -0.2, -19.0, 1.0), 88)
+	for i in 3:
+		inst("KayKitProps", "YardCrate%d" % i, KK_PROTO + ["Box_A", "Box_B", "Box_C"][i] + ".gltf",
+			TRS(7.6 + float(i) * 0.85, -0.2, -16.2, 12.0 * float(i), 1.0), [38, 56, 68][i])
+	# The packs ship no tree or plant assets beyond this one bush, so the extra
+	# greenery is the same kit clustered at a smaller scale than the planters
+	# use. Each clump sits in a measured gap between building masses (z=4.8
+	# between Building2 and Building1, z=0.0 and z=8.8 in the two east gaps)
+	# and is kept at |x|>7.5 so the whole clump clears the -0.2 bare ground
+	# rather than straddling the 0.15 sidewalk edge, and both sampled sidewalk
+	# lanes. They carry no collision.
+	for i in 3:
+		var sx: float = [8.2, -9.0, 8.6][i]
+		var sz: float = [8.8, 4.8, 0.0][i]
+		for j in 3:
+			var a := float(j) * 2.399963
+			inst("KayKitProps", "Shrub%d_%d" % [i, j], KK_CITY + "bush.gltf",
+				TS(sx + cos(a) * 0.55, -0.2, sz + sin(a) * 0.55, 1.9 + 0.5 * float(j % 2)), 27)
 
 func planter(x: float, z: float, name: String) -> void:
 	grp("StreetProps", name, T(x, 0.45, z))
@@ -500,20 +530,34 @@ func planter(x: float, z: float, name: String) -> void:
 	mi(p, "Rim", Vector3(0.86, 0.14, 0.86), "kk_trim", T(0, 0.3, 0))
 	inst(p, "Shrub", KK_CITY + "bush.gltf", TS(0.0, 0.36, 0.0, 3.4), 27)
 
-func parked_car(x: float, z: float, rot: float, body: String, name: String) -> void:
+func parked_car(x: float, z: float, rot: float, body: String, name: String, kind: String) -> void:
 	grp("StreetProps", name, RY(x, 0.55, z, rot))
 	var p := "StreetProps/" + name
-	# The box and wheels stay as the collision body, the KayKit shell is the
-	# visible car. Scale 3.8 lines the 0.94 long shell up with the 3.6 box. The
-	# shell carries its own wheels, so separate wheel cylinders only sat inside
-	# it and cost sixteen nodes across the four parked cars.
-	sb(p, "Body", Vector3(1.85, 0.6, 3.6), body, T(0, -0.06, 0), true, true)
-	var kind := "car_sedan"
-	if name == "ParkedCar1":
-		kind = "car_taxi"
-	elif name == "ParkedCar3":
-		kind = "car_police"
-	inst(p, "Shell", KK_CITY + kind + ".gltf", TRS(0.0, -0.32, 0.0, 0.0, 3.8), 540)
+	# The box stays the collision body and the KayKit shell is the visible car.
+	# The shell carries its own wheels, so separate wheel cylinders only sat
+	# inside it and cost sixteen nodes across the parked cars.
+	var kit: Array = car_kit(kind)
+	sb(p, "Body", Vector3(1.85, 0.6, float(kit[1])), body, T(0, -0.06, 0), true, true)
+	inst(p, "Shell", KK_CITY + kind + ".gltf", TRS(0.0, float(kit[2]), 0.0, 0.0, float(kit[0])), int(kit[3]))
+
+# Every KayKit car shell is 0.94 long except the hatchback at 0.81, and they all
+# share a -0.072 base offset, so scale, collision length and the vertical nudge
+# that keeps the wheels on the tarmac are per-kit rather than one size forced
+# onto every model. Returns [scale, body_length, y_offset, tris].
+func car_kit(kind: String) -> Array:
+	match kind:
+		"car_taxi":
+			return [3.8, 3.6, -0.32, 548]
+		"car_police":
+			return [3.8, 3.6, -0.32, 580]
+		"car_stationwagon":
+			return [3.8, 3.6, -0.32, 523]
+		"car_hatchback":
+			# Shorter shell: 0.81 * 4.4 = 3.56 long, and the extra scale needs a
+			# little more lift because the -0.072 base offset grows with it.
+			return [4.4, 3.4, -0.28, 498]
+		_:
+			return [3.8, 3.6, -0.32, 515]
 
 func hydrant() -> void:
 	grp("StreetProps", "FireHydrant", T(-5.5, 0.55, 10))
@@ -855,11 +899,16 @@ func _build() -> void:
 		sb(ep, "Body", Vector3(e[2], 6.5, e[3]), "kk_wall2", T(0, 3.25, 0), true)
 		sb(ep, "Cap", Vector3(e[2] + 0.3, 0.3, e[3] + 0.3), "kk_roof", T(0, 6.6, 0), false)
 		sb(ep, "Band", Vector3(e[2] + 0.2, 0.16, e[3] + 0.2), "kk_trim", T(0, 2.6, 0), false)
-		# KayKit panels on the street side plus a real 2x2 unit against the back
+		# KayKit panels on the street side plus a real 2x2 unit against the back.
+		# All eight building kits are the same 2x2 footprint with their base at
+		# y=0, so they drop straight onto the ground; spreading four plots across
+		# eight of them stops the back lot repeating the same three silhouettes.
 		clad_building(ep, e[2], e[3], 6.5, int(e[4]), false)
 		var annex := Vector3(-float(e[4]) * (e[2] * 0.5 - 1.0), 0.0, 0.0)
-		inst(ep, "Unit", KK_CITY + ["building_A", "building_B", "building_C", "building_G"][int(absf(e[1])) % 4] + ".gltf",
-			T(annex.x, 0.0, annex.z), 500)
+		var kits := [["building_A", 464], ["building_B", 614], ["building_C", 577], ["building_D", 657],
+			["building_E", 799], ["building_F", 791], ["building_G", 973], ["building_H", 1112]]
+		var k: Array = kits[int(absf(e[1])) % kits.size()]
+		inst(ep, "Unit", KK_CITY + String(k[0]) + ".gltf", T(annex.x, 0.0, annex.z), int(k[1]))
 
 	# --- buildings ---------------------------------------------------------
 	building("Building1", -8, 10, 4, 6, 10, "wall_tan", "wall_tan2", 1, true, "CAFE", "awning_red", true, 2, 3, 2)
@@ -988,8 +1037,15 @@ func _build() -> void:
 	planter(5.5, 10.0, "Planter1")
 	planter(-5.5, 1.5, "Planter2")
 	planter(5.5, 5.5, "Planter3")
-	parked_car(-2.6, -10.0, 0.0, "car_a", "ParkedCar1")
-	parked_car(2.6, 4.0, 180.0, "car_b", "ParkedCar2")
+	# Four kerbside cars instead of two, so the block reads as a street people
+	# park on. Each one stays on the same side as the car it follows, which
+	# leaves the opposite two lanes clear of the box at every z the road test
+	# samples. car_police was already named in the old code but never actually
+	# placed, so this also finally puts it in the scene.
+	parked_car(-2.6, -10.0, 0.0, "car_a", "ParkedCar1", "car_taxi")
+	parked_car(2.6, 4.0, 180.0, "car_b", "ParkedCar2", "car_sedan")
+	parked_car(-2.7, 12.0, 0.0, "car_a", "ParkedCar3", "car_police")
+	parked_car(2.7, -14.0, 180.0, "car_b", "ParkedCar4", "car_hatchback")
 	hydrant()
 	mailbox()
 	stop_sign()
