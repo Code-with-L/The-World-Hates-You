@@ -1,3 +1,30 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Godot export / build output
+/build/
+/export/
+/bin/
+*.pck
+*.zip
+
+# Godot per-user import leftovers
+*.translation
+
+# Local dev harness output (tests/visual_check.gd writes these to user://)
+frame_stats.txt
+vis_*.png
+stats_*.txt
+shots_*/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.log
+.vs/
+.idea/
+.vscode/
