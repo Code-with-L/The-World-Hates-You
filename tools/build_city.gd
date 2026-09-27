@@ -14,9 +14,12 @@ const OUT := "res://scenes/city_block.tscn"
 
 var _nodes: Array[String] = []
 var _subs: Array[String] = []
+var _exts: Array[String] = []
+var _extid := {}
 var _mid := {}
 var _mesh := {}
 var n_res := 0
+var n_ext := 0
 var n_node := 0
 var n_csg := 0
 var n_mi := 0
@@ -24,6 +27,11 @@ var n_solid := 0
 var n_light := 0
 var n_label := 0
 var n_tri := 0
+var n_inst := 0
+
+const KK_CITY := "res://assets/kaykit/city/Assets/gltf/"
+const KK_REST := "res://assets/kaykit/restaurant/Assets/gltf/"
+const KK_PROTO := "res://assets/kaykit/prototype/Assets/gltf/"
 
 var MATS := [
 	["road", {"c": Color(0.26, 0.26, 0.28), "r": 0.95}],
@@ -70,6 +78,13 @@ var MATS := [
 	["marker_spawn", {"c": Color(0.2, 0.6, 0.85), "r": 0.4, "e": Color(0.3, 0.75, 1.0), "ei": 0.9}],
 	["marker_goal", {"c": Color(0.2, 0.7, 0.35), "r": 0.4, "e": Color(0.3, 0.95, 0.45), "ei": 0.9}],
 	["grate", {"c": Color(0.18, 0.18, 0.19), "r": 0.9}],
+	# --- KayKit palette (sampled from the pack atlases) ---------------------
+	["kk_roof", {"c": Color(0.29, 0.29, 0.27), "r": 0.9}],
+	["kk_wall", {"c": Color(0.42, 0.42, 0.33), "r": 0.9}],
+	["kk_wall2", {"c": Color(0.49, 0.45, 0.34), "r": 0.9}],
+	["kk_trim", {"c": Color(0.55, 0.52, 0.47), "r": 0.85}],
+	["kk_base", {"c": Color(0.73, 0.54, 0.25), "r": 0.95}],
+	["kk_asphalt", {"c": Color(0.38, 0.38, 0.25), "r": 0.95}],
 ]
 
 # --------------------------------------------------------------- formatting
@@ -88,8 +103,12 @@ func cl(c: Color) -> String:
 	return "Color(%s, %s, %s, %s)" % [f(c.r), f(c.g), f(c.b), f(c.a)]
 
 func xf(t: Transform3D) -> String:
+	return "Transform3D(" + xf12(t) + ")"
+
+# The same 12 numbers without the Transform3D wrapper, for a MultiMesh buffer.
+func xf12(t: Transform3D) -> String:
 	var b := t.basis
-	return "Transform3D(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % [
+	return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s" % [
 		f(b.x.x), f(b.y.x), f(b.z.x),
 		f(b.x.y), f(b.y.y), f(b.z.y),
 		f(b.x.z), f(b.y.z), f(b.z.z),
@@ -106,6 +125,15 @@ func RX(x: float, y: float, z: float, deg: float) -> Transform3D:
 
 func RZ(x: float, y: float, z: float, deg: float) -> Transform3D:
 	return Transform3D(Basis(Vector3.BACK, deg_to_rad(deg)), Vector3(x, y, z))
+
+# Uniformly scaled transforms, used for the KayKit props: the packs are modelled
+# at a smaller scale than this world, so every instance carries its own factor.
+func TS(x: float, y: float, z: float, s: float) -> Transform3D:
+	return Transform3D(Basis().scaled(Vector3(s, s, s)), Vector3(x, y, z))
+
+func TRS(x: float, y: float, z: float, deg: float, s: float) -> Transform3D:
+	var b := Basis(Vector3.UP, deg_to_rad(deg)).scaled(Vector3(s, s, s))
+	return Transform3D(b, Vector3(x, y, z))
 
 # --------------------------------------------------------------- emitters
 func sub_res(type: String, id: String, body: Array) -> void:
@@ -126,9 +154,38 @@ func node(t: String, name: String, parent: String, x: Transform3D = Transform3D.
 	_nodes.append("")
 	n_node += 1
 
+# Registers a KayKit PackedScene once and returns its ext_resource id.
+func ext_res(path: String, type := "PackedScene") -> String:
+	if _extid.has(path):
+		return str(_extid[path])
+	n_ext += 1
+	var id := "%d_kk%d" % [10 + n_ext, n_ext]
+	_extid[path] = id
+	_exts.append('[ext_resource type="%s" path="%s" id="%s"]' % [type, path, id])
+	return id
+
+# Instances a KayKit glTF. These are pure visuals: no collision, so they can
+# never change the walkable heights or block a lane the city tests protect.
+# They also do not cast shadows: the CSG body behind each one already casts the
+# shadow that reads, and the extra casters cost about 10ms a frame.
+func inst(parent: String, name: String, path: String, x: Transform3D, tris: int) -> void:
+	_nodes.append('[node name="%s" parent="%s" instance=ExtResource("%s")]' % [name, parent, ext_res(path)])
+	if x != Transform3D.IDENTITY:
+		_nodes.append("transform = " + xf(x))
+	_nodes.append("cast_shadow = 0")
+	_nodes.append("")
+	_nodes.append("")
+	n_node += 1
+	n_inst += 1
+	n_tri += tris
+
 func grp(parent: String, name: String, x: Transform3D = Transform3D.IDENTITY) -> void:
 	node("Node3D", name, parent, x)
 
+# Small decorative boxes stay as individual MeshInstance3D nodes. Batching them
+# into per-material MultiMeshes was measurably slower (11.3ms vs 6.5ms): one
+# MultiMesh spanning the whole city cannot be frustum culled, so every instance
+# is transformed and rasterised every frame.
 func mi(parent: String, name: String, size: Vector3, mat: String, x: Transform3D = Transform3D.IDENTITY) -> void:
 	var key := "b|" + str(size)
 	if not _mesh.has(key):
@@ -138,38 +195,90 @@ func mi(parent: String, name: String, size: Vector3, mat: String, x: Transform3D
 		n_tri += 12
 	node("MeshInstance3D", name, parent, x, [
 		"mesh = SubResource(\"%s\")" % _mesh[key],
-		"surface_material_override/0 = SubResource(\"%s\")" % _mid[mat]])
+		"surface_material_override/0 = SubResource(\"%s\")" % _mid[mat],
+		"cast_shadow = 0"])
 	n_mi += 1
 
-func sb(parent: String, name: String, size: Vector3, mat: String, x: Transform3D = Transform3D.IDENTITY, solid := true) -> void:
-	node("CSGBox3D", name, parent, x, [
+# Decorative shapes are emitted as plain mesh instances rather than CSG. CSG
+# re-solves its geometry whenever anything above it moves, and none of these
+# carry collision, so they cost CPU for nothing. Only solid shapes stay CSG.
+func _cyl_mesh(radius: float, height: float, seg: int) -> String:
+	var key := "c|%s|%s|%d" % [f(radius), f(height), seg]
+	if not _mesh.has(key):
+		var id := "mc%d" % _mesh.size()
+		_mesh[key] = id
+		sub_res("CylinderMesh", id, [
+			"top_radius = " + f(radius),
+			"bottom_radius = " + f(radius),
+			"height = " + f(height),
+			"radial_segments = " + str(seg),
+			"rings = 1"])
+		n_tri += seg * 4
+	return _mesh[key]
+
+func _sph_mesh(radius: float) -> String:
+	var key := "s|" + f(radius)
+	if not _mesh.has(key):
+		var id := "ms%d" % _mesh.size()
+		_mesh[key] = id
+		sub_res("SphereMesh", id, [
+			"radius = " + f(radius),
+			"height = " + f(radius * 2.0),
+			"radial_segments = 8",
+			"rings = 4"])
+		n_tri += 8 * 4
+	return _mesh[key]
+
+func sb(parent: String, name: String, size: Vector3, mat: String, x: Transform3D = Transform3D.IDENTITY, solid := true, hide := false) -> void:
+	if not solid:
+		mi(parent, name, size, mat, x)
+		return
+	var props := [
 		"size = " + v3(size),
 		"material = SubResource(\"%s\")" % _mid[mat],
-		"use_collision = " + ("true" if solid else "false")])
+		"use_collision = true"]
+	if hide:
+		props.append("visible = false")
+	node("CSGBox3D", name, parent, x, props)
 	n_csg += 1
 	n_tri += 12
-	if solid:
-		n_solid += 1
+	n_solid += 1
 
-func scyl(parent: String, name: String, radius: float, height: float, mat: String, x: Transform3D = Transform3D.IDENTITY, seg := 10, solid := true) -> void:
-	node("CSGCylinder3D", name, parent, x, [
+func scyl(parent: String, name: String, radius: float, height: float, mat: String, x: Transform3D = Transform3D.IDENTITY, seg := 10, solid := true, hide := false) -> void:
+	if not solid:
+		node("MeshInstance3D", name, parent, x, [
+			"mesh = SubResource(\"%s\")" % _cyl_mesh(radius, height, seg),
+			"surface_material_override/0 = SubResource(\"%s\")" % _mid[mat],
+			"cast_shadow = 0"])
+		n_mi += 1
+		return
+	var props := [
 		"material = SubResource(\"%s\")" % _mid[mat],
 		"radius = " + f(radius),
 		"height = " + f(height),
 		"radial_segments = " + str(seg),
-		"use_collision = " + ("true" if solid else "false")])
+		"use_collision = true"]
+	if hide:
+		props.append("visible = false")
+	node("CSGCylinder3D", name, parent, x, props)
 	n_csg += 1
 	n_tri += seg * 4
-	if solid:
-		n_solid += 1
+	n_solid += 1
 
 func ssph(parent: String, name: String, radius: float, mat: String, x: Transform3D = Transform3D.IDENTITY, solid := true) -> void:
+	if not solid:
+		node("MeshInstance3D", name, parent, x, [
+			"mesh = SubResource(\"%s\")" % _sph_mesh(radius),
+			"surface_material_override/0 = SubResource(\"%s\")" % _mid[mat],
+			"cast_shadow = 0"])
+		n_mi += 1
+		return
 	node("CSGSphere3D", name, parent, x, [
 		"material = SubResource(\"%s\")" % _mid[mat],
 		"radius = " + f(radius),
 		"radial_segments = 8",
 		"rings = 4",
-		"use_collision = " + ("true" if solid else "false")])
+		"use_collision = true"])
 	n_csg += 1
 	n_tri += 64
 	if solid:
@@ -239,32 +348,35 @@ func building(tag: String, cx: float, cz: float, dx: float, dz: float, h: float,
 	grp(".", tag, T(cx, 0, cz))
 	var p := tag
 	var upper_h := maxf(0.6, h - 2.6)
-	sb(p, "GroundFloor", Vector3(dx, 2.6, dz), "wall_brick" if shop else wall, T(0, 1.3, 0), true)
-	sb(p, "Walls", Vector3(dx, upper_h, dz), wall, T(0, 2.6 + upper_h * 0.5, 0), true)
-	sb(p, "Cladding", Vector3(dx + 0.06, maxf(0.3, upper_h - 0.5), dz + 0.06), upper, T(0, 2.6 + upper_h * 0.5, 0), false)
-	sb(p, "Base", Vector3(dx + 0.24, 0.55, dz + 0.24), "trim_dark", T(0, 0.27, 0), false)
-	sb(p, "Cornice", Vector3(dx + 0.34, 0.34, dz + 0.34), "trim", T(0, h - 0.15, 0), false)
-	sb(p, "Roof", Vector3(dx + 0.1, 0.4, dz + 0.1), "roof", T(0, h + 0.2, 0), true)
-	sb(p, "RoofLip", Vector3(dx + 0.5, 0.28, dz + 0.5), "trim_dark", T(0, h + 0.48, 0), false)
+	# The masses keep their exact collision; only their palette changes so the
+	# procedural block matches the KayKit facade panels that now clad the front.
+	sb(p, "GroundFloor", Vector3(dx, 2.6, dz), "kk_wall2", T(0, 1.3, 0), true)
+	sb(p, "Walls", Vector3(dx, upper_h, dz), "kk_wall", T(0, 2.6 + upper_h * 0.5, 0), true)
+	sb(p, "Cladding", Vector3(dx + 0.06, maxf(0.3, upper_h - 0.5), dz + 0.06), upper, T(0, 2.6 + upper_h * 0.5, 0), false, true)
+	sb(p, "Base", Vector3(dx + 0.24, 0.55, dz + 0.24), "kk_trim", T(0, 0.27, 0), false)
+	sb(p, "Cornice", Vector3(dx + 0.34, 0.34, dz + 0.34), "kk_trim", T(0, h - 0.15, 0), false)
+	sb(p, "Roof", Vector3(dx + 0.1, 0.4, dz + 0.1), "kk_roof", T(0, h + 0.2, 0), true)
+	sb(p, "RoofLip", Vector3(dx + 0.5, 0.28, dz + 0.5), "kk_roof", T(0, h + 0.48, 0), false)
 	var pz := dz * 0.5 + 0.2
 	var px := dx * 0.5 + 0.2
-	sb(p, "ParapetN", Vector3(dx + 0.5, 0.5, 0.25), "trim", T(0, h + 0.75, pz), false)
-	sb(p, "ParapetS", Vector3(dx + 0.5, 0.5, 0.25), "trim", T(0, h + 0.75, -pz), false)
-	sb(p, "ParapetE", Vector3(0.25, 0.5, dz + 0.5), "trim", T(px, h + 0.75, 0), false)
-	sb(p, "ParapetW", Vector3(0.25, 0.5, dz + 0.5), "trim", T(-px, h + 0.75, 0), false)
-	# floor line moldings
-	var nbands := maxi(1, rows)
+	sb(p, "ParapetN", Vector3(dx + 0.5, 0.5, 0.25), "kk_trim", T(0, h + 0.75, pz), false)
+	sb(p, "ParapetS", Vector3(dx + 0.5, 0.5, 0.25), "kk_trim", T(0, h + 0.75, -pz), false)
+	sb(p, "ParapetE", Vector3(0.25, 0.5, dz + 0.5), "kk_trim", T(px, h + 0.75, 0), false)
+	sb(p, "ParapetW", Vector3(0.25, 0.5, dz + 0.5), "kk_trim", T(-px, h + 0.75, 0), false)
+	# KayKit 4x4 wall panels replace the painted window grid, so the procedural
+	# band moldings and window frames are no longer emitted.
+	var nbands := 0
 	for i in nbands:
 		var by := 2.6 + upper_h * (float(i + 1) / float(nbands + 1))
 		grp(p, "Band%d" % i, T(0, by, 0))
 		var bl := (dz - 0.2) if face != 0 else (dx - 0.2)
 		mi(p + "/Band%d" % i, "Strip", fs(face, bl, 0.16, 0.16), "trim", T(0, 0, 0))
 		mi(p + "/Band%d" % i, "Under", fs(face, bl, 0.08, 0.2), "trim_dark", T(0, -0.12, 0))
-	# upper windows
+	# upper windows: replaced by the KayKit facade panels
 	grp(p, "Windows")
 	var wspan := (dz - 1.0) if face != 0 else (dx - 1.0)
 	var sp := minf(1.75, wspan / float(maxi(1, cols)))
-	for r in rows:
+	for r in 0:
 		for c in cols:
 			var s := (float(c) - float(cols - 1) * 0.5) * sp
 			var y := 2.6 + 2.6 * float(r) + 1.25
@@ -300,20 +412,14 @@ func building(tag: String, cx: float, cz: float, dx: float, dz: float, h: float,
 			mi(rp + "/" + an, "Body", Vector3(1.15, 0.8, 1.15), "metal_light", T(0, 0, 0))
 			mi(rp + "/" + an, "Grill", Vector3(0.8, 0.07, 0.8), "grate", T(0, 0.43, 0))
 			mi(rp + "/" + an, "Foot", Vector3(1.3, 0.14, 1.3), "metal", T(0, -0.46, 0))
-	# ground floor frontage
+	# ground floor frontage: the KayKit doorway/order window panels take over the
+	# shopfront glazing, so only the sign and the awning are kept.
 	grp(p, "Shop")
 	var sp2 := p + "/Shop"
-	grp(sp2, "Front")
-	var fp2 := sp2 + "/Front"
 	var span: float = minf((dz - 1.0) if face != 0 else (dx - 1.0), 5.0)
-	mi(fp2, "Kick", fs(face, span, 0.55, 0.22), "trim_dark", ft(fl(face, dx, dz, 0, 0.37, 0.06)))
-	mi(fp2, "Glass", fs(face, span - 0.4, 1.85, 0.18), "glass_lit", ft(fl(face, dx, dz, 0, 1.5, 0.1)))
-	mi(fp2, "Mullion", fs(face, 0.1, 1.85, 0.22), "trim_dark", ft(fl(face, dx, dz, 0, 1.5, 0.12)))
-	mi(fp2, "DoorFrame", fs(face, 1.26, 2.34, 0.18), "trim", ft(fl(face, dx, dz, -span * 0.5 + 0.75, 1.2, 0.08)))
-	mi(fp2, "Door", fs(face, 1.02, 2.08, 0.22), "door", ft(fl(face, dx, dz, -span * 0.5 + 0.75, 1.15, 0.13)))
-	mi(fp2, "Band", fs(face, span + 0.5, 0.5, 0.28), accent, ft(fl(face, dx, dz, 0, 2.9, 0.09)))
 	if sign_text != "":
-		label3d(fp2, "Sign", sign_text, fl(face, dx, dz, 0, 2.92, 0.26), 90.0 if face != 0 else 180.0, 0.011, Color(1, 0.96, 0.88), Color(0.15, 0.06, 0.05))
+		label3d(sp2, "Sign", sign_text, fl(face, dx, dz, 0, 2.92, 0.26), 90.0 if face != 0 else 180.0, 0.011, Color(1, 0.96, 0.88), Color(0.15, 0.06, 0.05))
+	clad_building(p, dx, dz, h, face, shop)
 	if awning:
 		var ap := sp2 + "/Awning"
 		var base := fl(face, dx, dz, 0, 3.35, 0.62)
@@ -341,24 +447,16 @@ func bench(x: float, z: float, rot: float, id: int) -> void:
 	var n := "Bench%d" % id
 	grp("StreetProps", n, RY(x, 0.45, z, rot))
 	var p := "StreetProps/" + n
-	mi(p, "LegA", Vector3(0.12, 0.45, 0.55), "metal", T(-0.7, -0.22, 0))
-	mi(p, "LegB", Vector3(0.12, 0.45, 0.55), "metal", T(0.7, -0.22, 0))
-	mi(p, "Seat", Vector3(1.8, 0.11, 0.56), "bench", T(0, 0.05, 0))
-	mi(p, "BackA", Vector3(0.1, 0.5, 0.1), "metal", T(-0.7, 0.3, -0.24))
-	mi(p, "BackB", Vector3(0.1, 0.5, 0.1), "metal", T(0.7, 0.3, -0.24))
-	mi(p, "Back", Vector3(1.8, 0.34, 0.09), "bench", T(0, 0.42, -0.26))
-	mi(p, "ArmL", Vector3(0.09, 0.09, 0.5), "metal", T(-0.85, 0.28, 0))
-	mi(p, "ArmR", Vector3(0.09, 0.09, 0.5), "metal", T(0.85, 0.28, 0))
-	sb(p, "Block", Vector3(1.7, 0.42, 0.45), "bench", T(0, -0.2, 0), true)
+	# collision only; the KayKit slat bench is the visible part
+	sb(p, "Block", Vector3(1.7, 0.42, 0.45), "bench", T(0, -0.2, 0), true, true)
+	inst(p, "Slat", KK_CITY + "bench.gltf", TRS(0.0, -0.30, 0.0, 0.0, 4.5), 26)
 
 func bin_at(x: float, z: float, id: int) -> void:
 	var n := "Bin%d" % id
 	grp("StreetProps", n, T(x, 0.65, z))
 	var p := "StreetProps/" + n
-	scyl(p, "Can", 0.28, 0.92, "metal", T(0, 0, 0), 10, true)
-	scyl(p, "Band", 0.3, 0.08, "metal_light", T(0, 0.3, 0), 10, false)
-	mi(p, "Lid", Vector3(0.62, 0.08, 0.62), "metal_light", T(0, 0.5, 0))
-	mi(p, "Hole", Vector3(0.3, 0.06, 0.3), "grate", T(0, 0.53, 0))
+	scyl(p, "Can", 0.28, 0.92, "metal", T(0, 0, 0), 10, true, true)
+	inst(p, "Mesh", KK_PROTO + ("Can_B" if id % 2 == 0 else "Can_A") + ".gltf", TS(0.0, -0.50, 0.0, 2.0), 79)
 
 func tree(x: float, z: float, s: float, id: int) -> void:
 	var n := "Tree%d" % id
@@ -370,49 +468,63 @@ func tree(x: float, z: float, s: float, id: int) -> void:
 	ssph(p, "CanopyC", 0.55 * s, "leaf2", T(-0.4 * s, 3.1 * s, -0.2 * s), false)
 	scyl(p, "Grate", 0.55, 0.06, "grate", T(0, 0.03, 0), 8, false)
 	scyl(p, "Soil", 0.45, 0.05, "soil", T(0, 0.05, 0), 8, false)
+	# KayKit shrubs fill the bare trunk base
+	inst(p, "Bush", KK_CITY + "bush.gltf", TS(
+		cos(float(id) * 1.7) * 0.4, -0.15, sin(float(id) * 1.7) * 0.4, 2.6), 27)
+
+# Extra KayKit set dressing: kerbside clutter that the procedural pass never
+# had. All of it is decoration only, so the walkable lanes are untouched.
+func kk_clutter() -> void:
+	grp(".", "KayKitProps")
+	# traffic lights on two crossing corners
+	for i in 2:
+		var tx := -4.6 if i % 2 == 0 else 4.6
+		inst("KayKitProps", "Signal%d" % i, KK_CITY + "trafficlight_B.gltf", TS(tx, 0.15, 5.6 if i < 1 else 10.4, 3.6), 331)
+	# skips and pallet stacks in the back yards
+	for i in 3:
+		var sx: float = [-7.4, 7.4, -7.4][i]
+		var sz: float = [14.0, -10.5, -17.5][i]
+		inst("KayKitProps", "Skip%d" % i, KK_CITY + "dumpster.gltf", TRS(sx, 0.15, sz, 90.0 * float(i % 2), 2.2), 77)
+	for i in 4:
+		inst("KayKitProps", "Barrel%d" % i, KK_PROTO + ["Barrel_A", "Barrel_C", "Barrel_B", "Barrel_A"][i] + ".gltf",
+			TS(-7.1 + float(i % 2) * 0.95, 0.75, -16.0 + float(i / 2) * 0.95, 1.0), 128)
+	inst("KayKitProps", "Pallet", KK_PROTO + "Pallet_Small.gltf", TS(-7.0, 0.15, -15.0, 1.0), 88)
+	# rooftop water tower and a few crates on the back lots
+	inst("KayKitProps", "Tower", KK_CITY + "watertower.gltf", TS(6.6, 6.7, 18.0, 1.0), 77)
+	for i in 3:
+		inst("KayKitProps", "Crate%d" % i, KK_PROTO + ["Box_A", "Box_B", "Box_C"][i] + ".gltf",
+			TS(6.9 + float(i) * 0.7, 0.15, 12.4 - float(i) * 0.5, 1.0), 50)
 
 func planter(x: float, z: float, name: String) -> void:
 	grp("StreetProps", name, T(x, 0.45, z))
 	var p := "StreetProps/" + name
-	sb(p, "Box", Vector3(0.72, 0.72, 0.72), "trim", T(0, 0, 0), true)
-	mi(p, "Rim", Vector3(0.86, 0.14, 0.86), "trim_dark", T(0, 0.3, 0))
-	mi(p, "Soil", Vector3(0.66, 0.06, 0.66), "soil", T(0, 0.33, 0))
-	ssph(p, "Plant", 0.36, "leaf", T(0, 0.62, 0), false)
-	ssph(p, "PlantB", 0.26, "leaf2", T(0.28, 0.5, 0.2), false)
+	sb(p, "Box", Vector3(0.72, 0.72, 0.72), "trim", T(0, 0, 0), true, true)
+	mi(p, "Rim", Vector3(0.86, 0.14, 0.86), "kk_trim", T(0, 0.3, 0))
+	inst(p, "Shrub", KK_CITY + "bush.gltf", TS(0.0, 0.36, 0.0, 3.4), 27)
+	inst(p, "ShrubB", KK_CITY + "bush.gltf", TS(0.3, 0.3, -0.22, 2.4), 27)
 
 func parked_car(x: float, z: float, rot: float, body: String, name: String) -> void:
 	grp("StreetProps", name, RY(x, 0.55, z, rot))
 	var p := "StreetProps/" + name
-	sb(p, "Body", Vector3(1.85, 0.6, 3.6), body, T(0, -0.06, 0), true)
-	mi(p, "Cabin", Vector3(1.66, 0.52, 1.9), body, T(0, 0.48, -0.2))
-	mi(p, "Windshield", Vector3(1.56, 0.42, 0.12), "glass", T(0, 0.5, 0.78))
-	mi(p, "Rear", Vector3(1.56, 0.4, 0.12), "glass", T(0, 0.5, -1.18))
-	mi(p, "BumperF", Vector3(1.9, 0.18, 0.16), "metal_light", T(0, -0.14, 1.82))
-	mi(p, "BumperR", Vector3(1.9, 0.18, 0.16), "metal_light", T(0, -0.14, -1.82))
-	mi(p, "LampL", Vector3(0.3, 0.16, 0.08), "lamp_glow", T(-0.6, -0.06, 1.84))
-	mi(p, "LampR", Vector3(0.3, 0.16, 0.08), "lamp_glow", T(0.6, -0.06, 1.84))
-	mi(p, "TailL", Vector3(0.3, 0.14, 0.08), "pizza_red", T(-0.6, -0.06, -1.84))
-	mi(p, "TailR", Vector3(0.3, 0.14, 0.08), "pizza_red", T(0.6, -0.06, -1.84))
-	mi(p, "Skirt", Vector3(1.92, 0.18, 3.3), "metal", T(0, -0.3, 0))
+	# the box and wheels stay as the collision body, the KayKit shell is the
+	# visible car. Scale 3.8 lines the 0.94 long shell up with the 3.6 box.
+	sb(p, "Body", Vector3(1.85, 0.6, 3.6), body, T(0, -0.06, 0), true, true)
 	for i in 4:
 		var wx := 0.88 if i % 2 == 0 else -0.88
 		var wz := 1.15 if i < 2 else -1.15
-		var wn := "Wheel%d" % i
-		scyl(p, wn, 0.32, 0.24, "tire", Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(wx, -0.26, wz)), 10, true)
-		scyl(p, "Hub" + wn, 0.14, 0.26, "metal_light", Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(wx, -0.26, wz)), 8, false)
+		scyl(p, "Wheel%d" % i, 0.32, 0.24, "tire", Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(wx, -0.26, wz)), 10, false)
+	var kind := "car_sedan"
+	if name == "ParkedCar1":
+		kind = "car_taxi"
+	elif name == "ParkedCar3":
+		kind = "car_police"
+	inst(p, "Shell", KK_CITY + kind + ".gltf", TRS(0.0, -0.32, 0.0, 0.0, 3.8), 540)
 
 func hydrant() -> void:
 	grp("StreetProps", "FireHydrant", T(-5.5, 0.55, 10))
 	var p := "StreetProps/FireHydrant"
-	scyl(p, "Base", 0.26, 0.14, "metal", T(0, -0.38, 0), 8, false)
-	scyl(p, "Body", 0.19, 0.78, "pizza_red", T(0, 0, 0), 8, true)
-	scyl(p, "Shoulder", 0.16, 0.12, "pizza_red", T(0, 0.42, 0), 8, false)
-	scyl(p, "Top", 0.11, 0.18, "pizza_red", T(0, 0.55, 0), 8, false)
-	scyl(p, "Cap", 0.07, 0.1, "metal_light", T(0, 0.66, 0), 6, false)
-	mi(p, "ValveL", Vector3(0.3, 0.1, 0.1), "metal", T(0.24, 0.16, 0))
-	mi(p, "ValveR", Vector3(0.3, 0.1, 0.1), "metal", T(-0.24, 0.16, 0))
-	mi(p, "Tag", Vector3(0.14, 0.2, 0.05), "yellow", T(0, 0.3, 0.2))
-
+	scyl(p, "Body", 0.19, 0.78, "pizza_red", T(0, 0, 0), 8, true, true)
+	inst(p, "Mesh", KK_CITY + "firehydrant.gltf", TS(0.0, -0.40, 0.0, 3.0), 72)
 func mailbox() -> void:
 	grp("StreetProps", "Mailbox", T(5.5, 0.75, 1))
 	var p := "StreetProps/Mailbox"
@@ -464,6 +576,152 @@ func manhole(x: float, z: float, id: int) -> void:
 	scyl("RoadDetails/" + n, "Plate", 0.34, 0.05, "grate", T(0, 0.02, 0), 10, false)
 	mi("RoadDetails/" + n, "Ring", Vector3(0.78, 0.03, 0.78), "road_dark", T(0, 0.012, 0))
 
+# --------------------------------------------------------- KayKit dressing
+# A KayKit road tile is 2x2x0.1 with its origin on the underside, so a tile
+# dropped to y=-0.1 has its driving surface flush with the original road top
+# (y=0.0). The CSG road underneath stays as the collision body.
+# Repeated KayKit props are far cheaper as one MultiMesh than as one instanced
+# scene per copy: 88 road tiles cost 88 draw calls as instances and one as a
+# MultiMesh. The source mesh is saved next to the scene so the .tscn can point
+# at it.
+const GENDIR := "res://scenes/generated/"
+
+var _mm_ids: Dictionary = {}
+
+func _mm_mesh_id(path: String) -> String:
+	if _mm_ids.has(path):
+		return _mm_ids[path]
+	var ps: PackedScene = load(path)
+	if ps == null:
+		return ""
+	var inst: Node = ps.instantiate()
+	var mesh: Mesh = null
+	for ch in inst.find_children("*", "MeshInstance3D", true, false):
+		mesh = (ch as MeshInstance3D).mesh
+		break
+	inst.free()
+	if mesh == null:
+		return ""
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(GENDIR))
+	var out := GENDIR + path.get_file().get_basename() + ".res"
+	ResourceSaver.save(mesh, out, ResourceSaver.FLAG_COMPRESS)
+	var id := ext_res(out, "Mesh")
+	_mm_ids[path] = id
+	return id
+
+# Emits one MultiMeshInstance3D holding every copy of `path` placed by `xs`/`zs`.
+func _mm_tiles(name: String, path: String, xs: Array, zs: Array, y: float) -> void:
+	if xs.is_empty():
+		return
+	var id := _mm_mesh_id(path)
+	if id == "":
+		return
+	var sub := "mm_" + name
+	var buf := ""
+	for i in xs.size():
+		if i > 0:
+			buf += ", "
+		buf += "1.0, 0.0, 0.0, " + f(float(xs[i]))
+		buf += ", 0.0, 1.0, 0.0, " + f(y)
+		buf += ", 0.0, 0.0, 1.0, " + f(float(zs[i]))
+	sub_res("MultiMesh", sub, [
+		"transform_format = 1",
+		"instance_count = " + str(xs.size()),
+		"visible_instance_count = " + str(xs.size()),
+		"mesh = ExtResource(\"%s\")" % id,
+		"buffer = PackedFloat32Array(" + buf + ")"])
+	node("MultiMeshInstance3D", name, "Roads", Transform3D.IDENTITY, [
+		"multimesh = SubResource(\"%s\")" % sub,
+		"cast_shadow = 0"])
+	n_inst += 1
+	n_tri += xs.size() * 34
+
+func kk_roads() -> void:
+	grp(".", "Roads")
+	var sx: Array = []
+	var sz: Array = []
+	var cx: Array = []
+	var cz: Array = []
+	for i in 20:
+		var z := -19.0 + float(i) * 2.0
+		# two rows of crossing tiles carry the zebra crossing that the old
+		# procedural Cross boxes used to paint on
+		var cross := absf(z - 7.0) < 0.01 or absf(z - 9.0) < 0.01
+		for j in 4:
+			var x := -3.0 + float(j) * 2.0
+			if cross:
+				cx.append(x)
+				cz.append(z)
+			else:
+				sx.append(x)
+				sz.append(z)
+	_mm_tiles("RStraight", KK_CITY + "road_straight.gltf", sx, sz, -0.1)
+	_mm_tiles("RCrossing", KK_CITY + "road_straight_crossing.gltf", cx, cz, -0.1)
+	# the two aprons past the road ends get plain base plates, dropped to the
+	# apron floor height so they sit flush with the ground behind the road
+	var ax: Array = []
+	var az: Array = []
+	for i in 4:
+		for s in 2:
+			ax.append(-3.0 + float(i) * 2.0)
+			az.append(21.0 * float(s))
+	_mm_tiles("RApron", KK_CITY + "base.gltf", ax, az, -0.3)
+
+# Transform for one facade panel, in the building's local space. The panel is a
+# 4x4x0.5 slab whose origin sits on its base; `out` pushes it onto the face
+# plane, and `sy` squashes the top filler row so the stack reaches the parapet.
+func _panel_xf(lx: float, y: float, out: float, rot: float, sy := 1.0) -> Transform3D:
+	var rb := Basis(Vector3.UP, deg_to_rad(rot))
+	return Transform3D(rb.scaled(Vector3(1.0, sy, 1.0)), rb * Vector3(lx, y, out))
+
+# Clads the street-facing side of a building with 4x4 KayKit wall panels, from
+# just above the plinth up to the parapet. Windows are scattered over the upper
+# rows; the ground row gets a doorway (shops) or an order window.
+func clad_building(p: String, dx: float, dz: float, h: float, face: int, shop: bool) -> void:
+	var rot := 0.0
+	var out := 0.0
+	var span := dx
+	if face > 0:
+		rot = 90.0
+		out = dx * 0.5
+		span = dz
+	elif face < 0:
+		rot = -90.0
+		out = dx * 0.5
+		span = dz
+	else:
+		out = dz * 0.5
+	var cols := maxi(1, int(ceil(span / 4.0)))
+	var top := h - 0.9
+	var bottom := 0.62
+	var rows := int(floor((top - bottom) / 4.0))
+	if rows <= 0:
+		return
+	grp(p, "Facade")
+	var fp := p + "/Facade"
+	for c in cols:
+		var lx := (float(c) - float(cols - 1) * 0.5) * 4.0
+		for r in rows:
+			var kind := "wall"
+			var tris := 50
+			var roll := (r * 5 + c * 3 + 11) % 5
+			if r == 0 and shop:
+				kind = "wall_orderwindow" if c % 2 == 0 else "wall_doorway"
+				tris = 113 if c % 2 == 0 else 97
+			elif r > 0 and roll < 2:
+				kind = "wall_window_open" if roll == 0 else "wall_window_closed"
+				tris = 106
+			inst(fp, "P%d_%d" % [c, r], KK_REST + kind + ".gltf", _panel_xf(lx, bottom + float(r) * 4.0, out, rot), tris)
+		# door leaf for the shopfront doorways
+		if shop and c % 2 == 1:
+			inst(fp, "L%d" % c, KK_REST + "door_A.gltf",
+				_panel_xf(lx + 0.85, bottom, out + 0.35, rot + 26.0), 110)
+		# squash one plain panel to close the gap under the parapet
+		var rem := top - (bottom + float(rows) * 4.0)
+		if rem > 1.1:
+			inst(fp, "F%d" % c, KK_REST + "wall.gltf",
+				_panel_xf(lx, bottom + float(rows) * 4.0, out, rot, rem / 4.0), 50)
+
 # --------------------------------------------------------------- main
 func _initialize() -> void:
 	_build()
@@ -482,6 +740,9 @@ func _build() -> void:
 	n_light = 0
 	n_label = 0
 	n_tri = 0
+	n_inst = 0
+	_exts.clear()
+	_extid.clear()
 
 	for d in MATS:
 		var name: String = d[0]
@@ -536,40 +797,39 @@ func _build() -> void:
 	scol_node("Ground/Body", "GroundBox")
 	# The original street was: road slab (8,0.2,40) at y=-0.1 and two sidewalk
 	# slabs (3,0.3,40) at x=+-5.5, all of them solid. Keep those exact numbers so
-	# the walkable heights stay road=0.0 / sidewalk=0.15.
-	sb(".", "Road", Vector3(8, 0.2, 40), "road", T(0, -0.1, 0), true)
+	# the walkable heights stay road=0.0 / sidewalk=0.15. The road slab is now
+	# invisible: it is the collision body under the KayKit road tiles.
+	sb(".", "Road", Vector3(8, 0.2, 40), "kk_asphalt", T(0, -0.1, 0), true, true)
 	sb(".", "SidewalkLeft", Vector3(3, 0.3, 40), "sidewalk", T(-5.5, 0, 0), true)
 	sb(".", "SidewalkRight", Vector3(3, 0.3, 40), "sidewalk", T(5.5, 0, 0), true)
-	grp(".", "RoadMarkings")
+	kk_roads()
 	grp(".", "RoadDetails")
 	grp(".", "Paving")
 	grp(".", "Curbs")
 	for i in 8:
 		var cz := -17.5 + float(i) * 5.0
-		sb("Curbs", "CurbL%d" % i, Vector3(0.3, 0.36, 4.4), "curb", T(-4.05, 0.02, cz), false)
-		sb("Curbs", "CurbR%d" % i, Vector3(0.3, 0.36, 4.4), "curb", T(4.05, 0.02, cz), false)
+		sb("Curbs", "CurbL%d" % i, Vector3(0.3, 0.36, 4.4), "kk_trim", T(-4.05, 0.02, cz), false)
+		sb("Curbs", "CurbR%d" % i, Vector3(0.3, 0.36, 4.4), "kk_trim", T(4.05, 0.02, cz), false)
 		mi("Paving", "JointL%d" % i, Vector3(2.9, 0.04, 0.14), "walk_tile", T(-5.5, 0.15, cz))
 		mi("Paving", "JointR%d" % i, Vector3(2.9, 0.04, 0.14), "walk_tile", T(5.5, 0.15, cz))
-	for i in 6:
-		mi("RoadMarkings", "Dash%d" % i, Vector3(0.22, 0.04, 3.0), "road_line", T(0, 0.02, -15.0 + float(i) * 5.0))
-	for i in 5:
-		mi("RoadMarkings", "Cross%d" % i, Vector3(0.62, 0.04, 6.2), "road_pale", T(-2.6 + float(i) * 1.3, 0.02, 8.0))
-	mi("RoadMarkings", "StopLine", Vector3(7.2, 0.04, 0.3), "road_pale", T(0, 0.02, 5.4))
-	mi("RoadMarkings", "EdgeL", Vector3(0.14, 0.03, 39.0), "road_line", T(-3.6, 0.015, 0))
-	mi("RoadMarkings", "EdgeR", Vector3(0.14, 0.03, 39.0), "road_line", T(3.6, 0.015, 0))
-	mi("RoadDetails", "Patch", Vector3(2.6, 0.02, 3.4), "road_dark", T(-1.4, 0.012, -13.0))
-	mi("RoadDetails", "PatchB", Vector3(1.8, 0.02, 2.2), "road_dark", T(1.6, 0.012, 3.0))
+	# Lane markings now come from the road tile texture, so the old painted
+	# dashes/crosswalk boxes are gone; the manholes stay as extra detail.
 	manhole(-2.0, -6.0, 1)
 	manhole(2.4, 12.0, 2)
 	# building plots
 	grp(".", "Plots")
-	for e in [[-8, 15.5, 4, 5, "wall_tan2"], [-8, -16.5, 4, 5, "wall_tan2"], [9, 18.5, 5, 3, "wall_blue2"], [9, -13.0, 5, 4, "wall_blue2"]]:
+	for e in [[-8, 15.5, 4, 5, 1], [-8, -16.5, 4, 5, -1], [9, 18.5, 5, 3, -1], [9, -13.0, 5, 4, -1]]:
 		var en := "Plot%d" % int(absf(e[1]) * 10.0)
 		var ep := "Plots/" + en
 		grp("Plots", en, T(e[0], 0, e[1]))
-		sb(ep, "Body", Vector3(e[2], 6.5, e[3]), e[4], T(0, 3.25, 0), true)
-		sb(ep, "Cap", Vector3(e[2] + 0.3, 0.3, e[3] + 0.3), "trim_dark", T(0, 6.6, 0), false)
-		sb(ep, "Band", Vector3(e[2] + 0.2, 0.16, e[3] + 0.2), "trim", T(0, 2.6, 0), false)
+		sb(ep, "Body", Vector3(e[2], 6.5, e[3]), "kk_wall2", T(0, 3.25, 0), true)
+		sb(ep, "Cap", Vector3(e[2] + 0.3, 0.3, e[3] + 0.3), "kk_roof", T(0, 6.6, 0), false)
+		sb(ep, "Band", Vector3(e[2] + 0.2, 0.16, e[3] + 0.2), "kk_trim", T(0, 2.6, 0), false)
+		# KayKit panels on the street side plus a real 2x2 unit against the back
+		clad_building(ep, e[2], e[3], 6.5, int(e[4]), false)
+		var annex := Vector3(-float(e[4]) * (e[2] * 0.5 - 1.0), 0.0, 0.0)
+		inst(ep, "Unit", KK_CITY + ["building_A", "building_B", "building_C", "building_G"][int(absf(e[1])) % 4] + ".gltf",
+			T(annex.x, 0.0, annex.z), 500)
 
 	# --- buildings ---------------------------------------------------------
 	building("Building1", -8, 10, 4, 6, 10, "wall_tan", "wall_tan2", 1, true, "CAFE", "awning_red", true, 2, 3, 2)
@@ -581,6 +841,22 @@ func _build() -> void:
 
 	# --- pizza shop --------------------------------------------------------
 	grp(".", "PizzaShop", T(7.5, 0, 19))
+	# Restaurant kit dressing: awning pillars at the door, a rooftop extraction
+	# hood, and an outdoor seating nook north of the shop. Everything sits off
+	# the delivery lane and clear of PizzaShopGoal at (7.2, 1, 15.4).
+	inst("PizzaShop", "PillarW", KK_REST + "pillar_A.gltf", TS(-3.0, 0.0, -1.5, 0.8), 29)
+	inst("PizzaShop", "PillarW2", KK_REST + "pillar_A.gltf", TS(-3.0, 0.0, 1.5, 0.8), 29)
+	inst("PizzaShop", "Hood", KK_REST + "extractorhood.gltf", TS(1.4, 6.4, 0.4, 1.0), 210)
+	inst("PizzaShop", "HoodDuct", KK_REST + "wall.gltf", TS(1.4, 8.0, 0.4, 1.0), 50)
+	grp("PizzaShop", "Nook", T(0.0, 0.0, 3.2))
+	inst("PizzaShop/Nook", "TableA", KK_REST + "table_round_A.gltf", TS(-1.2, 0.0, 0.0, 1.0), 120)
+	inst("PizzaShop/Nook", "TableB", KK_REST + "table_round_A_small.gltf", TS(1.4, 0.0, 0.4, 1.0), 96)
+	for i in 4:
+		inst("PizzaShop/Nook", "Chair%d" % i, KK_REST + ("chair_A" if i % 2 == 0 else "chair_B") + ".gltf",
+			TRS(-1.2 + [-1.1, 1.1, -1.1, 1.1][i], 0.0, [0.0, 0.0, 1.5, -1.1][i] * 1.0, [0, 180, 90, 270][i], 1.0), 70)
+	inst("PizzaShop/Nook", "CrateCheese", KK_REST + "crate_cheese.gltf", TRS(2.6, 0.0, -0.8, 20.0, 1.0), 130)
+	inst("PizzaShop/Nook", "CrateTomato", KK_REST + "crate_tomatoes.gltf", TRS(2.6, 0.55, -0.8, 0.0, 1.0), 130)
+	inst("PizzaShop/Nook", "Barrel", KK_PROTO + "Barrel_A.gltf", TS(-2.4, 0.0, -1.0, 1.0), 128)
 	sb("PizzaShop", "GroundFloor", Vector3(6, 3.2, 4), "pizza_red", T(0, 1.6, 0), true)
 	sb("PizzaShop", "Walls", Vector3(6, 2.8, 4), "wall_brick", T(0, 4.6, 0), true)
 	sb("PizzaShop", "Base", Vector3(6.24, 0.5, 4.24), "trim_dark", T(0, 0.25, 0), false)
@@ -701,6 +977,7 @@ func _build() -> void:
 	utility(-5.4, -2.2, "Utility1", 0.7, 1.0, 0.5)
 	utility(5.4, 8.0, "Utility2", 0.6, 0.9, 0.45)
 	utility(-5.4, 12.5, "Utility3", 0.55, 0.85, 0.4)
+	kk_clutter()
 	# facade clutter
 	grp(".", "FacadeBits")
 	var units := [["B1", -5.96, 7.6, 3.5], ["B2", -5.96, -1.6, 2.2], ["B3", -5.96, -12.0, 1.7],
@@ -773,13 +1050,15 @@ func _build() -> void:
 	grp(".", "CameraAnchor", Transform3D(Basis(Vector3.RIGHT, deg_to_rad(-30.0)), Vector3(0, 5, -8)))
 
 	# --- write -------------------------------------------------------------
-	var head := "[gd_scene load_steps=%d format=3]\n\n" % (n_res + 2)
+	var head := "[gd_scene load_steps=%d format=3]\n\n" % (n_res + n_ext + 2)
 	head += "[ext_resource type=\"Script\" path=\"res://scripts/city_block.gd\" id=\"1_city\"]\n\n"
+	if n_ext > 0:
+		head += "\n".join(_exts) + "\n\n"
 	head += "\n".join(_subs)
 	head += "\n[node name=\"CityBlock\" type=\"Node3D\"]\nscript = ExtResource(\"1_city\")\n\n"
 	head += "\n".join(_nodes)
 	var fh := FileAccess.open(OUT, FileAccess.WRITE)
 	fh.store_string(head)
 	fh.close()
-	print("WROTE %s res=%d nodes=%d csg=%d mi=%d solid=%d lights=%d labels=%d est_tris=%d" % [
-		OUT, n_res, n_node, n_csg, n_mi, n_solid, n_light, n_label, n_tri])
+	print("WROTE %s res=%d ext=%d inst=%d nodes=%d csg=%d mi=%d solid=%d lights=%d labels=%d est_tris=%d" % [
+		OUT, n_res, n_ext, n_inst, n_node, n_csg, n_mi, n_solid, n_light, n_label, n_tri])
