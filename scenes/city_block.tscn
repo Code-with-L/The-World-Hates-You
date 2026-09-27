@@ -2038,12 +2038,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 19)
 
 
 [node name="PillarW" parent="PizzaShop" instance=ExtResource("23_kk13")]
-transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -3, 0, -1.5)
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -3, 0.15, -1.5)
 cast_shadow = 0
 
 
 [node name="PillarW2" parent="PizzaShop" instance=ExtResource("23_kk13")]
-transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -3, 0, 1.5)
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -3, -0.2, 1.5)
 cast_shadow = 0
 
 
@@ -2058,7 +2058,7 @@ cast_shadow = 0
 
 
 [node name="Nook" type="Node3D" parent="PizzaShop"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 3.2)
 
 
 [node name="TableA" parent="PizzaShop/Nook" instance=ExtResource("25_kk15")]
@@ -2102,7 +2102,7 @@ cast_shadow = 0
 
 
 [node name="Barrel" parent="PizzaShop/Nook" instance=ExtResource("31_kk21")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.5, -1)
 cast_shadow = 0
 
 
@@ -2997,7 +2997,7 @@ cast_shadow = 0
 
 
 [node name="Bush" parent="StreetProps/Tree1" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, -0.0515, -0.15, 0.3967)
+transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, -0.0515, 0, 0.3967)
 cast_shadow = 0
 
 
@@ -3031,7 +3031,7 @@ cast_shadow = 0
 
 
 [node name="Bush" parent="StreetProps/Tree2" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, -0.3867, -0.15, -0.1022)
+transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, -0.3867, 0, -0.1022)
 cast_shadow = 0
 
 
@@ -3065,7 +3065,7 @@ cast_shadow = 0
 
 
 [node name="Bush" parent="StreetProps/Tree3" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, 0.1512, -0.15, -0.3703)
+transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, 0.1512, 0, -0.3703)
 cast_shadow = 0
 
 
@@ -3099,7 +3099,7 @@ cast_shadow = 0
 
 
 [node name="Bush" parent="StreetProps/Tree4" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, 0.3478, -0.15, 0.1976)
+transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, 0.3478, 0, 0.1976)
 cast_shadow = 0
 
 
@@ -3133,7 +3133,7 @@ cast_shadow = 0
 
 
 [node name="Bush" parent="StreetProps/Tree5" instance=ExtResource("35_kk25")]
-transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, -0.2408, -0.15, 0.3194)
+transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, -0.2408, 0, 0.3194)
 cast_shadow = 0
 
 
@@ -3439,37 +3439,37 @@ cast_shadow = 0
 
 
 [node name="Skip0" parent="KayKitProps" instance=ExtResource("40_kk30")]
-transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -7.4, 0.15, 14)
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -7.4, -0.2, 14)
 cast_shadow = 0
 
 
 [node name="Skip1" parent="KayKitProps" instance=ExtResource("40_kk30")]
-transform = Transform3D(0, 0, 2.2, 0, 2.2, 0, -2.2, 0, 0, 7.4, 0.15, -10.5)
+transform = Transform3D(0, 0, 2.2, 0, 2.2, 0, -2.2, 0, 0, 7.4, -0.2, -10.5)
 cast_shadow = 0
 
 
 [node name="Skip2" parent="KayKitProps" instance=ExtResource("40_kk30")]
-transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -7.4, 0.15, -17.5)
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, -7.4, -0.2, -17.5)
 cast_shadow = 0
 
 
 [node name="Barrel0" parent="KayKitProps" instance=ExtResource("31_kk21")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0.75, -16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0.3, -16)
 cast_shadow = 0
 
 
 [node name="Barrel1" parent="KayKitProps" instance=ExtResource("41_kk31")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.15, 0.75, -16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.15, 0.65, -16)
 cast_shadow = 0
 
 
 [node name="Barrel2" parent="KayKitProps" instance=ExtResource("42_kk32")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0.75, -15.05)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0.3, -15.05)
 cast_shadow = 0
 
 
 [node name="Barrel3" parent="KayKitProps" instance=ExtResource("31_kk21")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.15, 0.75, -15.05)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.15, 0.65, -15.05)
 cast_shadow = 0
 
 

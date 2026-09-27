@@ -463,9 +463,11 @@ func tree(x: float, z: float, s: float, id: int) -> void:
 	# the tree grate already hides the soil disc underneath.
 	ssph(p, "Canopy", 0.95 * s, "leaf", T(0, 2.5 * s, 0), true)
 	scyl(p, "Grate", 0.55, 0.06, "grate", T(0, 0.03, 0), 8, false)
-	# KayKit shrubs fill the bare trunk base
+	# KayKit shrubs fill the bare trunk base. The group already sits on the
+	# sidewalk at 0.15, so the shrub origin must be at 0.0, not -0.15, or it
+	# ends up buried in the pavement.
 	inst(p, "Bush", KK_CITY + "bush.gltf", TS(
-		cos(float(id) * 1.7) * 0.4, -0.15, sin(float(id) * 1.7) * 0.4, 2.6), 27)
+		cos(float(id) * 1.7) * 0.4, 0.0, sin(float(id) * 1.7) * 0.4, 2.6), 27)
 
 # Extra KayKit set dressing: kerbside clutter that the procedural pass never
 # had. All of it is decoration only, so the walkable lanes are untouched.
@@ -475,14 +477,18 @@ func kk_clutter() -> void:
 	for i in 2:
 		var tx := -4.6 if i % 2 == 0 else 4.6
 		inst("KayKitProps", "Signal%d" % i, KK_CITY + "trafficlight_B.gltf", TS(tx, 0.15, 5.6 if i < 1 else 10.4, 3.6), 331)
-	# skips and pallet stacks in the back yards
+	# skips and pallet stacks in the back yards. Ground/Body is a 2m box whose
+	# top is y=-0.2, so anything off the road/sidewalk slabs has to stand on
+	# -0.2 rather than on the 0.15 pavement height it was previously using.
 	for i in 3:
 		var sx: float = [-7.4, 7.4, -7.4][i]
 		var sz: float = [14.0, -10.5, -17.5][i]
-		inst("KayKitProps", "Skip%d" % i, KK_CITY + "dumpster.gltf", TRS(sx, 0.15, sz, 90.0 * float(i % 2), 2.2), 77)
+		inst("KayKitProps", "Skip%d" % i, KK_CITY + "dumpster.gltf", TRS(sx, -0.2, sz, 90.0 * float(i % 2), 2.2), 77)
+	# barrels straddle the pavement edge: even indices sit on the bare ground at
+	# -0.2, odd ones on the sidewalk at 0.15.
 	for i in 4:
 		inst("KayKitProps", "Barrel%d" % i, KK_PROTO + ["Barrel_A", "Barrel_C", "Barrel_B", "Barrel_A"][i] + ".gltf",
-			TS(-7.1 + float(i % 2) * 0.95, 0.75, -16.0 + float(i / 2) * 0.95, 1.0), 128)
+			TS(-7.1 + float(i % 2) * 0.95, [0.3, 0.65, 0.3, 0.65][i], -16.0 + float(i / 2) * 0.95, 1.0), 128)
 	inst("KayKitProps", "Pallet", KK_PROTO + "Pallet_Small.gltf", TS(-7.0, 0.15, -15.0, 1.0), 88)
 	# rooftop water tower and a few crates on the back lots
 	inst("KayKitProps", "Tower", KK_CITY + "watertower.gltf", TS(6.6, 6.7, 18.0, 1.0), 77)
@@ -868,11 +874,14 @@ func _build() -> void:
 	# Restaurant kit dressing: awning pillars at the door, a rooftop extraction
 	# hood, and an outdoor seating nook north of the shop. Everything sits off
 	# the delivery lane and clear of PizzaShopGoal at (7.2, 1, 15.4).
-	inst("PizzaShop", "PillarW", KK_REST + "pillar_A.gltf", TS(-3.0, 0.0, -1.5, 0.8), 29)
-	inst("PizzaShop", "PillarW2", KK_REST + "pillar_A.gltf", TS(-3.0, 0.0, 1.5, 0.8), 29)
+	inst("PizzaShop", "PillarW", KK_REST + "pillar_A.gltf", TS(-3.0, 0.15, -1.5, 0.8), 29)
+	inst("PizzaShop", "PillarW2", KK_REST + "pillar_A.gltf", TS(-3.0, -0.2, 1.5, 0.8), 29)
 	inst("PizzaShop", "Hood", KK_REST + "extractorhood.gltf", TS(1.4, 6.4, 0.4, 1.0), 210)
 	inst("PizzaShop", "HoodDuct", KK_REST + "wall.gltf", TS(1.4, 8.0, 0.4, 1.0), 50)
-	grp("PizzaShop", "Nook", T(0.0, 0.0, 3.2))
+	# The nook sits at z=22.2, past the end of the 40m road/sidewalk slabs, so
+	# it stands on the bare Ground/Body surface at -0.2. Its barrel model has
+	# its origin half a metre above its own base, hence the 0.5 local lift.
+	grp("PizzaShop", "Nook", T(0.0, -0.2, 3.2))
 	inst("PizzaShop/Nook", "TableA", KK_REST + "table_round_A.gltf", TS(-1.2, 0.0, 0.0, 1.0), 120)
 	inst("PizzaShop/Nook", "TableB", KK_REST + "table_round_A_small.gltf", TS(1.4, 0.0, 0.4, 1.0), 96)
 	for i in 4:
@@ -880,7 +889,7 @@ func _build() -> void:
 			TRS(-1.2 + [-1.1, 1.1, -1.1, 1.1][i], 0.0, [0.0, 0.0, 1.5, -1.1][i] * 1.0, [0, 180, 90, 270][i], 1.0), 70)
 	inst("PizzaShop/Nook", "CrateCheese", KK_REST + "crate_cheese.gltf", TRS(2.6, 0.0, -0.8, 20.0, 1.0), 130)
 	inst("PizzaShop/Nook", "CrateTomato", KK_REST + "crate_tomatoes.gltf", TRS(2.6, 0.55, -0.8, 0.0, 1.0), 130)
-	inst("PizzaShop/Nook", "Barrel", KK_PROTO + "Barrel_A.gltf", TS(-2.4, 0.0, -1.0, 1.0), 128)
+	inst("PizzaShop/Nook", "Barrel", KK_PROTO + "Barrel_A.gltf", TS(-2.4, 0.5, -1.0, 1.0), 128)
 	sb("PizzaShop", "GroundFloor", Vector3(6, 3.2, 4), "pizza_red", T(0, 1.6, 0), true)
 	sb("PizzaShop", "Walls", Vector3(6, 2.8, 4), "wall_brick", T(0, 4.6, 0), true)
 	sb("PizzaShop", "Base", Vector3(6.24, 0.5, 4.24), "trim_dark", T(0, 0.25, 0), false)
