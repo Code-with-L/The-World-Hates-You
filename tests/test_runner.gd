@@ -1,4 +1,4 @@
-﻿extends Node
+extends Node
 
 var game: Node = null
 var passed := 0

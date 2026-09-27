@@ -1,4 +1,4 @@
-﻿extends Node3D
+extends Node3D
 
 var _fails := 0
 var _passes := 0
