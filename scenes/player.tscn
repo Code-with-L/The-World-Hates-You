@@ -1,0 +1,201 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.4
+height = 1.7
+
+[sub_resource type="StandardMaterial3D" id="Material_jacket"]
+albedo_color = Color(0.93, 0.33, 0.24, 1)
+roughness = 0.62
+
+[sub_resource type="StandardMaterial3D" id="Material_skin"]
+albedo_color = Color(0.98, 0.85, 0.7, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Material_dark"]
+albedo_color = Color(0.12, 0.12, 0.14, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Material_cap"]
+albedo_color = Color(0.15, 0.52, 0.58, 1)
+roughness = 0.55
+
+[sub_resource type="StandardMaterial3D" id="Material_jeans"]
+albedo_color = Color(0.24, 0.29, 0.44, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Material_bag"]
+albedo_color = Color(0.72, 0.5, 0.26, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Material_shadow"]
+transparency = 1
+albedo_color = Color(0, 0, 0, 0.35)
+shading_mode = 0
+cull_mode = 2
+
+[sub_resource type="BoxMesh" id="BoxMesh_torso"]
+material = SubResource("Material_jacket")
+size = Vector3(0.58, 0.52, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_strap"]
+material = SubResource("Material_bag")
+size = Vector3(0.1, 0.5, 0.06)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_head"]
+material = SubResource("Material_skin")
+radius = 0.2
+height = 0.36
+radial_segments = 10
+rings = 3
+
+[sub_resource type="BoxMesh" id="BoxMesh_nose"]
+material = SubResource("Material_dark")
+size = Vector3(0.1, 0.08, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_eye"]
+material = SubResource("Material_dark")
+size = Vector3(0.07, 0.09, 0.05)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cap"]
+material = SubResource("Material_cap")
+top_radius = 0.21
+bottom_radius = 0.22
+height = 0.13
+radial_segments = 12
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_brim"]
+material = SubResource("Material_dark")
+size = Vector3(0.3, 0.035, 0.18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bag"]
+material = SubResource("Material_bag")
+size = Vector3(0.44, 0.48, 0.26)
+
+[sub_resource type="BoxMesh" id="BoxMesh_arm"]
+material = SubResource("Material_jacket")
+size = Vector3(0.15, 0.5, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_leg"]
+material = SubResource("Material_jeans")
+size = Vector3(0.2, 0.62, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_foot"]
+material = SubResource("Material_dark")
+size = Vector3(0.22, 0.13, 0.33)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_shadow"]
+material = SubResource("Material_shadow")
+top_radius = 0.45
+bottom_radius = 0.45
+height = 0.02
+radial_segments = 12
+rings = 1
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 1
+floor_snap_length = 0.4
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="Shadow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("CylinderMesh_shadow")
+cast_shadow = 0
+
+[node name="Model" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
+mesh = SubResource("BoxMesh_torso")
+cast_shadow = 0
+
+[node name="Strap" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.3, -0.21)
+mesh = SubResource("BoxMesh_strap")
+cast_shadow = 0
+
+[node name="Bag" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.3)
+mesh = SubResource("BoxMesh_bag")
+cast_shadow = 0
+
+[node name="ArmL" type="Node3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34, 0.44, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Model/ArmL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("BoxMesh_arm")
+cast_shadow = 0
+
+[node name="ArmR" type="Node3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34, 0.44, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Model/ArmR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("BoxMesh_arm")
+cast_shadow = 0
+
+[node name="LegL" type="Node3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, -0.02, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Model/LegL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.31, 0)
+mesh = SubResource("BoxMesh_leg")
+cast_shadow = 0
+
+[node name="Foot" type="MeshInstance3D" parent="Model/LegL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.66, -0.05)
+mesh = SubResource("BoxMesh_foot")
+cast_shadow = 0
+
+[node name="LegR" type="Node3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, -0.02, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Model/LegR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.31, 0)
+mesh = SubResource("BoxMesh_leg")
+cast_shadow = 0
+
+[node name="Foot" type="MeshInstance3D" parent="Model/LegR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.66, -0.05)
+mesh = SubResource("BoxMesh_foot")
+cast_shadow = 0
+
+[node name="Head" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
+mesh = SubResource("CapsuleMesh_head")
+cast_shadow = 0
+
+[node name="Nose" type="MeshInstance3D" parent="Model/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, -0.2)
+mesh = SubResource("BoxMesh_nose")
+cast_shadow = 0
+
+[node name="EyeL" type="MeshInstance3D" parent="Model/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.04, -0.17)
+mesh = SubResource("BoxMesh_eye")
+cast_shadow = 0
+
+[node name="EyeR" type="MeshInstance3D" parent="Model/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09, 0.04, -0.17)
+mesh = SubResource("BoxMesh_eye")
+cast_shadow = 0
+
+[node name="Cap" type="MeshInstance3D" parent="Model/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, 0)
+mesh = SubResource("CylinderMesh_cap")
+cast_shadow = 0
+
+[node name="Brim" type="MeshInstance3D" parent="Model/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -0.2)
+mesh = SubResource("BoxMesh_brim")
+cast_shadow = 0

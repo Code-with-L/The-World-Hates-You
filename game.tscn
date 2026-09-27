@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://bxbi50ws5oiby"]
+
+[ext_resource type="Script" uid="uid://brbplfm8cye3f" path="res://scripts/game_manager.gd" id="1_manager"]
+[ext_resource type="PackedScene" path="res://scenes/city_block.tscn" id="2_city"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="3_player"]
+[ext_resource type="Script" uid="uid://drvp5f46po42d" path="res://scripts/camera_rig.gd" id="4_camera"]
+[ext_resource type="Script" uid="uid://bp4fii5sp5amh" path="res://scripts/mission.gd" id="5_mission"]
+[ext_resource type="Script" uid="uid://v717es7xveom" path="res://scripts/disaster_manager.gd" id="6_disasters"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="7_hud"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(46, 0.6, 46)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.3, 0.31, 0.34, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = SubResource("Material_ground")
+size = Vector3(46, 0.6, 46)
+
+[node name="GAME" type="Node3D" unique_id=252784346]
+script = ExtResource("1_manager")
+
+[node name="ground" type="StaticBody3D" parent="." unique_id=869311294]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.33, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ground" unique_id=1622813653]
+shape = SubResource("BoxShape3D_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ground" unique_id=536965235]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.18911424, 0)
+mesh = SubResource("BoxMesh_ground")
+
+[node name="CityBlock" parent="." unique_id=326303986 instance=ExtResource("2_city")]
+
+[node name="Player" parent="." unique_id=1556826985 instance=ExtResource("3_player")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.1, -17)
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=412864807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -17)
+script = ExtResource("4_camera")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraRig" unique_id=473958593]
+spring_length = 6.4
+margin = 0.35
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/SpringArm3D" unique_id=429886334]
+fov = 62.0
+near = 0.08
+far = 90.0
+
+[node name="Mission" type="Node3D" parent="." unique_id=817518171]
+script = ExtResource("5_mission")
+
+[node name="DisasterManager" type="Node3D" parent="." unique_id=909638768]
+script = ExtResource("6_disasters")
+
+[node name="HUD" parent="." unique_id=798415084 instance=ExtResource("7_hud")]

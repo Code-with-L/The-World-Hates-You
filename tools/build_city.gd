@@ -1,0 +1,785 @@
+extends SceneTree
+
+# Regenerates scenes/city_block.tscn.
+#
+# Invariants kept on purpose:
+#   * gameplay layout is unchanged: road, sidewalks, the six buildings at their
+#     original centres/sizes/heights, pizza shop, prop anchors, hazard zones
+#     (position + collision shape), spawn/goal markers, camera anchor
+#   * decoration uses MeshInstance3D primitives only (no CSG bake, no collision)
+#   * solid props stay CSG with an explicit use_collision flag, and cylinders /
+#     spheres use low segment counts to keep the mobile triangle budget small
+
+const OUT := "res://scenes/city_block.tscn"
+
+var _nodes: Array[String] = []
+var _subs: Array[String] = []
+var _mid := {}
+var _mesh := {}
+var n_res := 0
+var n_node := 0
+var n_csg := 0
+var n_mi := 0
+var n_solid := 0
+var n_light := 0
+var n_label := 0
+var n_tri := 0
+
+var MATS := [
+	["road", {"c": Color(0.26, 0.26, 0.28), "r": 0.95}],
+	["road_dark", {"c": Color(0.2, 0.2, 0.22), "r": 0.95}],
+	["road_line", {"c": Color(0.88, 0.79, 0.38), "r": 0.8}],
+	["road_pale", {"c": Color(0.92, 0.92, 0.9), "r": 0.8}],
+	["curb", {"c": Color(0.74, 0.72, 0.68), "r": 0.9}],
+	["sidewalk", {"c": Color(0.64, 0.63, 0.61), "r": 0.9}],
+	["walk_tile", {"c": Color(0.55, 0.54, 0.53), "r": 0.9}],
+	["wall_tan", {"c": Color(0.66, 0.56, 0.42), "r": 0.85}],
+	["wall_tan2", {"c": Color(0.58, 0.48, 0.36), "r": 0.85}],
+	["wall_blue", {"c": Color(0.4, 0.48, 0.58), "r": 0.85}],
+	["wall_blue2", {"c": Color(0.34, 0.42, 0.52), "r": 0.85}],
+	["wall_brick", {"c": Color(0.48, 0.32, 0.27), "r": 0.9}],
+	["roof", {"c": Color(0.3, 0.29, 0.29), "r": 0.9}],
+	["trim", {"c": Color(0.86, 0.84, 0.78), "r": 0.7}],
+	["trim_dark", {"c": Color(0.33, 0.31, 0.29), "r": 0.8}],
+	["glass", {"c": Color(0.48, 0.66, 0.78), "r": 0.1, "m": 0.4, "e": Color(0.3, 0.42, 0.5), "ei": 0.3}],
+	["glass_lit", {"c": Color(0.95, 0.85, 0.6), "r": 0.2, "e": Color(1, 0.85, 0.55), "ei": 0.5}],
+	["door", {"c": Color(0.33, 0.2, 0.14), "r": 0.7}],
+	["awning_red", {"c": Color(0.78, 0.18, 0.16), "r": 0.75}],
+	["awning_cream", {"c": Color(0.9, 0.87, 0.8), "r": 0.75}],
+	["shop_dark", {"c": Color(0.16, 0.16, 0.18), "r": 0.8}],
+	["pizza_red", {"c": Color(0.76, 0.11, 0.09), "r": 0.5}],
+	["pizza_cream", {"c": Color(0.93, 0.86, 0.68), "r": 0.7}],
+	["pizza_cheese", {"c": Color(0.95, 0.78, 0.2), "r": 0.6}],
+	["yellow", {"c": Color(0.94, 0.76, 0.14), "r": 0.5, "e": Color(1, 0.8, 0.2), "ei": 0.35}],
+	["leaf", {"c": Color(0.24, 0.48, 0.24), "r": 0.95}],
+	["leaf2", {"c": Color(0.31, 0.55, 0.27), "r": 0.95}],
+	["trunk", {"c": Color(0.3, 0.21, 0.14), "r": 0.95}],
+	["soil", {"c": Color(0.26, 0.19, 0.14), "r": 1.0}],
+	["metal", {"c": Color(0.3, 0.31, 0.33), "r": 0.45, "m": 0.7}],
+	["metal_light", {"c": Color(0.58, 0.59, 0.61), "r": 0.4, "m": 0.7}],
+	["pole", {"c": Color(0.22, 0.23, 0.25), "r": 0.5, "m": 0.5}],
+	["car_a", {"c": Color(0.68, 0.2, 0.18), "r": 0.35, "m": 0.3}],
+	["car_b", {"c": Color(0.18, 0.28, 0.52), "r": 0.35, "m": 0.3}],
+	["tire", {"c": Color(0.11, 0.11, 0.12), "r": 0.95}],
+	["wood", {"c": Color(0.44, 0.31, 0.19), "r": 0.9}],
+	["bench", {"c": Color(0.48, 0.34, 0.2), "r": 0.9}],
+	["lamp_glow", {"c": Color(1, 0.93, 0.75), "r": 0.3, "e": Color(1, 0.92, 0.72), "ei": 2.0}],
+	["neon", {"c": Color(1, 0.3, 0.3), "r": 0.3, "e": Color(1, 0.22, 0.22), "ei": 1.6}],
+	["hazard", {"c": Color(0.44, 0.37, 0.17), "r": 0.9}],
+	["hatch", {"c": Color(0.82, 0.7, 0.2), "r": 0.8}],
+	["marker_spawn", {"c": Color(0.2, 0.6, 0.85), "r": 0.4, "e": Color(0.3, 0.75, 1.0), "ei": 0.9}],
+	["marker_goal", {"c": Color(0.2, 0.7, 0.35), "r": 0.4, "e": Color(0.3, 0.95, 0.45), "ei": 0.9}],
+	["grate", {"c": Color(0.18, 0.18, 0.19), "r": 0.9}],
+]
+
+# --------------------------------------------------------------- formatting
+func f(v: float) -> String:
+	if absf(v) < 0.0005:
+		return "0"
+	var s := String.num(v, 4)
+	if s.contains("."):
+		s = s.rstrip("0").rstrip(".")
+	return s
+
+func v3(v: Vector3) -> String:
+	return "Vector3(%s, %s, %s)" % [f(v.x), f(v.y), f(v.z)]
+
+func cl(c: Color) -> String:
+	return "Color(%s, %s, %s, %s)" % [f(c.r), f(c.g), f(c.b), f(c.a)]
+
+func xf(t: Transform3D) -> String:
+	var b := t.basis
+	return "Transform3D(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % [
+		f(b.x.x), f(b.y.x), f(b.z.x),
+		f(b.x.y), f(b.y.y), f(b.z.y),
+		f(b.x.z), f(b.y.z), f(b.z.z),
+		f(t.origin.x), f(t.origin.y), f(t.origin.z)]
+
+func T(x: float, y: float, z: float) -> Transform3D:
+	return Transform3D(Basis(), Vector3(x, y, z))
+
+func RY(x: float, y: float, z: float, deg: float) -> Transform3D:
+	return Transform3D(Basis(Vector3.UP, deg_to_rad(deg)), Vector3(x, y, z))
+
+func RX(x: float, y: float, z: float, deg: float) -> Transform3D:
+	return Transform3D(Basis(Vector3.RIGHT, deg_to_rad(deg)), Vector3(x, y, z))
+
+func RZ(x: float, y: float, z: float, deg: float) -> Transform3D:
+	return Transform3D(Basis(Vector3.BACK, deg_to_rad(deg)), Vector3(x, y, z))
+
+# --------------------------------------------------------------- emitters
+func sub_res(type: String, id: String, body: Array) -> void:
+	n_res += 1
+	_subs.append('[sub_resource type="%s" id="%s"]' % [type, id])
+	for l in body:
+		_subs.append(str(l))
+	_subs.append("")
+	_subs.append("")
+
+func node(t: String, name: String, parent: String, x: Transform3D = Transform3D.IDENTITY, props: Array = []) -> void:
+	_nodes.append('[node name="%s" type="%s" parent="%s"]' % [name, t, parent])
+	if x != Transform3D.IDENTITY:
+		_nodes.append("transform = " + xf(x))
+	for p in props:
+		_nodes.append(str(p))
+	_nodes.append("")
+	_nodes.append("")
+	n_node += 1
+
+func grp(parent: String, name: String, x: Transform3D = Transform3D.IDENTITY) -> void:
+	node("Node3D", name, parent, x)
+
+func mi(parent: String, name: String, size: Vector3, mat: String, x: Transform3D = Transform3D.IDENTITY) -> void:
+	var key := "b|" + str(size)
+	if not _mesh.has(key):
+		var id := "mb%d" % _mesh.size()
+		_mesh[key] = id
+		sub_res("BoxMesh", id, ["size = " + v3(size)])
+		n_tri += 12
+	node("MeshInstance3D", name, parent, x, [
+		"mesh = SubResource(\"%s\")" % _mesh[key],
+		"surface_material_override/0 = SubResource(\"%s\")" % _mid[mat]])
+	n_mi += 1
+
+func sb(parent: String, name: String, size: Vector3, mat: String, x: Transform3D = Transform3D.IDENTITY, solid := true) -> void:
+	node("CSGBox3D", name, parent, x, [
+		"size = " + v3(size),
+		"material = SubResource(\"%s\")" % _mid[mat],
+		"use_collision = " + ("true" if solid else "false")])
+	n_csg += 1
+	n_tri += 12
+	if solid:
+		n_solid += 1
+
+func scyl(parent: String, name: String, radius: float, height: float, mat: String, x: Transform3D = Transform3D.IDENTITY, seg := 10, solid := true) -> void:
+	node("CSGCylinder3D", name, parent, x, [
+		"material = SubResource(\"%s\")" % _mid[mat],
+		"radius = " + f(radius),
+		"height = " + f(height),
+		"radial_segments = " + str(seg),
+		"use_collision = " + ("true" if solid else "false")])
+	n_csg += 1
+	n_tri += seg * 4
+	if solid:
+		n_solid += 1
+
+func ssph(parent: String, name: String, radius: float, mat: String, x: Transform3D = Transform3D.IDENTITY, solid := true) -> void:
+	node("CSGSphere3D", name, parent, x, [
+		"material = SubResource(\"%s\")" % _mid[mat],
+		"radius = " + f(radius),
+		"radial_segments = 8",
+		"rings = 4",
+		"use_collision = " + ("true" if solid else "false")])
+	n_csg += 1
+	n_tri += 64
+	if solid:
+		n_solid += 1
+
+func storus(parent: String, name: String, inner: float, outer: float, mat: String, x: Transform3D = Transform3D.IDENTITY) -> void:
+	node("CSGTorus3D", name, parent, x, [
+		"material = SubResource(\"%s\")" % _mid[mat],
+		"inner_radius = " + f(inner),
+		"outer_radius = " + f(outer),
+		"rings = 3",
+		"ring_segments = 16",
+		"use_collision = false"])
+	n_csg += 1
+	n_tri += 96
+
+func scol_node(parent: String, shape_id: String) -> void:
+	node("CollisionShape3D", "CollisionShape3D", parent, Transform3D.IDENTITY, ["shape = SubResource(\"%s\")" % shape_id])
+
+func light(parent: String, name: String, pos: Vector3, color: Color, energy: float, rng: float) -> void:
+	node("OmniLight3D", name, parent, T(pos.x, pos.y, pos.z), [
+		"light_color = " + cl(color),
+		"light_energy = " + f(energy),
+		"omni_range = " + f(rng),
+		"shadow_enabled = false"])
+	n_light += 1
+
+func label3d(parent: String, name: String, text: String, pos: Vector3, rot: float, psize: float, col: Color, outline: Color) -> void:
+	node("Label3D", name, parent, RY(pos.x, pos.y, pos.z, rot), [
+		"text = \"%s\"" % text,
+		"font_size = 48",
+		"outline_size = 10",
+		"pixel_size = " + f(psize),
+		"modulate = " + cl(col),
+		"outline_modulate = " + cl(outline),
+		"billboard = 0",
+		"no_depth_test = false"])
+	n_label += 1
+
+# facade: 1 -> looks toward +x, -1 -> toward -x, 0 -> toward -z (local space)
+func fl(face: int, dx: float, dz: float, s: float, y: float, d: float) -> Vector3:
+	if face == 0:
+		return Vector3(s, y, -dz * 0.5 - d)
+	if face > 0:
+		return Vector3(dx * 0.5 + d, y, s)
+	return Vector3(-dx * 0.5 - d, y, s)
+
+func fs(face: int, w: float, h: float, t: float) -> Vector3:
+	if face == 0:
+		return Vector3(w, h, t)
+	return Vector3(t, h, w)
+
+func fo(face: int, lateral: float, up: float, out: float) -> Transform3D:
+	if face == 0:
+		return T(lateral, up, -out)
+	if face > 0:
+		return T(out, up, lateral)
+	return T(-out, up, lateral)
+
+func ft(v: Vector3) -> Transform3D:
+	return Transform3D(Basis(), v)
+
+# --------------------------------------------------------------- building
+func building(tag: String, cx: float, cz: float, dx: float, dz: float, h: float,
+		wall: String, upper: String, face: int, shop: bool, sign_text: String,
+		accent: String, awning: bool, rows: int, cols: int, roof_kit: int) -> void:
+	grp(".", tag, T(cx, 0, cz))
+	var p := tag
+	var upper_h := maxf(0.6, h - 2.6)
+	sb(p, "GroundFloor", Vector3(dx, 2.6, dz), "wall_brick" if shop else wall, T(0, 1.3, 0), true)
+	sb(p, "Walls", Vector3(dx, upper_h, dz), wall, T(0, 2.6 + upper_h * 0.5, 0), true)
+	sb(p, "Cladding", Vector3(dx + 0.06, maxf(0.3, upper_h - 0.5), dz + 0.06), upper, T(0, 2.6 + upper_h * 0.5, 0), false)
+	sb(p, "Base", Vector3(dx + 0.24, 0.55, dz + 0.24), "trim_dark", T(0, 0.27, 0), false)
+	sb(p, "Cornice", Vector3(dx + 0.34, 0.34, dz + 0.34), "trim", T(0, h - 0.15, 0), false)
+	sb(p, "Roof", Vector3(dx + 0.1, 0.4, dz + 0.1), "roof", T(0, h + 0.2, 0), true)
+	sb(p, "RoofLip", Vector3(dx + 0.5, 0.28, dz + 0.5), "trim_dark", T(0, h + 0.48, 0), false)
+	var pz := dz * 0.5 + 0.2
+	var px := dx * 0.5 + 0.2
+	sb(p, "ParapetN", Vector3(dx + 0.5, 0.5, 0.25), "trim", T(0, h + 0.75, pz), false)
+	sb(p, "ParapetS", Vector3(dx + 0.5, 0.5, 0.25), "trim", T(0, h + 0.75, -pz), false)
+	sb(p, "ParapetE", Vector3(0.25, 0.5, dz + 0.5), "trim", T(px, h + 0.75, 0), false)
+	sb(p, "ParapetW", Vector3(0.25, 0.5, dz + 0.5), "trim", T(-px, h + 0.75, 0), false)
+	# floor line moldings
+	var nbands := maxi(1, rows)
+	for i in nbands:
+		var by := 2.6 + upper_h * (float(i + 1) / float(nbands + 1))
+		grp(p, "Band%d" % i, T(0, by, 0))
+		var bl := (dz - 0.2) if face != 0 else (dx - 0.2)
+		mi(p + "/Band%d" % i, "Strip", fs(face, bl, 0.16, 0.16), "trim", T(0, 0, 0))
+		mi(p + "/Band%d" % i, "Under", fs(face, bl, 0.08, 0.2), "trim_dark", T(0, -0.12, 0))
+	# upper windows
+	grp(p, "Windows")
+	var wspan := (dz - 1.0) if face != 0 else (dx - 1.0)
+	var sp := minf(1.75, wspan / float(maxi(1, cols)))
+	for r in rows:
+		for c in cols:
+			var s := (float(c) - float(cols - 1) * 0.5) * sp
+			var y := 2.6 + 2.6 * float(r) + 1.25
+			if y + 0.8 > h - 0.35:
+				continue
+			var wn := "W%d_%d" % [r, c]
+			var wp := p + "/Windows/" + wn
+			grp(p + "/Windows", wn, ft(fl(face, dx, dz, s, y, 0.05)))
+			mi(wp, "Frame", fs(face, 1.16, 1.56, 0.12), "trim", T(0, 0, 0))
+			mi(wp, "Pane", fs(face, 0.92, 1.32, 0.18), "glass_lit" if (r + c) % 3 == 0 else "glass", T(0, 0, 0))
+			mi(wp, "Bar", fs(face, 0.07, 1.32, 0.2), "trim_dark", T(0, 0, 0))
+			mi(wp, "Sill", fs(face, 1.34, 0.11, 0.3), "trim", fo(face, 0, -0.86, 0.05))
+			mi(wp, "Lintel", fs(face, 1.4, 0.12, 0.22), "trim", fo(face, 0, 0.86, 0.02))
+	# roof kit
+	if roof_kit > 0:
+		grp(p, "RoofTop")
+		var rp := p + "/RoofTop"
+		if roof_kit > 1:
+			grp(rp, "Hut", T(dx * 0.2, h + 1.45, dz * 0.18))
+			mi(rp + "/Hut", "Body", Vector3(1.7, 2.0, 1.7), "trim_dark", T(0, 0, 0))
+			mi(rp + "/Hut", "Cap", Vector3(1.9, 0.16, 1.9), "metal", T(0, 1.08, 0))
+			mi(rp + "/Hut", "Door", Vector3(0.7, 1.3, 0.1), "metal_light", T(0, -0.3, 0.88))
+		if roof_kit > 2:
+			grp(rp, "Tank", T(-dx * 0.22, h + 1.75, -dz * 0.2))
+			scyl(rp + "/Tank", "Drum", 0.85, 1.5, "metal_light", T(0, 0, 0), 10, false)
+			mi(rp + "/Tank", "Lid", Vector3(1.7, 0.12, 1.7), "metal", T(0, 0.8, 0))
+			for lx in [-0.6, 0.6]:
+				for lz in [-0.6, 0.6]:
+					mi(rp + "/Tank", "Leg%d_%d" % [int(lx * 10.0), int(lz * 10.0)], Vector3(0.12, 0.95, 0.12), "metal", T(lx, -1.2, lz))
+		for a in roof_kit:
+			var an := "AC%d" % a
+			grp(rp, an, T(-dx * 0.3 + float(a) * 1.5, h + 0.9, -dz * 0.28 + float(a % 2) * 1.0))
+			mi(rp + "/" + an, "Body", Vector3(1.15, 0.8, 1.15), "metal_light", T(0, 0, 0))
+			mi(rp + "/" + an, "Grill", Vector3(0.8, 0.07, 0.8), "grate", T(0, 0.43, 0))
+			mi(rp + "/" + an, "Foot", Vector3(1.3, 0.14, 1.3), "metal", T(0, -0.46, 0))
+	# ground floor frontage
+	grp(p, "Shop")
+	var sp2 := p + "/Shop"
+	grp(sp2, "Front")
+	var fp2 := sp2 + "/Front"
+	var span: float = minf((dz - 1.0) if face != 0 else (dx - 1.0), 5.0)
+	mi(fp2, "Kick", fs(face, span, 0.55, 0.22), "trim_dark", ft(fl(face, dx, dz, 0, 0.37, 0.06)))
+	mi(fp2, "Glass", fs(face, span - 0.4, 1.85, 0.18), "glass_lit", ft(fl(face, dx, dz, 0, 1.5, 0.1)))
+	mi(fp2, "Mullion", fs(face, 0.1, 1.85, 0.22), "trim_dark", ft(fl(face, dx, dz, 0, 1.5, 0.12)))
+	mi(fp2, "DoorFrame", fs(face, 1.26, 2.34, 0.18), "trim", ft(fl(face, dx, dz, -span * 0.5 + 0.75, 1.2, 0.08)))
+	mi(fp2, "Door", fs(face, 1.02, 2.08, 0.22), "door", ft(fl(face, dx, dz, -span * 0.5 + 0.75, 1.15, 0.13)))
+	mi(fp2, "Band", fs(face, span + 0.5, 0.5, 0.28), accent, ft(fl(face, dx, dz, 0, 2.9, 0.09)))
+	if sign_text != "":
+		label3d(fp2, "Sign", sign_text, fl(face, dx, dz, 0, 2.92, 0.26), 90.0 if face != 0 else 180.0, 0.011, Color(1, 0.96, 0.88), Color(0.15, 0.06, 0.05))
+	if awning:
+		var ap := sp2 + "/Awning"
+		var base := fl(face, dx, dz, 0, 3.35, 0.62)
+		grp(sp2, "Awning", RZ(base.x, base.y, base.z, -20.0) if face > 0 else (RZ(base.x, base.y, base.z, 20.0) if face < 0 else RX(base.x, base.y, base.z, -20.0)))
+		mi(ap, "Slab", fs(face, span + 0.9, 0.12, 1.5), "awning_red", T(0, 0, 0))
+		for st in 4:
+			mi(ap, "Stripe%d" % st, fs(face, 0.5, 0.14, 1.52), "awning_cream", fo(face, (float(st) - 1.5) * (span + 0.9) / 4.0, 0, 0))
+		mi(ap, "Valance", fs(face, span + 0.9, 0.34, 0.1), "awning_red", fo(face, 0, -0.2, 0.72))
+		mi(ap, "Rod", fs(face, span + 0.9, 0.08, 0.08), "metal", fo(face, 0, -0.02, -0.7))
+
+# --------------------------------------------------------------- props
+func streetlight(x: float, z: float, dir: float, id: int) -> void:
+	var n := "Lamp%d" % id
+	grp("StreetProps", n, T(x, 0.15, z))
+	var p := "StreetProps/" + n
+	scyl(p, "Base", 0.17, 0.34, "metal", T(0, 0.17, 0), 8, true)
+	scyl(p, "Pole", 0.075, 4.7, "pole", T(0, 2.6, 0), 8, true)
+	mi(p, "Arm", Vector3(1.35, 0.09, 0.09), "pole", T(dir * 0.65, 4.9, 0))
+	mi(p, "Brace", Vector3(0.55, 0.07, 0.07), "pole", RZ(dir * 0.3, 4.7, 0, dir * 35.0))
+	mi(p, "Head", Vector3(0.7, 0.16, 0.34), "metal", T(dir * 1.25, 4.8, 0))
+	mi(p, "Lens", Vector3(0.56, 0.06, 0.26), "lamp_glow", T(dir * 1.25, 4.69, 0))
+	light(p, "Glow", Vector3(dir * 1.25, 4.55, 0), Color(1, 0.93, 0.78), 1.15, 7.0)
+
+func bench(x: float, z: float, rot: float, id: int) -> void:
+	var n := "Bench%d" % id
+	grp("StreetProps", n, RY(x, 0.45, z, rot))
+	var p := "StreetProps/" + n
+	mi(p, "LegA", Vector3(0.12, 0.45, 0.55), "metal", T(-0.7, -0.22, 0))
+	mi(p, "LegB", Vector3(0.12, 0.45, 0.55), "metal", T(0.7, -0.22, 0))
+	mi(p, "Seat", Vector3(1.8, 0.11, 0.56), "bench", T(0, 0.05, 0))
+	mi(p, "BackA", Vector3(0.1, 0.5, 0.1), "metal", T(-0.7, 0.3, -0.24))
+	mi(p, "BackB", Vector3(0.1, 0.5, 0.1), "metal", T(0.7, 0.3, -0.24))
+	mi(p, "Back", Vector3(1.8, 0.34, 0.09), "bench", T(0, 0.42, -0.26))
+	mi(p, "ArmL", Vector3(0.09, 0.09, 0.5), "metal", T(-0.85, 0.28, 0))
+	mi(p, "ArmR", Vector3(0.09, 0.09, 0.5), "metal", T(0.85, 0.28, 0))
+	sb(p, "Block", Vector3(1.7, 0.42, 0.45), "bench", T(0, -0.2, 0), true)
+
+func bin_at(x: float, z: float, id: int) -> void:
+	var n := "Bin%d" % id
+	grp("StreetProps", n, T(x, 0.65, z))
+	var p := "StreetProps/" + n
+	scyl(p, "Can", 0.28, 0.92, "metal", T(0, 0, 0), 10, true)
+	scyl(p, "Band", 0.3, 0.08, "metal_light", T(0, 0.3, 0), 10, false)
+	mi(p, "Lid", Vector3(0.62, 0.08, 0.62), "metal_light", T(0, 0.5, 0))
+	mi(p, "Hole", Vector3(0.3, 0.06, 0.3), "grate", T(0, 0.53, 0))
+
+func tree(x: float, z: float, s: float, id: int) -> void:
+	var n := "Tree%d" % id
+	grp("StreetProps", n, T(x, 0.15, z))
+	var p := "StreetProps/" + n
+	scyl(p, "Trunk", 0.17 * s, 1.9 * s, "trunk", T(0, 0.95 * s, 0), 8, true)
+	ssph(p, "Canopy", 0.95 * s, "leaf", T(0, 2.5 * s, 0), true)
+	ssph(p, "CanopyB", 0.62 * s, "leaf2", T(0.45 * s, 1.85 * s, 0.3 * s), false)
+	ssph(p, "CanopyC", 0.55 * s, "leaf2", T(-0.4 * s, 3.1 * s, -0.2 * s), false)
+	scyl(p, "Grate", 0.55, 0.06, "grate", T(0, 0.03, 0), 8, false)
+	scyl(p, "Soil", 0.45, 0.05, "soil", T(0, 0.05, 0), 8, false)
+
+func planter(x: float, z: float, name: String) -> void:
+	grp("StreetProps", name, T(x, 0.45, z))
+	var p := "StreetProps/" + name
+	sb(p, "Box", Vector3(0.72, 0.72, 0.72), "trim", T(0, 0, 0), true)
+	mi(p, "Rim", Vector3(0.86, 0.14, 0.86), "trim_dark", T(0, 0.3, 0))
+	mi(p, "Soil", Vector3(0.66, 0.06, 0.66), "soil", T(0, 0.33, 0))
+	ssph(p, "Plant", 0.36, "leaf", T(0, 0.62, 0), false)
+	ssph(p, "PlantB", 0.26, "leaf2", T(0.28, 0.5, 0.2), false)
+
+func parked_car(x: float, z: float, rot: float, body: String, name: String) -> void:
+	grp("StreetProps", name, RY(x, 0.55, z, rot))
+	var p := "StreetProps/" + name
+	sb(p, "Body", Vector3(1.85, 0.6, 3.6), body, T(0, -0.06, 0), true)
+	mi(p, "Cabin", Vector3(1.66, 0.52, 1.9), body, T(0, 0.48, -0.2))
+	mi(p, "Windshield", Vector3(1.56, 0.42, 0.12), "glass", T(0, 0.5, 0.78))
+	mi(p, "Rear", Vector3(1.56, 0.4, 0.12), "glass", T(0, 0.5, -1.18))
+	mi(p, "BumperF", Vector3(1.9, 0.18, 0.16), "metal_light", T(0, -0.14, 1.82))
+	mi(p, "BumperR", Vector3(1.9, 0.18, 0.16), "metal_light", T(0, -0.14, -1.82))
+	mi(p, "LampL", Vector3(0.3, 0.16, 0.08), "lamp_glow", T(-0.6, -0.06, 1.84))
+	mi(p, "LampR", Vector3(0.3, 0.16, 0.08), "lamp_glow", T(0.6, -0.06, 1.84))
+	mi(p, "TailL", Vector3(0.3, 0.14, 0.08), "pizza_red", T(-0.6, -0.06, -1.84))
+	mi(p, "TailR", Vector3(0.3, 0.14, 0.08), "pizza_red", T(0.6, -0.06, -1.84))
+	mi(p, "Skirt", Vector3(1.92, 0.18, 3.3), "metal", T(0, -0.3, 0))
+	for i in 4:
+		var wx := 0.88 if i % 2 == 0 else -0.88
+		var wz := 1.15 if i < 2 else -1.15
+		var wn := "Wheel%d" % i
+		scyl(p, wn, 0.32, 0.24, "tire", Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(wx, -0.26, wz)), 10, true)
+		scyl(p, "Hub" + wn, 0.14, 0.26, "metal_light", Transform3D(Basis(Vector3.BACK, PI * 0.5), Vector3(wx, -0.26, wz)), 8, false)
+
+func hydrant() -> void:
+	grp("StreetProps", "FireHydrant", T(-5.5, 0.55, 10))
+	var p := "StreetProps/FireHydrant"
+	scyl(p, "Base", 0.26, 0.14, "metal", T(0, -0.38, 0), 8, false)
+	scyl(p, "Body", 0.19, 0.78, "pizza_red", T(0, 0, 0), 8, true)
+	scyl(p, "Shoulder", 0.16, 0.12, "pizza_red", T(0, 0.42, 0), 8, false)
+	scyl(p, "Top", 0.11, 0.18, "pizza_red", T(0, 0.55, 0), 8, false)
+	scyl(p, "Cap", 0.07, 0.1, "metal_light", T(0, 0.66, 0), 6, false)
+	mi(p, "ValveL", Vector3(0.3, 0.1, 0.1), "metal", T(0.24, 0.16, 0))
+	mi(p, "ValveR", Vector3(0.3, 0.1, 0.1), "metal", T(-0.24, 0.16, 0))
+	mi(p, "Tag", Vector3(0.14, 0.2, 0.05), "yellow", T(0, 0.3, 0.2))
+
+func mailbox() -> void:
+	grp("StreetProps", "Mailbox", T(5.5, 0.75, 1))
+	var p := "StreetProps/Mailbox"
+	scyl(p, "Post", 0.08, 1.2, "pole", T(0, -0.35, 0), 8, true)
+	mi(p, "Leg", Vector3(0.14, 0.3, 0.14), "metal", T(0, -0.95, 0))
+	mi(p, "Box", Vector3(0.42, 0.46, 0.52), "car_b", T(0, 0.3, 0))
+	mi(p, "Cap", Vector3(0.44, 0.14, 0.54), "car_b", T(0, 0.55, 0))
+	mi(p, "Slot", Vector3(0.26, 0.08, 0.06), "shop_dark", T(0, 0.42, 0.27))
+	mi(p, "Flag", Vector3(0.06, 0.22, 0.06), "pizza_red", T(0.22, 0.5, 0))
+
+func stop_sign() -> void:
+	grp("StreetProps", "StopSign", T(-6.5, 1.5, 8))
+	var p := "StreetProps/StopSign"
+	scyl(p, "Pole", 0.055, 2.0, "metal_light", T(0, -0.5, 0), 8, true)
+	scyl(p, "Foot", 0.16, 0.1, "metal", T(0, -1.45, 0), 8, false)
+	grp(p, "Plate", RY(0, 0, 0, 90))
+	var pp := p + "/Plate"
+	node("CSGPolygon3D", "Octagon", pp, Transform3D.IDENTITY, [
+		"polygon = PackedVector2Array(0.34, 0, 0.24, -0.17, 0, -0.34, -0.24, -0.17, -0.34, 0, -0.24, 0.17, 0, 0.34, 0.24, 0.17)",
+		"depth = 0.05",
+		"material = SubResource(\"%s\")" % _mid["pizza_red"],
+		"use_collision = true"])
+	n_csg += 1
+	n_tri += 6
+	n_solid += 1
+	mi(pp, "Rim", Vector3(0.04, 0.74, 0.74), "pizza_cream", T(-0.03, 0, 0))
+	mi(pp, "Bar", Vector3(0.06, 0.3, 0.5), "pizza_cream", T(0.04, 0, 0))
+
+func barrier(x: float, z: float, flip: float, name: String) -> void:
+	grp("StreetProps", name, T(x, 0.55, z))
+	var p := "StreetProps/" + name
+	sb(p, "Body", Vector3(0.24, 0.85, 2.1), "awning_cream", T(0, 0, 0), true)
+	mi(p, "Stripe1", Vector3(0.3, 0.34, 1.2), "pizza_red", RX(0, 0, -0.55, 32.0 * flip))
+	mi(p, "Stripe2", Vector3(0.3, 0.34, 1.2), "pizza_red", RX(0, 0, 0.55, -32.0 * flip))
+	mi(p, "Foot1", Vector3(0.5, 0.16, 0.2), "metal", T(0, -0.36, -0.8))
+	mi(p, "Foot2", Vector3(0.5, 0.16, 0.2), "metal", T(0, -0.36, 0.8))
+
+func utility(x: float, z: float, name: String, w: float, h: float, d: float) -> void:
+	grp("StreetProps", name, T(x, 0.15, z))
+	var p := "StreetProps/" + name
+	mi(p, "Body", Vector3(w, h, d), "metal_light", T(0, h * 0.5, 0))
+	mi(p, "Door", Vector3(w * 0.7, h * 0.6, 0.06), "metal", T(0, h * 0.5, d * 0.5 + 0.02))
+	mi(p, "Vent", Vector3(w * 0.4, 0.06, d * 0.4), "grate", T(0, h + 0.02, 0))
+	mi(p, "Base", Vector3(w + 0.12, 0.12, d + 0.12), "trim_dark", T(0, 0.06, 0))
+
+func manhole(x: float, z: float, id: int) -> void:
+	var n := "Manhole%d" % id
+	grp("RoadDetails", n, T(x, 0.0, z))
+	scyl("RoadDetails/" + n, "Plate", 0.34, 0.05, "grate", T(0, 0.02, 0), 10, false)
+	mi("RoadDetails/" + n, "Ring", Vector3(0.78, 0.03, 0.78), "road_dark", T(0, 0.012, 0))
+
+# --------------------------------------------------------------- main
+func _initialize() -> void:
+	_build()
+	quit()
+
+func _build() -> void:
+	_nodes.clear()
+	_subs.clear()
+	_mid.clear()
+	_mesh.clear()
+	n_res = 0
+	n_node = 0
+	n_csg = 0
+	n_mi = 0
+	n_solid = 0
+	n_light = 0
+	n_label = 0
+	n_tri = 0
+
+	for d in MATS:
+		var name: String = d[0]
+		var o: Dictionary = d[1]
+		var id := "m_" + name
+		_mid[name] = id
+		var body: Array = ["albedo_color = " + cl(o["c"]), "roughness = " + f(o.get("r", 0.9))]
+		if o.has("m"):
+			body.append("metallic = " + f(o["m"]))
+		if o.has("e"):
+			body.append("emission_enabled = true")
+			body.append("emission = " + cl(o["e"]))
+			body.append("emission_energy_multiplier = " + f(o["ei"]))
+		sub_res("StandardMaterial3D", id, body)
+
+	var zone_shapes := [["ZoneShapeCar", Vector3(8, 3, 6)], ["ZoneShapeDog", Vector3(2.6, 3, 9)], ["ZoneShapeSmall", Vector3(2.4, 3, 3)]]
+	for z in zone_shapes:
+		sub_res("BoxShape3D", str(z[0]), ["size = " + v3(z[1])])
+	sub_res("BoxShape3D", "GroundBox", ["size = Vector3(60, 2, 56)"])
+	sub_res("ProceduralSkyMaterial", "sky_mat", [
+		"sky_top_color = Color(0.29, 0.5, 0.79, 1)",
+		"sky_horizon_color = Color(0.75, 0.82, 0.9, 1)",
+		"ground_bottom_color = Color(0.2, 0.2, 0.22, 1)",
+		"ground_horizon_color = Color(0.62, 0.68, 0.74, 1)",
+		"sun_angle_max = 24.0"])
+	sub_res("Sky", "sky", ["sky_material = SubResource(\"sky_mat\")"])
+	sub_res("Environment", "env_main", [
+		"background_mode = 2",
+		"sky = SubResource(\"sky\")",
+		"ambient_light_source = 3",
+		"ambient_light_color = Color(0.72, 0.78, 0.88, 1)",
+		"ambient_light_sky_contribution = 0.65",
+		"ambient_light_energy = 1.0",
+		"fog_enabled = true",
+		"fog_light_color = Color(0.72, 0.79, 0.88, 1)",
+		"fog_density = 0.0016",
+		"fog_sky_affect = 0.0"])
+
+	# --- environment -------------------------------------------------------
+	node("WorldEnvironment", "WorldEnvironment", ".", Transform3D.IDENTITY, ["environment = SubResource(\"env_main\")"])
+	node("DirectionalLight3D", "DirectionalLight3D", ".", Transform3D(Basis.looking_at(Vector3(-0.33, -0.86, -0.39), Vector3.UP), Vector3(0, 15, 0)), [
+		"light_color = Color(1, 0.96, 0.89, 1)",
+		"light_energy = 1.2",
+		"shadow_enabled = true",
+		"shadow_bias = 0.04",
+		"shadow_normal_bias = 1.2",
+		"directional_shadow_max_distance = 60.0"])
+
+	# --- ground / street ---------------------------------------------------
+	grp(".", "Ground")
+	node("StaticBody3D", "Body", "Ground", T(0, -1.2, 0), ["collision_layer = 1", "collision_mask = 1"])
+	scol_node("Ground/Body", "GroundBox")
+	# The original street was: road slab (8,0.2,40) at y=-0.1 and two sidewalk
+	# slabs (3,0.3,40) at x=+-5.5, all of them solid. Keep those exact numbers so
+	# the walkable heights stay road=0.0 / sidewalk=0.15.
+	sb(".", "Road", Vector3(8, 0.2, 40), "road", T(0, -0.1, 0), true)
+	sb(".", "SidewalkLeft", Vector3(3, 0.3, 40), "sidewalk", T(-5.5, 0, 0), true)
+	sb(".", "SidewalkRight", Vector3(3, 0.3, 40), "sidewalk", T(5.5, 0, 0), true)
+	grp(".", "RoadMarkings")
+	grp(".", "RoadDetails")
+	grp(".", "Paving")
+	grp(".", "Curbs")
+	for i in 8:
+		var cz := -17.5 + float(i) * 5.0
+		sb("Curbs", "CurbL%d" % i, Vector3(0.3, 0.36, 4.4), "curb", T(-4.05, 0.02, cz), false)
+		sb("Curbs", "CurbR%d" % i, Vector3(0.3, 0.36, 4.4), "curb", T(4.05, 0.02, cz), false)
+		mi("Paving", "JointL%d" % i, Vector3(2.9, 0.04, 0.14), "walk_tile", T(-5.5, 0.15, cz))
+		mi("Paving", "JointR%d" % i, Vector3(2.9, 0.04, 0.14), "walk_tile", T(5.5, 0.15, cz))
+	for i in 6:
+		mi("RoadMarkings", "Dash%d" % i, Vector3(0.22, 0.04, 3.0), "road_line", T(0, 0.02, -15.0 + float(i) * 5.0))
+	for i in 5:
+		mi("RoadMarkings", "Cross%d" % i, Vector3(0.62, 0.04, 6.2), "road_pale", T(-2.6 + float(i) * 1.3, 0.02, 8.0))
+	mi("RoadMarkings", "StopLine", Vector3(7.2, 0.04, 0.3), "road_pale", T(0, 0.02, 5.4))
+	mi("RoadMarkings", "EdgeL", Vector3(0.14, 0.03, 39.0), "road_line", T(-3.6, 0.015, 0))
+	mi("RoadMarkings", "EdgeR", Vector3(0.14, 0.03, 39.0), "road_line", T(3.6, 0.015, 0))
+	mi("RoadDetails", "Patch", Vector3(2.6, 0.02, 3.4), "road_dark", T(-1.4, 0.012, -13.0))
+	mi("RoadDetails", "PatchB", Vector3(1.8, 0.02, 2.2), "road_dark", T(1.6, 0.012, 3.0))
+	manhole(-2.0, -6.0, 1)
+	manhole(2.4, 12.0, 2)
+	# building plots
+	grp(".", "Plots")
+	for e in [[-8, 15.5, 4, 5, "wall_tan2"], [-8, -16.5, 4, 5, "wall_tan2"], [9, 18.5, 5, 3, "wall_blue2"], [9, -13.0, 5, 4, "wall_blue2"]]:
+		var en := "Plot%d" % int(absf(e[1]) * 10.0)
+		var ep := "Plots/" + en
+		grp("Plots", en, T(e[0], 0, e[1]))
+		sb(ep, "Body", Vector3(e[2], 6.5, e[3]), e[4], T(0, 3.25, 0), true)
+		sb(ep, "Cap", Vector3(e[2] + 0.3, 0.3, e[3] + 0.3), "trim_dark", T(0, 6.6, 0), false)
+		sb(ep, "Band", Vector3(e[2] + 0.2, 0.16, e[3] + 0.2), "trim", T(0, 2.6, 0), false)
+
+	# --- buildings ---------------------------------------------------------
+	building("Building1", -8, 10, 4, 6, 10, "wall_tan", "wall_tan2", 1, true, "CAFE", "awning_red", true, 2, 3, 2)
+	building("Building2", -8, 0, 4, 5, 7, "wall_blue", "wall_blue2", 1, false, "", "trim", false, 1, 2, 1)
+	building("Building3", -8, -10, 4, 7, 4, "wall_tan", "wall_tan2", 1, true, "LAUNDRY", "awning_red", false, 0, 3, 0)
+	building("Building4", 9, 13, 5, 5, 12, "wall_blue", "wall_blue2", -1, false, "", "trim", false, 3, 2, 2)
+	building("Building5", 9, 4, 5, 6, 6, "wall_tan", "wall_tan2", -1, true, "MARKET", "awning_red", true, 1, 3, 1)
+	building("Building6", 9, -7, 5, 8, 5, "wall_blue", "wall_blue2", -1, false, "", "trim", false, 1, 4, 1)
+
+	# --- pizza shop --------------------------------------------------------
+	grp(".", "PizzaShop", T(7.5, 0, 19))
+	sb("PizzaShop", "GroundFloor", Vector3(6, 3.2, 4), "pizza_red", T(0, 1.6, 0), true)
+	sb("PizzaShop", "Walls", Vector3(6, 2.8, 4), "wall_brick", T(0, 4.6, 0), true)
+	sb("PizzaShop", "Base", Vector3(6.24, 0.5, 4.24), "trim_dark", T(0, 0.25, 0), false)
+	sb("PizzaShop", "Cornice", Vector3(6.3, 0.3, 4.3), "pizza_cream", T(0, 5.85, 0), false)
+	sb("PizzaShop", "Roof", Vector3(6.1, 0.4, 4.1), "roof", T(0, 6.2, 0), true)
+	sb("PizzaShop", "RoofLip", Vector3(6.5, 0.26, 4.5), "trim_dark", T(0, 6.45, 0), false)
+	sb("PizzaShop", "ParapetS", Vector3(6.5, 0.45, 0.24), "pizza_cream", T(0, 6.75, -2.2), false)
+	sb("PizzaShop", "ParapetN", Vector3(6.5, 0.45, 0.24), "pizza_cream", T(0, 6.75, 2.2), false)
+	sb("PizzaShop", "ParapetW", Vector3(0.24, 0.45, 4.5), "pizza_cream", T(-3.1, 6.75, 0), false)
+	grp("PizzaShop", "Shop")
+	grp("PizzaShop/Shop", "Front")
+	var fpz := "PizzaShop/Shop/Front"
+	mi(fpz, "KickS", Vector3(5.0, 0.5, 0.22), "trim_dark", T(0, 0.35, -2.03))
+	mi(fpz, "GlassS", Vector3(4.7, 2.2, 0.18), "glass_lit", T(0, 1.6, -2.05))
+	mi(fpz, "BarS", Vector3(0.12, 2.2, 0.2), "trim_dark", T(0, 1.6, -2.07))
+	mi(fpz, "DoorFrameS", Vector3(1.26, 2.5, 0.2), "pizza_cream", T(-1.9, 1.3, -2.07))
+	mi(fpz, "DoorS", Vector3(1.02, 2.25, 0.24), "door", T(-1.9, 1.25, -2.09))
+	mi(fpz, "BandS", Vector3(5.5, 0.72, 0.28), "pizza_red", T(0, 3.12, -2.08))
+	mi(fpz, "KickW", Vector3(0.22, 0.5, 3.2), "trim_dark", T(-3.03, 0.35, 0))
+	mi(fpz, "GlassW", Vector3(0.18, 2.2, 2.9), "glass_lit", T(-3.05, 1.6, 0))
+	mi(fpz, "BarW", Vector3(0.2, 2.2, 0.12), "trim_dark", T(-3.07, 1.6, 0))
+	mi(fpz, "BandW", Vector3(0.28, 0.72, 3.5), "pizza_red", T(-3.09, 3.12, 0))
+	mi(fpz, "Open", Vector3(0.1, 0.36, 0.7), "neon", T(-3.12, 2.35, 0.9))
+	label3d(fpz, "Sign", "PIZZA", Vector3(-0.9, 3.14, -2.26), 180.0, 0.014, Color(1, 0.95, 0.85), Color(0.35, 0.05, 0.04))
+	label3d(fpz, "SignW", "HOT SLICE", Vector3(-3.26, 3.14, 0), 90.0, 0.009, Color(1, 0.95, 0.85), Color(0.35, 0.05, 0.04))
+	grp("PizzaShop/Shop", "AwningS", T(0, 3.52, -2.58))
+	mi("PizzaShop/Shop/AwningS", "Slab", Vector3(5.6, 0.12, 1.5), "pizza_red", T(0, 0, 0))
+	for s in 5:
+		mi("PizzaShop/Shop/AwningS", "Stripe%d" % s, Vector3(0.5, 0.14, 1.52), "pizza_cream", T(-2.2 + float(s) * 1.1, 0, 0))
+	mi("PizzaShop/Shop/AwningS", "Valance", Vector3(5.6, 0.4, 0.1), "pizza_cream", T(0, -0.2, 0.72))
+	mi("PizzaShop/Shop/AwningS", "Rod", Vector3(5.6, 0.08, 0.08), "metal", T(0, -0.02, -0.72))
+	grp("PizzaShop/Shop", "AwningW", T(-3.58, 3.52, 0))
+	mi("PizzaShop/Shop/AwningW", "Slab", Vector3(1.5, 0.12, 3.6), "pizza_red", T(0, 0, 0))
+	for s in 3:
+		mi("PizzaShop/Shop/AwningW", "Stripe%d" % s, Vector3(1.52, 0.14, 0.5), "pizza_cream", T(0, 0, -1.2 + float(s) * 1.2))
+	mi("PizzaShop/Shop/AwningW", "Valance", Vector3(0.1, 0.4, 3.6), "pizza_cream", T(-0.72, -0.2, 0))
+	mi("PizzaShop/Shop/AwningW", "Rod", Vector3(0.08, 0.08, 3.6), "metal", T(-0.72, -0.02, 0))
+	grp("PizzaShop", "Windows")
+	for i in 3:
+		grp("PizzaShop/Windows", "U%d" % i, T(-1.7 + float(i) * 1.7, 4.75, -2.03))
+		mi("PizzaShop/Windows/U%d" % i, "Frame", Vector3(1.2, 1.36, 0.12), "pizza_cream", T(0, 0, 0))
+		mi("PizzaShop/Windows/U%d" % i, "Pane", Vector3(0.96, 1.12, 0.18), "glass_lit" if i == 1 else "glass", T(0, 0, 0))
+		mi("PizzaShop/Windows/U%d" % i, "Sill", Vector3(1.36, 0.11, 0.28), "pizza_cream", T(0, -0.76, -0.06))
+	grp("PizzaShop", "RoofTop")
+	scyl("PizzaShop/RoofTop", "Vent", 0.28, 0.9, "metal", T(-1.6, 6.85, 1.0), 8, false)
+	mi("PizzaShop/RoofTop", "Hut", Vector3(1.6, 1.8, 1.6), "trim_dark", T(1.4, 7.3, 0.9))
+	mi("PizzaShop/RoofTop", "HutCap", Vector3(1.8, 0.14, 1.8), "metal", T(1.4, 8.26, 0.9))
+	mi("PizzaShop/RoofTop", "AC", Vector3(1.1, 0.7, 1.1), "metal_light", T(-0.4, 6.75, 1.1))
+	grp("PizzaShop", "Hanging", T(1.7, 3.05, -2.5))
+	mi("PizzaShop/Hanging", "Arm", Vector3(0.09, 0.09, 0.9), "metal", T(0, 0, 0))
+	mi("PizzaShop/Hanging", "Rod1", Vector3(0.05, 0.55, 0.05), "metal", T(0, -0.28, -0.36))
+	mi("PizzaShop/Hanging", "Rod2", Vector3(0.05, 0.55, 0.05), "metal", T(0, -0.28, 0.36))
+	mi("PizzaShop/Hanging", "Board", Vector3(0.12, 0.7, 1.0), "pizza_red", T(0, -0.85, 0))
+	mi("PizzaShop/Hanging", "Slice", Vector3(0.16, 0.46, 0.6), "pizza_cheese", T(0, -0.85, 0))
+	light("PizzaShop", "Warm", Vector3(0, 2.7, -2.7), Color(1, 0.8, 0.55), 0.9, 5.0)
+	for i in 3:
+		var pn := "WindowBox%d" % i
+		grp("PizzaShop", pn, T(-2.2 + float(i) * 2.2, 0.15, -2.45))
+		mi("PizzaShop/" + pn, "Box", Vector3(0.8, 0.4, 0.36), "wood", T(0, 0.2, 0))
+		mi("PizzaShop/" + pn, "Soil", Vector3(0.7, 0.06, 0.28), "soil", T(0, 0.4, 0))
+		ssph("PizzaShop/" + pn, "Bush", 0.22, "leaf", T(0, 0.5, 0), false)
+	# scripts/city_block.gd drives this node: it overwrites scale with
+	# 0.1 * (1 + sin) and spins it. The original was a CSGCylinder3D of radius 3
+	# and height 0.5 parked at (-1.5, 6.5, -2.2), so the art is modelled in those
+	# same pre-scale units (effective size 0.3 radius) and keeps that anchor.
+	grp("PizzaShop", "PizzaIcon", T(-1.5, 6.5, -2.2))
+	node("CSGPolygon3D", "Slice", "PizzaShop/PizzaIcon", Transform3D.IDENTITY, [
+		"polygon = PackedVector2Array(0, 0, 3.3, 0.72, 2.5, 2.88, 0.78, 2.88)",
+		"depth = 0.5",
+		"material = SubResource(\"%s\")" % _mid["pizza_cheese"],
+		"use_collision = false"])
+	n_csg += 1
+	n_tri += 2
+	mi("PizzaShop/PizzaIcon", "Crust", Vector3(0.85, 0.55, 3.5), "pizza_cream", T(0.1, 0, 1.6))
+	mi("PizzaShop/PizzaIcon", "CrustTip", Vector3(0.7, 0.5, 0.7), "pizza_cream", T(3.2, 0, 0.55))
+	mi("PizzaShop/PizzaIcon", "PepA", Vector3(0.6, 0.2, 0.6), "pizza_red", T(1.5, 0.3, 1.5))
+	mi("PizzaShop/PizzaIcon", "PepB", Vector3(0.55, 0.2, 0.55), "pizza_red", T(2.5, 0.3, 0.9))
+	mi("PizzaShop/PizzaIcon", "Leaf", Vector3(0.8, 0.16, 0.5), "leaf", T(1.2, 0.3, 0.6))
+	mi("PizzaShop/PizzaIcon", "Cheese", Vector3(1.4, 0.18, 0.4), "yellow", T(2.1, 0.3, 2.0))
+	# static bracket so the spinning sign reads as mounted, not floating
+	mi("PizzaShop", "SignMast", Vector3(0.16, 1.9, 0.16), "metal", T(-1.5, 5.3, -2.2))
+	mi("PizzaShop", "SignArm", Vector3(0.14, 0.14, 1.1), "metal", T(-1.5, 6.4, -1.8))
+	# static decoration on the front sign band (not driven by any script)
+	mi("PizzaShop", "SignDisc", Vector3(1.5, 0.12, 1.5), "pizza_cream", T(1.7, 3.16, -2.34))
+	mi("PizzaShop", "SignDiscIn", Vector3(1.16, 0.1, 1.16), "pizza_red", T(1.7, 3.2, -2.34))
+	mi("PizzaShop", "SignDiscPep", Vector3(0.26, 0.08, 0.26), "yellow", T(1.4, 3.24, -2.5))
+	mi("PizzaShop", "SignDiscPep2", Vector3(0.24, 0.08, 0.24), "yellow", T(2.0, 3.24, -2.15))
+
+	# --- street props ------------------------------------------------------
+	grp(".", "StreetProps")
+	streetlight(-6.5, -12.0, 1.0, 1)
+	streetlight(-6.5, 0.0, 1.0, 2)
+	streetlight(-6.5, 12.0, 1.0, 3)
+	streetlight(6.5, -2.0, -1.0, 4)
+	streetlight(6.5, 9.0, -1.0, 5)
+	bench(-5.8, -8.0, 90.0, 1)
+	bench(-5.8, 3.0, 90.0, 2)
+	bin_at(-5.5, -15.0, 1)
+	bin_at(5.5, -3.0, 2)
+	bin_at(5.5, 14.0, 3)
+	bin_at(-5.5, 6.9, 4)
+	bin_at(5.5, -6.0, 5)
+	tree(-5.0, -5.0, 1.0, 1)
+	tree(5.0, -12.0, 0.9, 2)
+	tree(-5.0, 16.0, 1.0, 3)
+	tree(5.0, 7.0, 0.85, 4)
+	tree(-5.0, 1.2, 0.8, 5)
+	planter(5.5, 10.0, "Planter1")
+	planter(-5.5, 1.5, "Planter2")
+	planter(5.5, 5.5, "Planter3")
+	parked_car(-2.6, -10.0, 0.0, "car_a", "ParkedCar1")
+	parked_car(2.6, 4.0, 180.0, "car_b", "ParkedCar2")
+	hydrant()
+	mailbox()
+	stop_sign()
+	barrier(-6.8, -18.0, 1.0, "Barrier1")
+	barrier(6.8, -18.0, -1.0, "Barrier2")
+	utility(-5.4, -2.2, "Utility1", 0.7, 1.0, 0.5)
+	utility(5.4, 8.0, "Utility2", 0.6, 0.9, 0.45)
+	utility(-5.4, 12.5, "Utility3", 0.55, 0.85, 0.4)
+	# facade clutter
+	grp(".", "FacadeBits")
+	var units := [["B1", -5.96, 7.6, 3.5], ["B2", -5.96, -1.6, 2.2], ["B3", -5.96, -12.0, 1.7],
+		["B4", 6.46, 11.0, 3.2], ["B5", 6.46, 6.4, 2.1], ["B6", 6.46, -9.0, 2.1]]
+	for i in units.size():
+		var un := "AC%d" % i
+		grp("FacadeBits", un, T(units[i][1], 0, units[i][2]))
+		mi("FacadeBits/" + un, "Unit", Vector3(0.44, 0.62, 0.72), "metal_light", T(0, units[i][3], 0))
+		mi("FacadeBits/" + un, "Fan", Vector3(0.1, 0.44, 0.52), "grate", T(-0.24 if units[i][1] < 0.0 else 0.24, units[i][3], 0))
+		mi("FacadeBits/" + un, "Pipe", Vector3(0.12, 1.1, 0.12), "metal", T(0, units[i][3] - 0.8, 0.4))
+	for i2 in 3:
+		var pn2 := "Downpipe%d" % i2
+		grp("FacadeBits", pn2, T(-5.94 if i2 % 2 == 0 else 6.44, 0, [8.6, -2.2, 14.6][i2]))
+		scyl("FacadeBits/" + pn2, "Pipe", 0.1, 5.0, "metal", T(0, 2.5, 0), 8, false)
+		scyl("FacadeBits/" + pn2, "Collar", 0.14, 0.12, "metal", T(0, 1.1, 0), 8, false)
+		scyl("FacadeBits/" + pn2, "Shoe", 0.13, 0.3, "metal", T(0, 0.2, 0.08), 8, false)
+
+	# --- markers -----------------------------------------------------------
+	# The goal centre sits inside the Building4 footprint, so its ground decal is
+	# offset onto the open sidewalk tile in front of the shop door.
+	node("Marker3D", "PlayerSpawn", ".", T(0, 0.2, -17))
+	grp("PlayerSpawn", "Ring")
+	storus("PlayerSpawn/Ring", "Ring", 0.85, 1.05, "marker_spawn", T(0, -0.18, 0))
+	mi("PlayerSpawn/Ring", "Arrow", Vector3(0.5, 0.04, 0.9), "marker_spawn", T(0, -0.17, 0.55))
+	mi("PlayerSpawn/Ring", "Arrow2", Vector3(1.0, 0.04, 0.4), "marker_spawn", T(0, -0.17, 1.0))
+	node("Marker3D", "PizzaShopGoal", ".", T(7.2, 1.0, 15.4))
+	grp("PizzaShopGoal", "Pad")
+	scyl("PizzaShopGoal/Pad", "Disc", 1.75, 0.03, "marker_goal", T(-2.0, -0.83, 0.0), 16, false)
+	storus("PizzaShopGoal/Pad", "Ring", 1.5, 1.75, "marker_goal", T(-2.0, -0.8, 0.0))
+	mi("PizzaShopGoal/Pad", "Arrow", Vector3(0.5, 0.04, 1.4), "marker_goal", T(-2.0, -0.78, 0.3))
+	mi("PizzaShopGoal/Pad", "Head", Vector3(1.2, 0.04, 0.8), "marker_goal", T(-2.0, -0.78, 1.3))
+	grp("PizzaShopGoal", "Beam")
+	mi("PizzaShopGoal/Beam", "Post", Vector3(0.1, 1.4, 0.1), "metal", T(-2.0, 0.9, -1.6))
+	mi("PizzaShopGoal/Beam", "Flag", Vector3(0.06, 0.4, 0.6), "marker_goal", T(-2.0, 1.5, -1.6))
+	mi("PizzaShopGoal/Beam", "Arrow3", Vector3(0.4, 0.04, 1.2), "marker_goal", T(-2.0, 0.2, -0.9))
+
+	# --- disaster zones (positions and shapes unchanged) -------------------
+	grp(".", "DisasterZones")
+	var zones := [
+		["CarAttackZone", T(0, 0.5, -8), "ZoneShapeCar", Vector3(6, 0.04, 5), Vector3(6, 0.06, 5)],
+		["FallingObjectZone", T(-5.5, 0.5, 10), "ZoneShapeSmall", Vector3(3.2, 0.04, 3.2), Vector3(2.5, 0.06, 2.5)],
+		["DogChaseZone", T(5.5, 0.5, 0), "ZoneShapeDog", Vector3(2.4, 0.04, 8.6), Vector3(2.5, 0.06, 8.6)],
+		["ObstacleZone1", T(-5.5, 0.5, -3), "ZoneShapeSmall", Vector3(2.2, 0.04, 2.6), Vector3(2.2, 0.06, 2.6)],
+		["ObstacleZone2", T(5.5, 0.5, -15), "ZoneShapeSmall", Vector3(2.2, 0.04, 2.6), Vector3(2.2, 0.06, 2.6)],
+		["ObstacleZone3", T(-5.5, 0.5, 13), "ZoneShapeSmall", Vector3(2.2, 0.04, 2.6), Vector3(2.2, 0.06, 2.6)],
+	]
+	for z in zones:
+		var zn: String = z[0]
+		node("Area3D", zn, "DisasterZones", z[1], ["monitoring = false", "monitorable = false"])
+		scol_node("DisasterZones/" + zn, str(z[2]))
+		sb("DisasterZones/" + zn, "VisualMarker", z[3], "hazard", T(0, -0.33, 0), true)
+		var hv: Vector3 = z[4]
+		for e in 4:
+			var ex := (hv.x * 0.5 - 0.8) if e % 2 == 0 else (-hv.x * 0.5 + 0.8)
+			var ez := (hv.z * 0.5 - 0.45) if e < 2 else (-hv.z * 0.5 + 0.45)
+			mi("DisasterZones/" + zn, "Hatch%d" % e, Vector3(1.1, 0.03, 0.2), "hatch", T(ex, -0.3, ez))
+	grp("DisasterZones", "LockedDoorArea", Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(-5.5, 1.35, 5)))
+	var lp := "DisasterZones/LockedDoorArea"
+	sb(lp, "Wall", Vector3(3.8, 2.9, 0.4), "wall_brick", T(0, 0, -0.62), true)
+	sb(lp, "Door", Vector3(2.8, 2.4, 0.25), "wall_tan2", T(0, 0, 0), true)
+	mi(lp, "Frame", Vector3(3.0, 2.6, 0.1), "trim", T(0, 0, -0.16))
+	mi(lp, "Panel", Vector3(1.0, 0.9, 0.06), "door", T(-0.7, 0.4, -0.2))
+	mi(lp, "PanelB", Vector3(1.0, 0.9, 0.06), "door", T(0.7, 0.4, -0.2))
+	mi(lp, "Step", Vector3(3.2, 0.18, 0.7), "curb", T(0, -1.3, -0.32))
+	mi(lp, "LockPlate", Vector3(0.36, 0.42, 0.05), "trim_dark", T(0.45, 0, -0.2))
+	mi(lp, "Lock", Vector3(0.18, 0.24, 0.07), "yellow", T(0.45, 0, -0.24))
+	mi(lp, "Doormat", Vector3(1.2, 0.05, 0.6), "grate", T(0, -1.2, -0.5))
+	mi(lp, "Canopy", Vector3(3.4, 0.12, 0.8), "metal", T(0, 1.5, -0.5))
+
+	grp(".", "CameraAnchor", Transform3D(Basis(Vector3.RIGHT, deg_to_rad(-30.0)), Vector3(0, 5, -8)))
+
+	# --- write -------------------------------------------------------------
+	var head := "[gd_scene load_steps=%d format=3]\n\n" % (n_res + 2)
+	head += "[ext_resource type=\"Script\" path=\"res://scripts/city_block.gd\" id=\"1_city\"]\n\n"
+	head += "\n".join(_subs)
+	head += "\n[node name=\"CityBlock\" type=\"Node3D\"]\nscript = ExtResource(\"1_city\")\n\n"
+	head += "\n".join(_nodes)
+	var fh := FileAccess.open(OUT, FileAccess.WRITE)
+	fh.store_string(head)
+	fh.close()
+	print("WROTE %s res=%d nodes=%d csg=%d mi=%d solid=%d lights=%d labels=%d est_tris=%d" % [
+		OUT, n_res, n_node, n_csg, n_mi, n_solid, n_light, n_label, n_tri])

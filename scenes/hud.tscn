@@ -1,0 +1,435 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui_manager.gd" id="1_ui"]
+[ext_resource type="Script" path="res://scripts/touch_controls.gd" id="2_touch"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.07, 0.08, 0.11, 0.72)
+border_width_left = 4
+border_color = Color(1, 0.78, 0.15, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_btn"]
+bg_color = Color(0.16, 0.6, 0.95, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.85)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_btn_hover"]
+bg_color = Color(0.25, 0.72, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_btn_pressed"]
+bg_color = Color(0.1, 0.42, 0.7, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.6)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_joy_base"]
+bg_color = Color(1, 1, 1, 0.14)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 0.45)
+corner_radius_top_left = 75
+corner_radius_top_right = 75
+corner_radius_bottom_right = 75
+corner_radius_bottom_left = 75
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_joy_knob"]
+bg_color = Color(1, 0.85, 0.25, 0.75)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 0.8)
+corner_radius_top_left = 34
+corner_radius_top_right = 34
+corner_radius_bottom_right = 34
+corner_radius_bottom_left = 34
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_ui")
+
+[node name="ObjectivePanel" type="PanelContainer" parent="."]
+anchors_preset = -1
+anchor_right = 0.0
+offset_left = 16.0
+offset_top = 14.0
+offset_right = 386.0
+offset_bottom = 110.0
+grow_horizontal = 1
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Box" type="VBoxContainer" parent="ObjectivePanel"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Title" type="Label" parent="ObjectivePanel/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.78, 0.15, 1)
+theme_override_font_sizes/font_size = 15
+text = "OBJECTIVE"
+
+[node name="ObjectiveLabel" type="Label" parent="ObjectivePanel/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 4
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.7)
+theme_override_font_sizes/font_size = 25
+text = "GET TO THE PIZZA SHOP"
+
+[node name="DistanceLabel" type="Label" parent="ObjectivePanel/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "0m TO PIZZA"
+
+[node name="TimerLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -170.0
+offset_top = 6.0
+offset_right = 170.0
+offset_bottom = 70.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 46
+text = "60"
+horizontal_alignment = 1
+vertical_alignment = 1
+pivot_offset = Vector2(170, 32)
+
+[node name="CoinsLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -380.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 52.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 27
+text = "COINS  0"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="EventLabel" type="Label" parent="."]
+anchors_preset = -1
+anchor_top = 0.24
+anchor_right = 1.0
+anchor_bottom = 0.24
+offset_top = -34.0
+offset_bottom = 34.0
+grow_horizontal = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 42
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+pivot_offset = Vector2(640, 34)
+
+[node name="RestartHint" type="Label" parent="."]
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -34.0
+offset_right = 380.0
+offset_bottom = -8.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.55)
+theme_override_font_sizes/font_size = 15
+text = "WASD MOVE   SPACE JUMP   SHIFT SPRINT   R RESTART"
+vertical_alignment = 1
+
+[node name="DamageFlash" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9, 0.1, 0.1, 0)
+
+[node name="TouchControls" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_touch")
+
+[node name="JoyBase" type="Panel" parent="TouchControls"]
+visible = false
+custom_minimum_size = Vector2(150, 150)
+offset_left = 135.0
+offset_top = 410.0
+offset_right = 285.0
+offset_bottom = 560.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_joy_base")
+
+[node name="JoyKnob" type="Panel" parent="TouchControls"]
+visible = false
+custom_minimum_size = Vector2(68, 68)
+offset_left = 176.0
+offset_top = 451.0
+offset_right = 244.0
+offset_bottom = 519.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_joy_knob")
+
+[node name="JumpButton" type="Button" parent="TouchControls"]
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -138.0
+offset_top = -138.0
+offset_right = -22.0
+offset_bottom = -22.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBox_btn")
+theme_override_styles/hover = SubResource("StyleBox_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBox_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBox_btn")
+text = "JUMP"
+
+[node name="SprintButton" type="Button" parent="TouchControls"]
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -170.0
+offset_top = -206.0
+offset_right = -22.0
+offset_bottom = -150.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBox_btn")
+theme_override_styles/hover = SubResource("StyleBox_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBox_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBox_btn")
+text = "SPRINT"
+
+[node name="TouchToggle" type="Button" parent="TouchControls"]
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -130.0
+offset_top = 56.0
+offset_right = -16.0
+offset_bottom = 88.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBox_btn")
+theme_override_styles/hover = SubResource("StyleBox_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBox_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBox_btn")
+text = "TOUCH: OFF"
+
+[node name="VictoryPanel" type="Control" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="VictoryPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.05, 0.6)
+
+[node name="Card" type="PanelContainer" parent="VictoryPanel"]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -170.0
+offset_right = 300.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Box" type="VBoxContainer" parent="VictoryPanel/Card"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="VictoryPanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 1, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 46
+text = "YOU MADE IT!"
+horizontal_alignment = 1
+
+[node name="Sub" type="Label" parent="VictoryPanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "THE PIZZA IS YOURS"
+horizontal_alignment = 1
+
+[node name="CoinLine" type="Label" parent="VictoryPanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "+100 COINS"
+horizontal_alignment = 1
+
+[node name="TimeLine" type="Label" parent="VictoryPanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "TIME LEFT 0.0s"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="VictoryPanel/Card/Box"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="VictoryButton" type="Button" parent="VictoryPanel/Card/Box"]
+custom_minimum_size = Vector2(280, 66)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBox_btn")
+theme_override_styles/hover = SubResource("StyleBox_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBox_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBox_btn")
+text = "PLAY AGAIN"
+
+[node name="FailurePanel" type="Control" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="FailurePanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.01, 0.01, 0.6)
+
+[node name="Card" type="PanelContainer" parent="FailurePanel"]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -170.0
+offset_right = 300.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Box" type="VBoxContainer" parent="FailurePanel/Card"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="FailurePanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 46
+text = "THE WORLD WINS"
+horizontal_alignment = 1
+
+[node name="Sub" type="Label" parent="FailurePanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_font_sizes/font_size = 22
+text = "REASON"
+horizontal_alignment = 1
+
+[node name="ReasonLine" type="Label" parent="FailurePanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 20
+text = "REASON"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CoinLine" type="Label" parent="FailurePanel/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "+10 COINS"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="FailurePanel/Card/Box"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="FailureButton" type="Button" parent="FailurePanel/Card/Box"]
+custom_minimum_size = Vector2(280, 66)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBox_btn")
+theme_override_styles/hover = SubResource("StyleBox_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBox_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBox_btn")
+text = "TRY AGAIN"
