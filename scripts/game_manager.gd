@@ -1,6 +1,7 @@
 extends Node3D
 
 const Fx := preload("res://scripts/fx.gd")
+const Sfx := preload("res://scripts/sfx.gd")
 
 enum State { INTRO, RUNNING, WON, LOST }
 
@@ -25,6 +26,9 @@ var _hitstop := 0.0
 
 
 func _ready() -> void:
+	# Sound hooks are inert until audio files exist; attaching the pool is what
+	# makes adding them later a drop-in change.
+	Sfx.attach(self)
 	player.camera_rig = camera_rig
 	camera_rig.target = player
 	camera_rig.snap_to_target()
@@ -125,6 +129,7 @@ func _on_goal_reached() -> void:
 	state = State.WON
 	disasters.set_active(false)
 	ui.show_event("YOU MADE IT!", 2)
+	Sfx.play("victory")
 	_capture_mouse(true)
 
 
@@ -138,6 +143,9 @@ func _on_player_hit(_world_pos: Vector3, reason: String) -> void:
 	add_shake(0.45)
 	hit_stop(0.09)
 	emit_event(reason, 1)
+	# Single funnel point for every hit in the game, so the "I got hit" cue only
+	# has to be wired once.
+	Sfx.play("player_hurt")
 
 
 func _on_player_died(reason: String) -> void:

@@ -32,11 +32,11 @@ const WEIGHTS := {
 	"obstacle": 1.3,
 }
 const MESSAGES := {
-	"car": ["CAR INCOMING!", "BRUH! A CAR!", "LOOK OUT! CAR!"],
-	"falling": ["LOOK OUT! ABOVE!", "THE SKY IS FALLING!", "INCOMING FROM ABOVE!"],
-	"dog": ["OH NO! DOG!", "BAD DOG INCOMING!", "HERE COME THE DOGS!"],
-	"door": ["DOOR LOCKED! GO AROUND!", "LOCKED! RUDE!", "THE WORLD BLOCKS YOU!"],
-	"obstacle": ["WATCH THE FLOOR!", "STUFF IN THE WAY!", "TRIP HAZARD!"],
+	"car": ["CAR INCOMING!", "BRUH! A CAR!", "MOVE! CAR!"],
+	"falling": ["LOOK OUT! ABOVE!", "INCOMING FROM ABOVE!", "WATCH THE SKY!"],
+	"dog": ["DOG! RUN!", "OH NO! DOG!", "HERE COME THE DOGS!"],
+	"door": ["LOCKED! GO AROUND!", "NOT THIS WAY!", "THE DOOR SAYS NO!"],
+	"obstacle": ["TRIP HAZARD!", "WATCH THE FLOOR!", "STUFF IN THE WAY!"],
 }
 
 var player: Node3D = null
